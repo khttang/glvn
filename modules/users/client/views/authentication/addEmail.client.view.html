@@ -1,0 +1,23 @@
+<section>
+  <div class="modal-header">
+    <h3 class="modal-title">New Email</h3>
+  </div>
+  <div class="modal-body">
+    <form name="addEmail" novalidate>
+      <fieldset>
+        <div class="form-group" ng-class="{ 'has-error' : addEmail.email.$invalid && addEmail.email.$touched }">
+          <input type="email" name="email" class="form-control" ng-model="modalData.email" ng-minlength="5" ng-maxlength="32" placeholder="Email" required>
+          <div class="help-block" ng-messages="addEmail.email.$error" ng-if="addEmail.email.$touched">
+            <p ng-message="minlength">Email is too short</p>
+            <p ng-message="maxlength">Email is too long</p>
+            <p ng-message="required">Email is required</p>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success btn-lg" ng-disabled="addEmail.$invalid" ng-click="ok()">Add</button>
+    <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
+  </div>
+</section>

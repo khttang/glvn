@@ -1,0 +1,45 @@
+<div ng-controller="AuthenticationController">
+  <h3 class="col-md-12 text-center">Testing</h3>
+  <div class="row col-md-6 col-md-offset-4">
+    <h2>Emails</h2>
+    <div class="row">
+      <div class="col-xs-8">
+        <ul>
+          <li ng-repeat="email in emails" ng-class="{'selected':$index == selectedRow}" ng-click="setClickedRow($index)">
+            {{$index+1}} {{email.address}}
+          </li>
+        </ul>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-primary">
+          <i class="glyphicon glyphicon-plus"></i>
+        </button>
+        <button type="button" class="btn btn-warning">
+          <i class="glyphicon glyphicon-minus"></i>
+        </button>
+      </div>
+    </div>
+
+    <h2>Phones</h2>
+    <div class="row">
+      <div class="col-xs-8">
+        <ul>
+          <li ng-repeat="phone in phones" ng-class="{'selected':$index == selectedRow2}" ng-click="setClickedRow2($index)">
+            {{$index+1}} {{phone.number}}
+          </li>
+        </ul>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-primary">
+          <i class="glyphicon glyphicon-plus"></i>
+        </button>
+        <button type="button" class="btn btn-warning">
+          <i class="glyphicon glyphicon-minus"></i>
+        </button>
+      </div>
+    </div>
+
+    <div ng-sparkline width='400'></div>
+
+  </div>
+</div>
