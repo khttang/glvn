@@ -14,13 +14,64 @@ var _ = require('lodash'),
     Student = mongoose.model('Student'),
     Registration = mongoose.model('Registration');
 
+function isPhoneNumber(inputtxt) {
+    var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.exec(inputtxt);
+    if(phoneno) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function isAddress(inputtxt) {
+    return false;
+}
+
+exports.find = function (req, res) {
+    var _criteria = req.query.criteria;
+    var _student_id = req.query.student_id;
+    var _class = req.query.class;
+
+    if (_criteria) {
+        if (_criteria.indexOf('@') > 0) {
+            User.find({ 'emails.address': _criteria, 'userType': 'STUDENT' }, function(err, docs) {
+                if (!err){
+                    res.json(docs);
+                } else {throw err;}
+            });
+        } else if (isPhoneNumber(_criteria)) {
+            User.find({ 'phones.number': _criteria, 'userType': 'STUDENT' }, function(err, docs) {
+                if (!err){
+                    res.json(docs);
+                } else {throw err;}
+            });
+        } /* else if (isAddress(_criteria)) {
+            TODO: search by address line
+        }*/
+    } else if (_student_id) {
+        User.findById(_student_id, function (err, user) {
+            if (!err){
+                console.log(user);
+                process.exit();
+            } else {throw err;}
+        });
+    } else if (_class) {
+        console.log(_class);
+
+    } else {
+        res.status(400).send({
+            message: 'User is not provided'
+        });
+    }
+};
+
 exports.register = function (req, res) {
     var _user = req.body;
     var currentDt = new Date().now;
-    var regYear = dateFormat(currentDt, "yyyy");
+    var regYear = dateFormat(currentDt, 'yyyy');
 
     if (_user) {
-        var _username = _user.firstName.charAt(0) + dateFormat(_user.birthDate, "mmddyyyy") + _user.lastName.charAt(0);
+        var _username = _user.firstName.charAt(0) + dateFormat(_user.birthDate, 'mmddyyyy') + _user.lastName.charAt(0);
         User.find({ username: _username}).populate('user', 'username').exec(function (err, users) {
             if (err) {
                 return res.status(400).send({
@@ -29,7 +80,7 @@ exports.register = function (req, res) {
             }
             if (users !== null && users.length > 0) {
                 return res.status(400).send({
-                    message: errorHandler.getErrorMessage("username "+_username+" already exists.")
+                    message: errorHandler.getErrorMessage('username '+_username+' already exists.')
                 });
                 // fix user name if name is already taken
                 //_username = _username + _user.address.charAt(0) + '2';
@@ -51,22 +102,13 @@ exports.register = function (req, res) {
             city: _user.city,
             zipCode: _user.zipCode,
             emails: _user.emails,
-            phones: _user.phones
-        });
-
-        var parents = new Parents({
+            phones: _user.phones,
             fatherFirstName: _user.fatherFirstName,
             fatherLastName: _user.fatherLastName,
             motherFirstName: _user.motherFirstName,
             motherLastName: _user.motherLastName
         });
-        parents.save(function (err) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            }
-        });
+
         user.save(function (err) {
             if (err) {
                 return res.status(400).send({
@@ -76,8 +118,7 @@ exports.register = function (req, res) {
         });
         var student = new Student({
             username: _username,
-            userId: user._id,
-            parentsId: parents._id
+            userId: user._id
         });
         student.save(function (err) {
             if (err) {
@@ -107,39 +148,78 @@ exports.register = function (req, res) {
     }
 };
 
-exports.create = function (req, res) {
-  var user = req.body;
-
-  if (user) {
-    var myUser = new User({
-      saintName: user.saintName,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      middleName: user.middleName,
-      gender: user.gender,
-      birthDate: user.birthDate,
-      address: user.address,
-      city: user.city,
-      zipCode: user.zipCode
-    });
-
-    /*
-    myUser.save(function (err) {
-      if (err) {
-        return res.status(400).send({
-          message: errorHandler.getErrorMessage(err)
+function buildUser(inputUser, userType) {
+    if (inputUser) {
+        var _username = inputUser.firstName.toUpperCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toUpperCase().charAt(0);
+        User.find({ username: _username}).populate('user', 'username').exec(function (err, users) {
+            if (err) {
+                throw new Error('Cannot find user');
+            }
+            if (users !== null && users.length > 0) {
+                throw new Error('username '+_username+' already exists.');
+            }
+                // fix user name if name is already taken
+                //_username = _username + _user.address.charAt(0) + '2';
         });
-      } else {
-        res.json(user);
-      }
-    });
-    */
-    res.json(myUser);
-  } else {
-    res.status(400).send({
-      message: 'User is not provided'
-    });
-  }
+
+        // Create a new user
+        var user = new User({
+            status: 'PROVISIONED',
+            userType: userType,
+            saintName: inputUser.saintName,
+            firstName: inputUser.firstName,
+            lastName: inputUser.lastName,
+            username: _username,
+            password: dateFormat(inputUser.birthDate, 'mmddyyyy'),
+            gender: inputUser.gender,
+            birthDate: inputUser.birthDate,
+            address: inputUser.address,
+            city: inputUser.city,
+            zipCode: inputUser.zipCode,
+            fatherFirstName: inputUser.fatherFirstName,
+            fatherLastName: inputUser.fatherLastName,
+            motherFirstName: inputUser.motherFirstName,
+            motherLastName: inputUser.motherLastName
+
+        });
+
+        for (var i = 0; i < inputUser.emails.length; i++) {
+            //user.emails.push({address: inputUser.emails[i], status: 'UNCONFIRMED'});
+            user.emails.push(inputUser.emails[i]);
+        }
+        for (i = 0; i < inputUser.phones.length; i++) {
+            //user.phones.push({number: inputUser.phones[i], status: 'UNCONFIRMED'});
+            user.phones.push(inputUser.phones[i]);
+        }
+
+        user.save(function (err) {
+            if (err) {
+                throw new Error(errorHandler.getErrorMessage(err));
+            }
+        });
+        var student = new Student({
+            username: _username,
+            userId: user._id
+        });
+        student.save(function (err) {
+            if (err) {
+                throw new Error(errorHandler.getErrorMessage(err));
+            }
+        });
+    } else {
+        throw new Error('Registration is not provided');
+    }
+}
+
+exports.create = function (req, res) {
+    try {
+        buildUser(req.body, 'STUDENT');
+    } catch(err) {
+        return res.status(400).send({
+            message: errorHandler.getErrorMessage(err)
+        });
+    }
+
 };
 
 /**
@@ -147,37 +227,23 @@ exports.create = function (req, res) {
  */
 exports.update = function (req, res) {
   // Init Variables
-  var user = req.user;
+  //var user = req.user;
 
   // For security measurement we remove the roles from the req.body object
-  delete req.body.roles;
+    delete req.body.roles;
+    delete req.body.userType;
+    delete req.body.username;
+    delete req.body.birthDate;
 
-  if (user) {
-    // Merge existing user
-    user = _.extend(user, req.body);
-    user.updated = Date.now();
-    user.displayName = user.firstName + ' ' + user.lastName;
+    var user = new User(req.body);
 
-    user.save(function (err) {
-      if (err) {
-        return res.status(400).send({
-          message: errorHandler.getErrorMessage(err)
-        });
-      } else {
-        req.login(user, function (err) {
-          if (err) {
+    User.findByIdAndUpdate(req.body._id, user, function(err, ret_user){
+        if (err) {
             res.status(400).send(err);
-          } else {
-            res.json(user);
-          }
-        });
-      }
+        } else {
+            res.json(ret_user);
+        }
     });
-  } else {
-    res.status(400).send({
-      message: 'User is not signed in'
-    });
-  }
 };
 
 /**

@@ -226,7 +226,7 @@ describe('User Model Unit Tests:', function () {
     });
   });
 
-  describe("User E-mail Validation Tests", function() {
+  describe('User E-mail Validation Tests', function() {
     it('should not allow invalid email address - "123"', function (done) {
       var _user1 = new User(user1);
 
@@ -401,7 +401,7 @@ describe('User Model Unit Tests:', function () {
     it('should allow single quote characters in email address - "abc\'def@abc.com"', function (done) {
       var _user1 = new User(user1);
 
-      _user1.emails = [{address:"abc\'def@abc.com"}];
+      _user1.emails = [{address:'abc\'def@abc.com'}];
       _user1.save(function (err) {
         if (!err) {
           _user1.remove(function (err_remove) {
@@ -511,7 +511,7 @@ describe('User Model Unit Tests:', function () {
     });
   });
 
-  describe("User Phone Validation Tests", function() {
+  describe('User Phone Validation Tests', function() {
     it('should not allow invalid phone number - "123"', function (done) {
       var _user1 = new User(user1);
       _user1.phones = [{number: '123'}];

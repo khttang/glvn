@@ -1,0 +1,32 @@
+<section>
+    <div class="modal-header">
+        <h3 class="modal-title">Identity Proofing</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="form-group col-xs-4">
+                Father First Name:
+            </div>
+            <div class="form-group col-xs-8">
+                <input type="text" id="fathername" name="fathername" class="form-control" ng-model="modalData.fatherName"  required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                Saint Name:
+            </div>
+            <div class="form-group col-xs-8">
+                <input type="text" id="saintname" name="saintname" class="form-control" ng-model="modalData.saintName"  required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-4">Birth Date:</div>
+            <div class="form-group col-xs-8">
+                <input type="date" id="birthdate" name="birthdate" class="form-control" ng-model="modalData.birthDate" placeholder="MM/DD/YYYY" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success btn-lg" ng-click="ok()">Submit</button>
+        </div>
+    </div>
+</section>

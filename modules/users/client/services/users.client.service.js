@@ -23,3 +23,32 @@ angular.module('users.admin').factory('ADMIN', ['$resource',
     });
   }
 ]);
+
+angular.module('users').service('userService', function() {
+  var user = {
+    emails: [],
+    phones: []
+  };
+
+  var clearUser = function() {
+    user = {
+      emails: [],
+      phones: []
+    };
+  }
+
+  var getUser = function() {
+    return user;
+  };
+
+  var putUser = function(data) {
+    user = data;
+  };
+
+  return {
+    getUser: getUser,
+    putUser: putUser,
+    clearUser: clearUser
+  };
+
+});

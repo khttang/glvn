@@ -20,13 +20,13 @@ describe('Student Model Unit Tests:', function () {
     before(function () {
         student1 = {
             userId: 'userId1',
-            userName: 'userName1',
+            username: 'userName1',
             parentsId: 'parentsId'
         };
         // parents2 is a clone of parents1
         student2 = {
             userId: 'userId2',
-            userName: 'userName2',
+            username: 'userName2',
             parentsId: 'parentsId'
         };
 
@@ -88,7 +88,7 @@ describe('Student Model Unit Tests:', function () {
             var _student1 = new Student(student1);
             var _student2 = new Student(student2);
 
-            _student2.userName = _student1.userName;
+            _student2.username = _student1.username;
 
             _student1.save(function () {
                 _student2.save(function (err) {

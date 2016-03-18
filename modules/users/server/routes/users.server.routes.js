@@ -5,8 +5,9 @@ module.exports = function (app) {
   var users = require('../controllers/users.server.controller');
 
   // Setting up the users profile api
-  app.route('/api/users/registration').post(users.register);
+  app.route('/api/users/register').post(users.register);
   app.route('/api/users').post(users.create);
+  app.route('/api/users').get(users.find);
   app.route('/api/users/me').get(users.me);
   app.route('/api/users').put(users.update);
   app.route('/api/users/accounts').delete(users.removeOAuthProvider);

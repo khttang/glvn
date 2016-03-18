@@ -11,8 +11,8 @@
     "angular-bootstrap": "~0.14",
     "angular-ui-utils": "bower",
     "angular-ui-router": "~0.2",
-    "angular-file-upload": "2.1.4",
-    "angular-messages": "1.4.17",
+    "angular-file-upload": "^2.2",
+    "angular-messages": "~1.4",
     "ngSelect": "1.0.0"
   },
   "resolutions": {

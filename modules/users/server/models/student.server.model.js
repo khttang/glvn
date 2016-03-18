@@ -24,11 +24,6 @@ var StudentSchema = new Schema({
         unique: 'UserName already exists',
         required: 'Please fill in userName'
     },
-    parentsId: {
-        type: String,
-        trim: true,
-        required: 'Please fill in parents id'
-    },
     baptismCert: {
         data: Buffer,
         contentType: String

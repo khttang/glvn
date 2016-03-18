@@ -1,12 +1,19 @@
 <section>
   <div class="modal-header">
-    <h3 class="modal-title">New Email</h3>
+    <h3 class="modal-title">{{modalTitle}}</h3>
   </div>
   <div class="modal-body">
     <form name="addEmail" novalidate>
       <fieldset>
-        <div class="form-group" ng-class="{ 'has-error' : addEmail.email.$invalid && addEmail.email.$touched }">
-          <input type="email" name="email" class="form-control" ng-model="modalData.email" ng-minlength="5" ng-maxlength="32" placeholder="Email" required>
+        <div class="form-group col-xs-2">
+          <select class="form-control" id="owner" name="owner" ng-model="modalData.owner" required>
+            <option value="MOM">MOM</option>
+            <option value="DAD">DAD</option>
+            <option value="STUDENT">STUDENT</option>
+          </select>
+        </div>
+        <div class="form-group col-xs-6" ng-class="{ 'has-error' : addEmail.email.$invalid && addEmail.email.$touched }">
+          <input type="email" name="email" class="form-control" ng-model="modalData.address" ng-minlength="5" ng-maxlength="32" placeholder="Email" required>
           <div class="help-block" ng-messages="addEmail.email.$error" ng-if="addEmail.email.$touched">
             <p ng-message="minlength">Email is too short</p>
             <p ng-message="maxlength">Email is too long</p>
@@ -17,7 +24,7 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success btn-lg" ng-disabled="addEmail.$invalid" ng-click="ok()">Add</button>
+    <button class="btn btn-success btn-lg" ng-disabled="addEmail.$invalid" ng-click="ok()">Accept</button>
     <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
   </div>
 </section>

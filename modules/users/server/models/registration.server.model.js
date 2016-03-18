@@ -48,7 +48,7 @@ var RegistrationSchema = new Schema({
         validate: [validateVNClass, 'invalid VN class']
     },
     status: {
-        type: String,   // SUBMITTED, PROCESSING, INCOMPLETE, APPROVED
+        type: String,   // RECEIVED, PROCESSING, INCOMPLETE, APPROVED
         trim: true,
         default: 'RECEIVED',
         required: 'Please fill in status',

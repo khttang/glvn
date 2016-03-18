@@ -1,7 +1,6 @@
 <div ng-controller="HeaderController">
   <a href="#"><img class="logo" src="/modules/core/client/img/brand/logo.png" /></a>
 
-  <!-- class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation" -->
   <nav>
 
     <!--
@@ -31,13 +30,23 @@
         <a ui-sref="students">Students</a>
       </li>
       <li ui-sref-active="active">
-        <a ui-sref="administration">Administration</a>
+        <a ui-sref="hphhs">Parents</a>
+      </li>
+      <li class="dropdown" dropdown>
+        <a class="dropdown-toggle" dropdown-toggle role="button">Administration</a>
+        <ul class="dropdown-menu" role="menu">
+          <li ui-sref-active="active">
+            <a ui-sref="registration">Registration Intake</a>
+          </li>
+          <li ui-sref-active="active">
+            <a ui-sref="registration.approval">Registration Approval</a>
+          </li>
+        </ul>
       </li>
       <li ui-sref-active="active">
         <a ui-sref="authentication.signin">Sign In</a>
       </li>
     </ul>
-
     <!--
     <ul class="nav navbar-nav navbar-right" ng-hide="authentication.user">
       <li ui-sref-active="active">

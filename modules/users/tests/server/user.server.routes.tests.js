@@ -26,7 +26,7 @@ describe('Admin Capabilities Unit Tests:', function () {
         agent = request.agent(app);
 
         var bdate = new Date();
-        var dayStr = dateFormat(bdate, "ddmmyyyy");
+        var dayStr = dateFormat(bdate, 'ddmmyyyy');
 
         // Create user credentials
         credentials = {
@@ -76,7 +76,7 @@ describe('Admin Capabilities Unit Tests:', function () {
 
         it('should be able to register a student if not admin', function (done) {
             user.save(function () {
-                agent.post('/api/users/registration')
+                agent.post('/api/users/register')
                     .send(registration1)
                     .expect(200)
                     .end(function (regErr, regRes) {

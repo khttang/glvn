@@ -144,6 +144,11 @@ var UserSchema = new Schema({
         default: '',
         validate: [validateLocalStrategyEmail, 'Please fill a valid email address']
       },
+      owner: {
+        type: String,
+        trim: true,
+        default: ''
+      },
       status: {
         type: String,   // UNCONFIRMED, INVALID, CONFIRMED, BLOCKED
         trim: true,
@@ -161,6 +166,16 @@ var UserSchema = new Schema({
         default: '',
         validate: [validateLocalStrategyPhone, 'Please fill a valid phone number']
       },
+      owner: {
+        type: String,
+        trim: true,
+        default: ''
+      },
+      type: {
+        type: String,
+        trim: true,
+        default: ''
+      },
       status: {
         type: String,   // UNCONFIRMED, INVALID, CONFIRMED, BLOCKED
         trim: true,
@@ -172,6 +187,26 @@ var UserSchema = new Schema({
   picture: {
     data: Buffer,
     contentType: String
+  },
+  fatherFirstName: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  fatherLastName: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  motherFirstName: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  motherLastName: {
+    type: String,
+    trim: true,
+    default: ''
   },
   updated: {
     type: Date

@@ -1,0 +1,67 @@
+<div ng-controller="AdministrationController as ctrl">
+  <form name="findStudentForm" novalidate>
+    <fieldset>
+      <div class="row">
+        <!-- STUDENT ID -->
+        <div class="form-group col-xs-2" ng-class="{ 'has-error' : findStudentForm.studentId.$invalid && findStudentForm.studentId.$touched }">
+          <div style="width:120px;">
+            <input type="text" name="studentId" class="form-control" ng-model="studentId" ng-minlength="10" ng-maxlength="12" placeholder="Student ID">
+          </div>
+          <div class="help-block" ng-messages="findStudentForm.studentId.$error" ng-if="findStudentForm.studentId.$touched">
+            <p ng-message="minlength">Student ID is too short</p>
+            <p ng-message="maxlength">Student ID is too long</p>
+          </div>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="form-group col-xs-2" ng-class="{ 'has-error' : findStudentForm.criteria.$invalid && findStudentForm.criteria.$touched }">
+          <div style="width:300px;">
+            <input type="text" name="criteria" class="form-control" ng-model="criteria" ng-minlength="5" placeholder="Parent's Email or Phone or Address">
+          </div>
+          <div class="help-block" ng-messages="findStudentForm.criteria.$error" ng-if="findStudentForm.criteria.$touched">
+            <p ng-message="minlength">Email is too short</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-xs-2 col-xs-push-2">
+          <button class="btn btn-primary" ng-disabled="findStudentForm.$invalid" ng-click="ctrl.findStudentForRegistration(studentId,criteria)">Find</button>
+        </div>
+        <div class="form-group col-xs-2 col-xs-push-4">
+          <button class="btn btn-primary" ng-click="ctrl.modalCreateNewStudent('lg', 'register')">Register New Student</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6" ng-repeat="user in students">
+          <div class="row">
+            <div class="col-xs-10">
+              <h1>
+                {{user.firstName}} {{user.lastName}}
+              </h1>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-10">
+              <p>Student ID: {{user.username}}</p>
+              <p>Student Father: {{user.fatherFirstName}} {{user.fatherLastName}}</p>
+              <p>Student Father: {{user.motherFirstName}} {{user.motherLastName}}</p>
+              <p>{{user.address}}, {{user.city}}, {{user.zipCode}}</p>
+              <p></p>
+            </div>
+            <div class="col-xs-2 col-xs-pull-2">
+              <button type="button" class="btn btn-success btn-sm">
+                <i class="glyphicon glyphicon-edit" ng-click="ctrl.modalAdminUpdateStudent('lg', user)"></i>
+              </button>
+              <button type="button" class="btn btn-success btn-sm">
+                <i class="glyphicon glyphicon-thumbs-up" ng-click="ctrl.modalAdminRegisterStudent('lg', user)"></i>
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+</div>
