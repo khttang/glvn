@@ -13,7 +13,9 @@
     "angular-ui-router": "~0.2",
     "angular-file-upload": "^2.2",
     "angular-messages": "~1.4",
-    "ngSelect": "1.0.0"
+    "ngSelect": "1.0.0",
+    "ng-img-crop": "ngImgCrop#~0.3.2",
+    "ng-img-crop-full-extended": "ngImgCropFullExtended#~0.4.9"
   },
   "resolutions": {
     "angular": "~1.4"

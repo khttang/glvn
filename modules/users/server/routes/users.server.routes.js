@@ -8,8 +8,10 @@ module.exports = function (app) {
   app.route('/api/users/register').post(users.register);
   app.route('/api/users').post(users.create);
   app.route('/api/users').get(users.find);
+  app.route('/api/users/registrations').get(users.getRegistrations);
   app.route('/api/users/me').get(users.me);
   app.route('/api/users').put(users.update);
+  app.route('/api/users/registration').put(users.addRegistration);
   app.route('/api/users/accounts').delete(users.removeOAuthProvider);
   app.route('/api/users/password').post(users.changePassword);
   app.route('/api/users/picture').post(users.changeProfilePicture);

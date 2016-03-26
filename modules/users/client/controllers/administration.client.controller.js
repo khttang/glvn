@@ -18,25 +18,49 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
         }
         */
 
+        this.isRegistered = function (registrations, studentId) {
+            /* $$$KT
+            var regYear = new Date().getFullYear();
+
+            for (var i = 0, len=registrations.length; i < len; i++) {
+                if (studentId === registrations[i].studentId) {
+                    if (registrations[i].year === regYear) {
+                        return true;
+                    }
+                }
+            }
+            */
+            return false;
+        }
+
         this.findStudent = function(criteria) {
             $http.get('/api/users?criteria='+criteria).success(function (response) {
                 $scope.students = response;
-            }).error(function (response) {
+                }).error(function (response) {
                 $scope.error = response.message;
             });
         };
 
         this.findStudentForRegistration = function(studentId, criteria) {
-            if (studentId !== null && criteria === null) {
+            if (studentId !== undefined && criteria === undefined) {
                 $http.get('/api/users?student_id='+studentId).success(function (response) {
                     $scope.students = response;
                 }).error(function (response) {
                     $scope.error = response.message;
                 });
-            } else if (studentId === null && criteria !== null) {
-                // findStudent(criteria);
+            } else if (studentId === undefined && criteria !== undefined) {
                 $http.get('/api/users?criteria='+criteria).success(function (response) {
                     $scope.students = response;
+
+                    var studentids = new Array;
+                    for(var i=0, len=response.length; i < len; i++){
+                        studentids.push(response[i].username);
+                    }
+                    $http.get('/api/users/registrations?student_ids='+JSON.stringify(studentids)).success(function (response) {
+                        $scope.registrations = response;
+                    }).error(function (response) {
+                        $scope.error = response.message;
+                    });
                 }).error(function (response) {
                     $scope.error = response.message;
                 });
@@ -74,8 +98,6 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     modalData.saintName.toLowerCase() === editUser.saintName.toLowerCase() &&
                     modalData.birthDate.getTime() === tmpDate.getTime()) {
 
-                    //modalAdminUpdateStudent('lg', editUser);
-
                     var modalInstance = $uibModal.open({
                         animation: $scope.animationsEnabled,
                         templateUrl: 'modules/users/client/views/signup.client.view.html',
@@ -106,8 +128,35 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             var modalInstance = $uibModal.open({
                 animation: $scope.animationsEnabled,
                 templateUrl: 'modules/users/client/views/register.client.view.html',
-                controller: 'updstudent.modal as vm',
-                size: size
+                controller: 'regstudent.modal as vm',
+                size: size,
+                resolve: {
+                    registrations: function () {
+                        return student_registrations;
+                    },
+                    user: function () {
+                        return user;
+                    }
+                }
+            });
+
+            modalInstance.modalTitle = 'Register student ' + user.username + ' for school Year '+ new Date().getFullYear();
+            modalInstance.result.then(function (modalData) {
+                $http.put('/api/users/registration?student_id='+user.username,
+                    {
+                        'studentId': modalData.username,
+                        'glClass': modalData.glClass,
+                        'vnClass': modalData.vnClass,
+                        'receivedBy': 'tester'     // TODO: should provide user from auth'ed session
+                    }
+                ).success(function (response) {
+
+                    // TODO: may need to say something here
+
+                }).error(function (response) {
+                        $scope.error = response.message;
+                });
+
             });
         }
     }
@@ -135,8 +184,25 @@ angular.module('users').controller('newstudent.modal', ['$scope', '$uibModalInst
 
 angular.module('users').controller('updstudent.modal', ['$scope', '$uibModalInstance', function($scope, $uibModalInstance) {
 
+    $scope.modalTitle = $uibModalInstance.modalTitle;
+
     $scope.ok = function () {
         $uibModalInstance.close($scope.modalData);
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+}]);
+
+angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$uibModalInstance', function(user, registrations, $scope, $uibModalInstance) {
+
+    $scope.modalTitle = $uibModalInstance.modalTitle;
+    $scope.user = user;
+    $scope.registrations = registrations;
+    $scope.ok = function () {
+        $uibModalInstance.close($scope.user);
     };
 
     $scope.cancel = function () {

@@ -1,6 +1,7 @@
 'use strict';
 
-// $$$KT 'ngImgCrop'
+/* $$$$ 'ngImgCrop'
+
 angular.module('core', [])
     .directive('photoCapture', function () {
 
@@ -31,7 +32,7 @@ angular.module('core', [])
                 fps: 45
             });
 
-            Webcam.attach("#my_camera");
+            Webcam.attach('#my_camera');
 
             scope.start_capture = function (index) {
                 scope.captureMode = true;
@@ -46,3 +47,4 @@ angular.module('core', [])
         }
     }
 });
+*/
