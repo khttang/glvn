@@ -56,9 +56,24 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     for(var i=0, len=response.length; i < len; i++){
                         studentids.push(response[i].username);
                     }
-                    $http.get('/api/users/registrations?student_ids='+JSON.stringify(studentids)).success(function (response) {
-                        $scope.registrations = response;
-                    }).error(function (response) {
+                    $http.get('/api/users/registrations?student_ids='+JSON.stringify(studentids)).success(function (response2) {
+                        $scope.registrations = response2;
+                        var currentyr = new Date().getFullYear();
+
+                        for(var i=0, len=response.length; i < len; i++) {
+                            response[i].registrations = new Array;
+                            for (var j = 0, len2=response2.length; j < len2; j++) {
+                                if (response[i].username === response2[j].studentId) {
+                                    if (response2[j].year === currentyr) {
+                                        response[i].current_reg = response2[j];
+                                    } else {
+                                        response[i].registrations.push(response2[j]);
+                                    }
+                                }
+                            }
+                        }
+
+                        }).error(function (response) {
                         $scope.error = response.message;
                     });
                 }).error(function (response) {
@@ -132,7 +147,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 size: size,
                 resolve: {
                     registrations: function () {
-                        return student_registrations;
+                        return user.registrations;
                     },
                     user: function () {
                         return user;
