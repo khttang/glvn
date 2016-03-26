@@ -43,7 +43,7 @@ angular.module('users').controller('UsersCreateController', ['$scope', '$http', 
                         return {
                             address: '',
                             owner: 'MOM'
-                        }
+                        };
                     }
                 }
             });

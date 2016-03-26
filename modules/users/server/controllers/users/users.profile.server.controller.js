@@ -27,6 +27,51 @@ function isAddress(inputtxt) {
     return false;
 }
 
+function getCurrentRegStatus(inpStudents) {
+    var regYear = new Date().getFullYear();
+    var outStudents = {};
+
+    for (var student in inpStudents) {
+        var outStudent = student;
+        var status = Registration.find({ 'studentId': student.username, 'year': regYear }).select('status');
+        outStudent.regStatus = status;
+        outStudents.push(outStudent);
+    }
+    return outStudents;
+}
+
+exports.getRegistrations = function (req, res) {
+    var _student_ids = JSON.parse(req.query.student_ids);
+    var _year = req.query.year;
+
+    if (_year === undefined) {
+        Registration.find({ 'studentId': { $in: _student_ids }}, function(err, docs) {
+            if (!err) {
+                res.json(docs);
+            } else {
+                res.send(500, err);
+            }
+        }).sort({'studentId': 1, 'year':-1});
+    } else if (_year === 'current') {
+        var regYear = new Date().getFullYear();
+        Registration.find({ 'studentId': { $in: _student_ids }, 'year': regYear}, function(err, docs) {
+            if (!err) {
+                res.json(docs);
+            } else {
+                res.send(500, err);
+            }
+        }).sort({'studentId': 1, 'year':-1});
+    } else {
+        Registration.find({ 'studentId': { $in: _student_ids }, 'year': _year}, function(err, docs) {
+            if (!err) {
+                res.json(docs);
+            } else {
+                res.send(500, err);
+            }
+        }).sort({'studentId': 1, 'year':-1});
+    }
+};
+
 exports.find = function (req, res) {
     var _criteria = req.query.criteria;
     var _student_id = req.query.student_id;
@@ -45,6 +90,7 @@ exports.find = function (req, res) {
                     res.json(docs);
                 } else {throw err;}
             });
+
         } /* else if (isAddress(_criteria)) {
             TODO: search by address line
         }*/
@@ -56,8 +102,10 @@ exports.find = function (req, res) {
             } else {throw err;}
         });
     } else if (_class) {
+        /*
+        TODO: should handle this case too
+         */
         console.log(_class);
-
     } else {
         res.status(400).send({
             message: 'User is not provided'
@@ -65,10 +113,29 @@ exports.find = function (req, res) {
     }
 };
 
+exports.addRegistration = function (req, res) {
+    var _registration = req.body;
+    var regYear = new Date().getFullYear();
+
+    var registration = new Registration({
+        studentId: _registration.studentId,
+        year: regYear,
+        glClass: _registration.glClass,
+        vnClass: _registration.vnClass,
+        receivedBy: _registration.receivedBy
+    });
+    registration.save(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+    });
+}
+
 exports.register = function (req, res) {
     var _user = req.body;
-    var currentDt = new Date().now;
-    var regYear = dateFormat(currentDt, 'yyyy');
+    var regYear = new Date().getFullYear();
 
     if (_user) {
         var _username = _user.firstName.charAt(0) + dateFormat(_user.birthDate, 'mmddyyyy') + _user.lastName.charAt(0);
@@ -128,7 +195,7 @@ exports.register = function (req, res) {
             }
         });
         var registration = new Registration({
-            studentId: student._id,
+            studentId: student.username,
             year: regYear,
             glClass: _user.glClass,
             vnClass: _user.vnClass,

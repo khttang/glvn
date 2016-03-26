@@ -1,71 +1,87 @@
-<section ng-controller="UsersCreateController as userCtrl">
+<section>
     <div class="modal-header">
         <h3 class="modal-title">{{modalTitle}}</h3>
     </div>
     <div class="modal-body" ng-init="init()">
-        <form name="createUserForm" novalidate>
+        <form name="registerUserForm" novalidate>
             <fieldset>
-                <label ng-show="registration==='register'">Classes:</label>
-                <div class="row" ng-show="registration==='register'">
-                    <div class="form-group col-xs-3">
-                        <select class="form-control" id="glClass" name="glClass" ng-model="user.glClass" ng-init="user.glClass=''" required>
-                            <option value="">-- Select GL Class --</option>
-                            <option value="gl-01">GL-01</option>
-                            <option value="gl-02">GL-02</option>
-                            <option value="gl-03">GL-03</option>
-                            <option value="gl-04">GL-04</option>
-                            <option value="gl-05">GL-05</option>
-                            <option value="gl-06">GL-06</option>
-                            <option value="gl-07">GL-07</option>
-                            <option value="gl-08">GL-08</option>
-                            <option value="pre-con">PRE-CON</option>
-                            <option value="confirmation">CONFIRMATION</option>
-                        </select>
-                        <div class="help-block" ng-messages="createUserForm.glClass.$error" ng-if="createUserForm.glClass.$touched">
-                            <p ng-message="required">glClass is required.</p>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label>Student Name:</label>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                {{user.saintName}} {{user.firstName}} {{user.lastName}}
+                            </div>
                         </div>
-                    </div>
+                        <label>Classes:</label>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass" required>
+                                    <option value="">-- Select GL Class --</option>
+                                    <option value="gl-01">GL-01</option>
+                                    <option value="gl-02">GL-02</option>
+                                    <option value="gl-03">GL-03</option>
+                                    <option value="gl-04">GL-04</option>
+                                    <option value="gl-05">GL-05</option>
+                                    <option value="gl-06">GL-06</option>
+                                    <option value="gl-07">GL-07</option>
+                                    <option value="gl-08">GL-08</option>
+                                    <option value="pre-con">PRE-CON</option>
+                                    <option value="confirmation">CONFIRMATION</option>
+                                </select>
+                                <div class="help-block" ng-messages="registerUserForm.glClass.$error" ng-if="registerUserForm.glClass.$touched">
+                                    <p ng-message="required">glClass is required.</p>
+                                </div>
+                            </div>
 
-                    <div class="form-group col-xs-3">
-                        <select class="form-control" id="vnClass" name="vnClass" ng-model="user.vnClass" ng-init="user.vnClass=''" required>
-                            <option value="">-- Select VN Class --</option>
-                            <option value="vn-01">VN-01</option>
-                            <option value="vn-02">VN-02</option>
-                            <option value="vn-03">VN-03</option>
-                            <option value="vn-04">VN-04</option>
-                            <option value="vn-05">VN-05</option>
-                            <option value="vn-06">VN-06</option>
-                            <option value="vn-07">VN-07</option>
-                            <option value="vn-08">VN-08</option>
-                            <option value="vn-09">VN-09</option>
-                        </select>
-                        <div class="help-block" ng-messages="createUserForm.vnClass.$error" ng-if="createUserForm.vnClass.$touched">
-                            <p ng-message="required">vnClass is required.</p>
+                            <div class="form-group col-xs-6">
+                                <select class="form-control" id="vnClass" name="vnClass" ng-model="user.current_reg.vnClass" ng-init="user.current_reg.vnClass" required>
+                                    <option value="">-- Select VN Class --</option>
+                                    <option value="vn-01">VN-01</option>
+                                    <option value="vn-02">VN-02</option>
+                                    <option value="vn-03">VN-03</option>
+                                    <option value="vn-04">VN-04</option>
+                                    <option value="vn-05">VN-05</option>
+                                    <option value="vn-06">VN-06</option>
+                                    <option value="vn-07">VN-07</option>
+                                    <option value="vn-08">VN-08</option>
+                                    <option value="vn-09">VN-09</option>
+                                </select>
+                                <div class="help-block" ng-messages="registerUserForm.vnClass.$error" ng-if="registerUserForm.vnClass.$touched">
+                                    <p ng-message="required">vnClass is required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                <label>Baptism certificate&nbsp;&nbsp;</label>
+                                <input type="checkbox" ng-model="user.hasBaptismCert" onclick="return false"/>
+                            </div>
+                            <div class="form-group col-xs-6">
+                                <button type="button" class="btn btn-success btn-xs" ng-disabled="!user.hasBaptismCert" ng-click="viewPhoto('certificate')">
+                                    <i class="glyphicon glyphicon-eye-open"></i>
+                                </button>
+                                <button type="button" class="btn btn-success btn-xs" ng-click="selectPhoto('certificate')">
+                                    <i class="glyphicon glyphicon-open-file"></i>
+                                </button>
+                                <button type="button" class="btn btn-success btn-xs" ng-click="snapPhoto('certificate')">
+                                    <i class="glyphicon glyphicon-camera"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row" ng-show="registration==='register'">
-                    <div class="form-group col-xs-3">
-                        <label>Baptism certificate&nbsp;&nbsp;</label>
-                        <input type="checkbox" ng-model="user.hasBaptismCert" onclick="return false"/>
-                    </div>
-                    <div class="form-group col-xs-2">
-                        <button type="button" class="btn btn-success btn-xs" ng-disabled="!user.hasBaptismCert" ng-click="userCtrl.viewPhoto('certificate')">
-                            <i class="glyphicon glyphicon-eye-open"></i>
-                        </button>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.selectPhoto('certificate')">
-                            <i class="glyphicon glyphicon-open-file"></i>
-                        </button>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.snapPhoto('certificate')">
-                            <i class="glyphicon glyphicon-camera"></i>
-                        </button>
+                    <div class="form-group col-xs-6">
+                        <label>Previous Registrations:</label>
+                        <div class="row" ng-repeat="reg in registrations">
+                             <p class="indented">{{reg.year}}: {{reg.glClass}}, {{reg.vnClass}}</p>
+                        </div>
                     </div>
                 </div>
             </fieldset>
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-success btn-lg" ng-disabled="formValid" ng-click="userCtrl.saveUserInfo('student', registration);ok()">Save & Close</button>
+        <button class="btn btn-success btn-lg" ng-disabled="formValid" ng-click="ok()">Save & Close</button>
         <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
     </div>
 </section>
