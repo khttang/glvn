@@ -157,21 +157,14 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
 
             modalInstance.modalTitle = 'Register student ' + user.username + ' for school Year '+ new Date().getFullYear();
             modalInstance.result.then(function (modalData) {
-                $http.put('/api/users/registration?student_id='+user.username,
-                    {
-                        'studentId': modalData.username,
-                        'glClass': modalData.glClass,
-                        'vnClass': modalData.vnClass,
-                        'receivedBy': 'tester'     // TODO: should provide user from auth'ed session
-                    }
-                ).success(function (response) {
+                user.current_reg.receivedBy = $scope.authentication.user.username;
+                $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function (response) {
 
                     // TODO: may need to say something here
 
                 }).error(function (response) {
                         $scope.error = response.message;
                 });
-
             });
         }
     }
