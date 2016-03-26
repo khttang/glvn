@@ -11,3 +11,4 @@ Install bower
     
 Install mongoose DB
     Download https://www.mongodb.org/dl/osx/x86_64
+    Launch <install path>/mongodb-<version>/bin/mongod --dbpath ~/mongod &
