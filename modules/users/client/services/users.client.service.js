@@ -27,13 +27,15 @@ angular.module('users.admin').factory('ADMIN', ['$resource',
 angular.module('users').service('userService', function() {
   var user = {
     emails: [],
-    phones: []
+    phones: [],
+    current_reg: {}
   };
 
   var clearUser = function() {
     user = {
       emails: [],
-      phones: []
+      phones: [],
+      current_reg: {}
     };
   }
 

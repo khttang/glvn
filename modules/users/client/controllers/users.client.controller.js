@@ -6,30 +6,10 @@ angular.module('users').controller('UsersController', ['$scope', '$stateParams',
     }
 ]);
 
-angular.module('users').controller('UsersCreateController', ['$scope', '$http', 'userService', '$uibModal', '$log',
-    function ($scope, $http, userService, $uibModal, $log) {
-
+angular.module('users').controller('UsersCreateController', ['$scope', '$http', 'userService', '$uibModal', '$log', 'Authentication',
+    function ($scope, $http, userService, $uibModal, $log, Authentication) {
+        $scope.authentication = Authentication;
         $scope.user = userService.getUser();
-
-        this.saveUserInfo = function(userType, registration) {
-            if (registration === 'update') {
-                $http.put('/api/users', $scope.user).success(function (response) {
-
-                }).error(function (response) {
-                    $scope.error = response.message;
-                });
-            } else {
-                var uri = (registration === 'register') ? '/api/users/register' : '/api/users';
-                $http.post(uri, $scope.user).success(function (response) {
-
-                }).error(function (response) {
-                    $scope.error = response.message;
-                });
-            }
-
-            userService.clearUser();
-            $scope.user = userService.getUser();
-        };
         
         this.addNewEmail = function(size) {
             $scope.modalData = {};

@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div ng-controller="AdministrationController as ctrl">
+    <form name="regApprovalForm" novalidate>
+        <fieldset>
+            <div class="row">
+                <div ng-show="error" class="text-center text-danger">
+                    <h4><strong>ERROR: {{error}}</strong></h4>
+                </div>
+                <div ng-show="success" class="text-center text-success">
+                    <h4><strong>{{success}}</strong></h4>
+                </div>
+            </div>
+            <div class="row">
+                <button type="button" class="btn btn-info" ng-click="ctrl.findStudentsForApproval()">
+                    <strong>Reload students for approval</strong>
+                </button>
+            </div>
 
-</body>
-</html>
+            <div class="row">
+                <div class="col-sm-6" ng-repeat="user in students">
+                    <div class="row">
+                        <div class="col-xs-10">
+                            <h1>
+                                {{user.firstName}} {{user.lastName}}
+                            </h1>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-10">
+                            <p>Student ID: {{user.username}}</p>
+                            <p>Student Father: {{user.fatherFirstName}} {{user.fatherLastName}}</p>
+                            <p>Student Father: {{user.motherFirstName}} {{user.motherLastName}}</p>
+                            <p>{{user.address}}, {{user.city}}, {{user.zipCode}}</p>
+                            <p></p>
+                        </div>
+                        <div class="col-xs-2 col-xs-pull-2">
+                            <button type="button" class="btn btn-success btn-sm" ng-click="ctrl.modalAdminUpdateStudent('lg', user)">
+                                <i class="glyphicon glyphicon-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm" ng-click="ctrl.modalAdminRegisterStudent('lg', user,'approve')">
+                                <i class="glyphicon glyphicon-thumbs-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
+</div>
