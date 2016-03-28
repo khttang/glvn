@@ -41,34 +41,47 @@ function getCurrentRegStatus(inpStudents) {
 }
 
 exports.getRegistrations = function (req, res) {
-    var _student_ids = JSON.parse(req.query.student_ids);
+    var _status = req.query.status;
     var _year = req.query.year;
 
-    if (_year === undefined) {
-        Registration.find({ 'studentId': { $in: _student_ids }}, function(err, docs) {
-            if (!err) {
-                res.json(docs);
-            } else {
-                res.send(500, err);
-            }
-        }).sort({'studentId': 1, 'year':-1});
-    } else if (_year === 'current') {
+    if (_status) {
         var regYear = new Date().getFullYear();
-        Registration.find({ 'studentId': { $in: _student_ids }, 'year': regYear}, function(err, docs) {
+        var statuses = JSON.parse(_status);
+        Registration.find({'status': { $in: statuses}, 'year': regYear}, function(err, docs) {
             if (!err) {
                 res.json(docs);
             } else {
                 res.send(500, err);
             }
-        }).sort({'studentId': 1, 'year':-1});
+        });
     } else {
-        Registration.find({ 'studentId': { $in: _student_ids }, 'year': _year}, function(err, docs) {
-            if (!err) {
-                res.json(docs);
-            } else {
-                res.send(500, err);
-            }
-        }).sort({'studentId': 1, 'year':-1});
+        var _student_ids = JSON.parse(req.query.student_ids);
+        if (_year === undefined) {
+            Registration.find({ 'studentId': { $in: _student_ids }}, function(err, docs) {
+                if (!err) {
+                    res.json(docs);
+                } else {
+                    res.send(500, err);
+                }
+            }).sort({'studentId': 1, 'year':-1});
+        } else if (_year === 'current') {
+            var regYear = new Date().getFullYear();
+            Registration.find({ 'studentId': { $in: _student_ids }, 'year': regYear}, function(err, docs) {
+                if (!err) {
+                    res.json(docs);
+                } else {
+                    res.send(500, err);
+                }
+            }).sort({'studentId': 1, 'year':-1});
+        } else {
+            Registration.find({ 'studentId': { $in: _student_ids }, 'year': _year}, function(err, docs) {
+                if (!err) {
+                    res.json(docs);
+                } else {
+                    res.send(500, err);
+                }
+            }).sort({'studentId': 1, 'year':-1});
+        }
     }
 };
 
@@ -76,19 +89,24 @@ exports.find = function (req, res) {
     var _criteria = req.query.criteria;
     var _student_id = req.query.student_id;
     var _class = req.query.class;
+    var _student_ids = req.query.student_ids;
 
     if (_criteria) {
         if (_criteria.indexOf('@') > 0) {
             User.find({ 'emails.address': _criteria, 'userType': 'STUDENT' }, function(err, docs) {
                 if (!err){
                     res.json(docs);
-                } else {throw err;}
+                } else {
+                    res.status(500).send(err.message);
+                }
             });
         } else if (isPhoneNumber(_criteria)) {
             User.find({ 'phones.number': _criteria, 'userType': 'STUDENT' }, function(err, docs) {
                 if (!err){
                     res.json(docs);
-                } else {throw err;}
+                } else {
+                    res.status(500).send(err.message);
+                }
             });
 
         } /* else if (isAddress(_criteria)) {
@@ -97,15 +115,27 @@ exports.find = function (req, res) {
     } else if (_student_id) {
         User.findById(_student_id, function (err, user) {
             if (!err){
-                console.log(user);
-                process.exit();
-            } else {throw err;}
+
+                // TODO: add code to handle this
+            } else {
+                res.status(500).send(err.message);
+            }
         });
     } else if (_class) {
         /*
         TODO: should handle this case too
          */
         console.log(_class);
+    } else if (_student_ids) {
+        var usernames = JSON.parse(_student_ids);
+        User.find({ 'username': { $in: usernames }}, function(err, docs) {
+            if (!err) {
+                res.json(docs);
+            } else {
+                res.send(500, err);
+            }
+        });
+
     } else {
         res.status(400).send({
             message: 'User is not provided'
@@ -117,94 +147,107 @@ exports.addRegistration = function (req, res) {
     var _registration = req.body;
     var regYear = new Date().getFullYear();
 
-    var registration = new Registration({
-        studentId: _registration.studentId,
-        year: regYear,
-        glClass: _registration.glClass,
-        vnClass: _registration.vnClass,
-        receivedBy: _registration.receivedBy
-    });
-    registration.save(function (err) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        }
-    });
+    if (_registration._id === null) {
+        var registration = new Registration({
+            studentId: _registration.studentId,
+            year: regYear,
+            glClass: _registration.glClass,
+            vnClass: _registration.vnClass,
+            receivedBy: _registration.receivedBy
+        });
+        Registration.save(function (err) {
+            if (err) {
+                return res.status(400).send(err.message);
+            }
+
+            res.status(200);
+        });
+    } else {
+        _registration.reviewed = new Date();
+        Registration.findByIdAndUpdate(_registration._id, _registration, function(err, ret_reg){
+            if (err) {
+                res.status(400).send(err);
+            } else {
+                res.json(ret_reg);
+            }
+        });
+    }
 }
 
-exports.register = function (req, res) {
-    var _user = req.body;
+exports.register = function (req, res, next) {
+    var inputUser = req.body;
     var regYear = new Date().getFullYear();
 
-    if (_user) {
-        var _username = _user.firstName.charAt(0) + dateFormat(_user.birthDate, 'mmddyyyy') + _user.lastName.charAt(0);
+    if (inputUser) {
+        var _username = inputUser.firstName.toLowerCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toLowerCase().charAt(0);
         User.find({ username: _username}).populate('user', 'username').exec(function (err, users) {
             if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
+                res.status(500).send(err.message);
             }
             if (users !== null && users.length > 0) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage('username '+_username+' already exists.')
-                });
+                res.status(400).send('username '+_username+' already exists.');
+
                 // fix user name if name is already taken
                 //_username = _username + _user.address.charAt(0) + '2';
-            }
-        });
 
-        // Create a new user
-        var user = new User({
-            status: _user.status,
-            userType: _user.userType,
-            saintName: _user.saintName,
-            firstName: _user.firstName,
-            lastName: _user.lastName,
-            username: _username,
-            password: _user.password,
-            gender: _user.gender,
-            birthDate: _user.birthDate,
-            address: _user.address,
-            city: _user.city,
-            zipCode: _user.zipCode,
-            emails: _user.emails,
-            phones: _user.phones,
-            fatherFirstName: _user.fatherFirstName,
-            fatherLastName: _user.fatherLastName,
-            motherFirstName: _user.motherFirstName,
-            motherLastName: _user.motherLastName
-        });
+            } else {
+                // Create a new user
+                var user = new User({
+                    status: 'PROVISIONED',
+                    userType: 'STUDENT',
+                    saintName: inputUser.saintName,
+                    firstName: inputUser.firstName,
+                    lastName: inputUser.lastName,
+                    username: _username,
+                    password: dateFormat(inputUser.birthDate, 'mmddyyyy'),
+                    gender: inputUser.gender,
+                    birthDate: inputUser.birthDate,
+                    address: inputUser.address,
+                    city: inputUser.city,
+                    zipCode: inputUser.zipCode,
+                    fatherFirstName: inputUser.fatherFirstName,
+                    fatherLastName: inputUser.fatherLastName,
+                    motherFirstName: inputUser.motherFirstName,
+                    motherLastName: inputUser.motherLastName
+                });
 
-        user.save(function (err) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            }
-        });
-        var student = new Student({
-            username: _username,
-            userId: user._id
-        });
-        student.save(function (err) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            }
-        });
-        var registration = new Registration({
-            studentId: student.username,
-            year: regYear,
-            glClass: _user.glClass,
-            vnClass: _user.vnClass,
-            receivedBy: _user.receivedBy
-        });
-        registration.save(function (err) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
+                for (var i = 0; i < inputUser.emails.length; i++) {
+                    user.emails.push(inputUser.emails[i]);
+                }
+                for (i = 0; i < inputUser.phones.length; i++) {
+                    user.phones.push(inputUser.phones[i]);
+                }
+
+                user.save(function (err) {
+                    if (err) {
+                        return res.status(500).send(err.message);
+                    }
+
+                    var student = new Student({
+                        username: _username,
+                        userId: user._id
+                    });
+                    student.save(function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        var registration = new Registration({
+                            studentId: _username,
+                            year: regYear,
+                            glClass: inputUser.current_reg.glClass,
+                            vnClass: inputUser.current_reg.vnClass,
+                            receivedBy: inputUser.current_reg.receivedBy
+                        });
+                        registration.save(function (err) {
+                            if (err) {
+                                return res.status(500).send(err.message);
+                            }
+
+                            res.json(_username);
+                        });
+                    });
+
                 });
             }
         });
@@ -215,78 +258,136 @@ exports.register = function (req, res) {
     }
 };
 
-function buildUser(inputUser, userType) {
+function buildUser(inputUser, userType, res, next) {
     if (inputUser) {
-        var _username = inputUser.firstName.toUpperCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toUpperCase().charAt(0);
+        var _username = inputUser.firstName.toLowerCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toLowerCase().charAt(0);
         User.find({ username: _username}).populate('user', 'username').exec(function (err, users) {
             if (err) {
-                throw new Error('Cannot find user');
+                res.status(500).send(err.message);
             }
             if (users !== null && users.length > 0) {
-                throw new Error('username '+_username+' already exists.');
-            }
+                res.status(400).send('username '+_username+' already exists.');
+
                 // fix user name if name is already taken
                 //_username = _username + _user.address.charAt(0) + '2';
-        });
 
-        // Create a new user
-        var user = new User({
-            status: 'PROVISIONED',
-            userType: userType,
-            saintName: inputUser.saintName,
-            firstName: inputUser.firstName,
-            lastName: inputUser.lastName,
-            username: _username,
-            password: dateFormat(inputUser.birthDate, 'mmddyyyy'),
-            gender: inputUser.gender,
-            birthDate: inputUser.birthDate,
-            address: inputUser.address,
-            city: inputUser.city,
-            zipCode: inputUser.zipCode,
-            fatherFirstName: inputUser.fatherFirstName,
-            fatherLastName: inputUser.fatherLastName,
-            motherFirstName: inputUser.motherFirstName,
-            motherLastName: inputUser.motherLastName
+            } else {
+                // Create a new user
+                var user = new User({
+                    status: 'PROVISIONED',
+                    userType: userType,
+                    saintName: inputUser.saintName,
+                    firstName: inputUser.firstName,
+                    lastName: inputUser.lastName,
+                    username: _username,
+                    password: dateFormat(inputUser.birthDate, 'mmddyyyy'),
+                    gender: inputUser.gender,
+                    birthDate: inputUser.birthDate,
+                    address: inputUser.address,
+                    city: inputUser.city,
+                    zipCode: inputUser.zipCode,
+                    fatherFirstName: inputUser.fatherFirstName,
+                    fatherLastName: inputUser.fatherLastName,
+                    motherFirstName: inputUser.motherFirstName,
+                    motherLastName: inputUser.motherLastName
+                });
 
-        });
+                for (var i = 0; i < inputUser.emails.length; i++) {
+                    user.emails.push(inputUser.emails[i]);
+                }
+                for (i = 0; i < inputUser.phones.length; i++) {
+                    user.phones.push(inputUser.phones[i]);
+                }
 
-        for (var i = 0; i < inputUser.emails.length; i++) {
-            //user.emails.push({address: inputUser.emails[i], status: 'UNCONFIRMED'});
-            user.emails.push(inputUser.emails[i]);
-        }
-        for (i = 0; i < inputUser.phones.length; i++) {
-            //user.phones.push({number: inputUser.phones[i], status: 'UNCONFIRMED'});
-            user.phones.push(inputUser.phones[i]);
-        }
+                user.save(function (err) {
+                    if (err) {
+                        return res.status(500).send(err.message);
+                    }
 
-        user.save(function (err) {
-            if (err) {
-                throw new Error(errorHandler.getErrorMessage(err));
-            }
-        });
-        var student = new Student({
-            username: _username,
-            userId: user._id
-        });
-        student.save(function (err) {
-            if (err) {
-                throw new Error(errorHandler.getErrorMessage(err));
+                    var student = new Student({
+                        username: _username,
+                        userId: user._id
+                    });
+                    student.save(function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        return _username;
+                    });
+
+                });
             }
         });
     } else {
-        throw new Error('Registration is not provided');
+        res.status(400).send('Registration is not provided');
     }
 }
 
-exports.create = function (req, res) {
-    try {
-        buildUser(req.body, 'STUDENT');
-    } catch(err) {
-        return res.status(400).send({
-            message: errorHandler.getErrorMessage(err)
-        });
-    }
+exports.create = function (req, res, next) {
+    var inputUser = req.body;
+    if (inputUser) {
+        var _username = inputUser.firstName.toLowerCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toLowerCase().charAt(0);
+        User.find({ username: _username}).populate('user', 'username').exec(function (err, users) {
+            if (err) {
+                res.status(500).send(err.message);
+            }
+            if (users !== null && users.length > 0) {
+                res.status(400).send('username '+_username+' already exists.');
 
+                // fix user name if name is already taken
+                //_username = _username + _user.address.charAt(0) + '2';
+
+            } else {
+                // Create a new user
+                var user = new User({
+                    status: 'PROVISIONED',
+                    userType: 'STUDENT',
+                    saintName: inputUser.saintName,
+                    firstName: inputUser.firstName,
+                    lastName: inputUser.lastName,
+                    username: _username,
+                    password: dateFormat(inputUser.birthDate, 'mmddyyyy'),
+                    gender: inputUser.gender,
+                    birthDate: inputUser.birthDate,
+                    address: inputUser.address,
+                    city: inputUser.city,
+                    zipCode: inputUser.zipCode,
+                    fatherFirstName: inputUser.fatherFirstName,
+                    fatherLastName: inputUser.fatherLastName,
+                    motherFirstName: inputUser.motherFirstName,
+                    motherLastName: inputUser.motherLastName
+                });
+
+                for (var i = 0; i < inputUser.emails.length; i++) {
+                    user.emails.push(inputUser.emails[i]);
+                }
+                for (i = 0; i < inputUser.phones.length; i++) {
+                    user.phones.push(inputUser.phones[i]);
+                }
+
+                user.save(function (err) {
+                    if (err) {
+                        return res.status(500).send(err.message);
+                    }
+
+                    var student = new Student({
+                        username: _username,
+                        userId: user._id
+                    });
+                    student.save(function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.json(_username);
+                    });
+
+                });
+            }
+        });
+    } else {
+        res.status(400).send('Input user is not provided');
+    }
 };
 
 /**
@@ -331,9 +432,7 @@ exports.changeProfilePicture = function (req, res) {
 
         user.save(function (saveError) {
           if (saveError) {
-            return res.status(400).send({
-              message: errorHandler.getErrorMessage(saveError)
-            });
+            return res.status(400).send(saveError.message);
           } else {
             req.login(user, function (err) {
               if (err) {

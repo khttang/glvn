@@ -2,6 +2,14 @@
   <form name="findStudentForm" novalidate>
     <fieldset>
       <div class="row">
+        <div ng-show="error" class="text-center text-danger">
+          <h4><strong>ERROR: {{error}}</strong></h4>
+        </div>
+        <div ng-show="success" class="text-center text-success">
+          <h4><strong>{{success}}</strong></h4>
+        </div>
+      </div>
+      <div class="row">
         <!-- STUDENT ID -->
         <div class="form-group col-xs-2" ng-class="{ 'has-error' : findStudentForm.studentId.$invalid && findStudentForm.studentId.$touched }">
           <div style="width:120px;">
@@ -50,11 +58,11 @@
               <p></p>
             </div>
             <div class="col-xs-2 col-xs-pull-2">
-              <button type="button" class="btn btn-success btn-sm">
-                <i class="glyphicon glyphicon-edit" ng-click="ctrl.modalAdminUpdateStudent('lg', user)"></i>
+              <button type="button" class="btn btn-success btn-sm" ng-click="ctrl.modalAdminUpdateStudent('lg', user)">
+                <i class="glyphicon glyphicon-edit"></i>
               </button>
-              <button type="button" class="btn btn-success btn-sm">
-                <i class="glyphicon glyphicon-thumbs-up" ng-click="ctrl.modalAdminRegisterStudent('lg', user)"></i>
+              <button type="button" ng-disabled="ctrl.isRegistered(user.username)" class="btn btn-success btn-sm" ng-click="ctrl.modalAdminRegisterStudent('lg', user,'intake')">
+                <i class="glyphicon glyphicon-thumbs-up"></i>
               </button>
 
             </div>

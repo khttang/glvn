@@ -12,25 +12,37 @@ angular.module('users').config(['$stateProvider',
             })
             .state('students', {
                 url: '/students',
-                templateUrl: 'modules/users/client/views/authentication/students.client.view.html'
+                templateUrl: 'modules/users/client/views/students.client.view.html'
             })
             .state('hphhs', {
                 url: '/hphhs',
-                templateUrl: 'modules/users/client/views/authentication/hphhs.client.view.html'
+                templateUrl: 'modules/users/client/views/hphhs.client.view.html'
             })
             .state('registration', {
+                abstract: true,
+                url: '/registration',
+                template: '<ui-view/>'
+            })
+            .state('registration.intake', {
                 url: '/registration_intake',
                 data: {
                     roles: ['ADMIN']
                 },
                 templateUrl: 'modules/users/client/views/registration_intake.client.view.html'
             })
-            .state('approval', {
+            .state('registration.approval', {
                 url: '/registration_approval',
                 data: {
                     roles: ['ADMIN']
                 },
                 templateUrl: 'modules/users/client/views/registration_approval.client.view.html'
+            })
+            .state('registration.show', {
+                url: '/registration_show',
+                data: {
+                    roles: ['ADMIN']
+                },
+                templateUrl: 'modules/users/client/views/registration_show.client.view.html'
             })
             .state('settings', {
                 abstract: true,
