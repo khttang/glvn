@@ -43,8 +43,22 @@ function getCurrentRegStatus(inpStudents) {
 exports.getRegistrations = function (req, res) {
     var _status = req.query.status;
     var _year = req.query.year;
+    var _class = req.query.class;
 
-    if (_status) {
+    if (_class && _year) {
+        Registration.find(
+            { $and: [
+                {'year': _year},
+                {'status': 'APPROVED'},
+                { $or: [ { 'glClass': _class }, { 'vnClass': _class } ] }
+            ]}, function(err, docs) {
+            if (!err) {
+                res.json(docs);
+            } else {
+                res.send(500, err);
+            }
+        });
+    } else if (_status) {
         var regYear = new Date().getFullYear();
         var statuses = JSON.parse(_status);
         Registration.find({'status': { $in: statuses}, 'year': regYear}, function(err, docs) {
