@@ -26,11 +26,13 @@ var validateLocalStrategyPassword = function (password) {
  * A Validation function for local strategy email
  */
 var validateLocalStrategyEmail = function (email) {
-  return ((this.provider !== 'local' && !this.updated) && validator.isEmail(email));
+  //var re = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+  //return ((this.provider !== 'local' && !this.updated) && validator.isEmail(email));
+  return true;
 };
 
 /**
- * A Validation function for local strategy email
+ * A Validation function for local strategy phone
  */
 var validateLocalStrategyPhone = function (phone) {
   var re = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
@@ -43,7 +45,7 @@ var validateStatus = function (searchStr) {
 };
 
 var validateUserStatus = function (searchStr) {
-  var userStatusArray = ['PROVISIONED', 'ACTIVE', 'INACTIVE'];
+  var userStatusArray = ['PROVISIONED', 'IMPORTED', 'ACTIVE', 'INACTIVE'];
   return (userStatusArray.indexOf(searchStr) > -1);
 };
 
@@ -80,26 +82,23 @@ var UserSchema = new Schema({
   status: {
     type: String,
     required: 'Please specify a status',
-    default: 'ACTIVE',     // Available values: Provisioned, Active, Inactive
-    validate: [validateUserStatus, 'User status must be in [PROVISIONED, ACTIVE, INACTIVE]']
+    default: 'ACTIVE',
+    validate: [validateUserStatus, 'User status must be in [PROVISIONED, IMPORTED, ACTIVE, INACTIVE]']
   },
   saintName: {
     type: String,
-    trim: true,
-    required: 'Please fill in a saint name'
+    trim: true
   },
   firstName: {
     type: String,
-    trim: true,
-    required: 'Please fill in a first name'
+    trim: true
   },
   middleName: {
     type: String
   },
   lastName: {
     type: String,
-    trim: true,
-    required: 'Please fill in a last name'
+    trim: true
   },
   username: {
     type: String,
@@ -116,24 +115,19 @@ var UserSchema = new Schema({
     validate: [validateLocalStrategyPassword, 'Password should be longer']
   },
   gender: {
-    type: String,
-    required: 'Please fill in gender'
+    type: String
   },
   birthDate: {
-    type: Date,
-    required: 'Please fill in birth date'
+    type: Date
   },
   address: {
-    type: String,
-    required: 'Please fill in address'
+    type: String
   },
   city: {
-    type: String,
-    required: 'Please fill in city'
+    type: String
   },
   zipCode: {
-    type: String,
-    required: 'Please fill in zip code'
+    type: String
   },
   emails: [
     {
@@ -142,7 +136,7 @@ var UserSchema = new Schema({
         lowercase: true,
         trim: true,
         default: '',
-        validate: [validateLocalStrategyEmail, 'Please fill a valid email address']
+        validate: [validateLocalStrategyEmail, 'Please provide a valid email address']
       },
       owner: {
         type: String,
@@ -164,7 +158,7 @@ var UserSchema = new Schema({
         lowercase: true,
         trim: true,
         default: '',
-        validate: [validateLocalStrategyPhone, 'Please fill a valid phone number']
+        validate: [validateLocalStrategyPhone, 'Please provide a valid phone number']
       },
       owner: {
         type: String,

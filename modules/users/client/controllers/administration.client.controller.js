@@ -53,7 +53,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 $http.get('/api/users?criteria='+criteria).success(function (response) {
                     $scope.students = response;
 
-                    var studentids = new Array;
+                    var studentids = [];
                     for(var i=0, len=response.length; i < len; i++){
                         studentids.push(response[i].username);
                     }
@@ -62,7 +62,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         var currentyr = new Date().getFullYear();
 
                         for(var i=0, len=response.length; i < len; i++) {
-                            response[i].registrations = new Array;
+                            response[i].registrations = [];
                             for (var j = 0, len2=response2.length; j < len2; j++) {
                                 if (response[i].username === response2[j].studentId) {
                                     if (response2[j].year === currentyr) {
@@ -89,7 +89,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             var statuses = ['RECEIVED', 'PROCESSING', 'INCOMPLETE'];
             $http.get('/api/users/registrations?status='+JSON.stringify(statuses)).success(function (response) {
 
-                var studentids = new Array;
+                var studentids = [];
                 for(var i=0, len=response.length; i < len; i++){
                     studentids.push(response[i].studentId);
                 }
@@ -98,7 +98,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     $scope.students = response2;
 
                     for(var i=0, len=response2.length; i < len; i++) {
-                        response2[i].registrations = new Array;
+                        response2[i].registrations = [];
                         for (var j = 0, len2=response.length; j < len2; j++) {
                             if (response2[i].username === response[j].studentId) {
                                 if (response[j].year === currentyr) {

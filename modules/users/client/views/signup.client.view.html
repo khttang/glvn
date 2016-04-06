@@ -164,6 +164,28 @@
         <label ng-show="registration==='register'">Classes:</label>
         <div class="row" ng-show="registration==='register'">
           <div class="form-group col-xs-3">
+            <select class="form-control" id="gradeLevel" name="gradeLevel" ng-model="user.current_reg.schoolGrade" ng-init="user.current_reg.schoolGrade=''" required>
+              <option value="">-- Select Grade Level --</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+            <div class="help-block" ng-messages="createUserForm.gradeLevel.$error" ng-if="createUserForm.gradeLevel.$touched">
+              <p ng-message="required">Grade level is required.</p>
+            </div>
+          </div>
+        </div>
+        <div class="row" ng-show="registration==='register'">
+          <div class="form-group col-xs-3">
             <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass=''" required>
               <option value="">-- Select GL Class --</option>
               <option value="gl-01">GL-01</option>

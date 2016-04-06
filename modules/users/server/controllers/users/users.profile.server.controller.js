@@ -44,6 +44,7 @@ exports.getRegistrations = function (req, res) {
     var _status = req.query.status;
     var _year = req.query.year;
     var _class = req.query.class;
+    var regYear = new Date().getFullYear();
 
     if (_class && _year) {
         Registration.find(
@@ -59,7 +60,6 @@ exports.getRegistrations = function (req, res) {
             }
         });
     } else if (_status) {
-        var regYear = new Date().getFullYear();
         var statuses = JSON.parse(_status);
         Registration.find({'status': { $in: statuses}, 'year': regYear}, function(err, docs) {
             if (!err) {
@@ -79,7 +79,6 @@ exports.getRegistrations = function (req, res) {
                 }
             }).sort({'studentId': 1, 'year':-1});
         } else if (_year === 'current') {
-            var regYear = new Date().getFullYear();
             Registration.find({ 'studentId': { $in: _student_ids }, 'year': regYear}, function(err, docs) {
                 if (!err) {
                     res.json(docs);
@@ -129,8 +128,7 @@ exports.find = function (req, res) {
     } else if (_student_id) {
         User.findById(_student_id, function (err, user) {
             if (!err){
-
-                // TODO: add code to handle this
+                res.json(user);
             } else {
                 res.status(500).send(err.message);
             }

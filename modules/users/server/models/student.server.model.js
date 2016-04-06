@@ -13,11 +13,6 @@ var mongoose = require('mongoose'),
  * Student Schema
  */
 var StudentSchema = new Schema({
-    userId: {
-        type: String,
-        unique: 'UserId already exists',
-        required: 'Please fill in userId'
-    },
     username: {
         type: String,
         trim: true,

@@ -30,7 +30,7 @@ angular.module('users').controller('RegistrationController', ['$scope', '$http',
             $scope.students = null;
             $http.get('/api/users/registrations?class='+label+'&year='+currentyr).success(function (response) {
                 if (response.length > 0) {
-                    var studentids = new Array;
+                    var studentids = [];
                     for(var i=0, len=response.length; i < len; i++){
                         studentids.push(response[i].studentId);
                     }
@@ -39,7 +39,7 @@ angular.module('users').controller('RegistrationController', ['$scope', '$http',
                         $scope.students = response2;
 
                         for(var i=0, len=response2.length; i < len; i++) {
-                            response2[i].registrations = new Array;
+                            response2[i].registrations = [];
                             for (var j = 0, len2=response.length; j < len2; j++) {
                                 if (response2[i].username === response[j].studentId) {
                                     if (response[j].year === currentyr) {
@@ -57,7 +57,6 @@ angular.module('users').controller('RegistrationController', ['$scope', '$http',
             }).error(function (response) {
                 $scope.error = response.message;
             });
-
         };
     }
 ]);
