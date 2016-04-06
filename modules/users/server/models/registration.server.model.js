@@ -16,12 +16,14 @@ var validateRegistrationStatus = function (searchStr) {
 
 var validateGLClass = function (searchStr) {
     var glArray = ['gl-01','gl-02','gl-03','gl-04','gl-05','gl-06','gl-07','gl-08','pre-con','confirmation'];
-    return (glArray.indexOf(searchStr) > -1);
+    //return (glArray.indexOf(searchStr) > -1);
+    return true;
 };
 
 var validateVNClass = function (searchStr) {
     var vnArray = ['vn-01','vn-02','vn-03','vn-04','vn-05','vn-06','vn-07','vn-08','vn-09'];
-    return (vnArray.indexOf(searchStr) > -1);
+    //return (vnArray.indexOf(searchStr) > -1);
+    return true;
 };
 
 /**
@@ -36,6 +38,10 @@ var RegistrationSchema = new Schema({
     year: {
         type: Number,
         required: 'Please fill in year'
+    },
+    schoolGrade: {
+        type: String,
+        trim: true
     },
     glClass: {
         type: String,

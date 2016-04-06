@@ -1,4 +1,4 @@
-<div ng-controller="HeaderController">
+<div ng-controller="HeaderController as ctrl">
   <a href="#"><img class="logo" src="/modules/core/client/img/brand/logo.png" /></a>
 
   <nav>
@@ -32,7 +32,7 @@
       <li ui-sref-active="active">
         <a ui-sref="hphhs">Parents</a>
       </li>
-      <li class="dropdown" dropdown>
+      <li class="dropdown" dropdown ng-show="ctrl.isAdminUser()">
         <a class="dropdown-toggle" dropdown-toggle role="button">Administration</a>
         <ul class="dropdown-menu" role="menu">
           <li ui-sref-active="active">

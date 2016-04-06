@@ -14,12 +14,14 @@ module.exports = {
   port: process.env.PORT || 8443,
   */
 
-
-  db: {
+db: {
     uri: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/mean-dev',
     options: {
-      user: '',
-      pass: ''
+        user: 'glvnapp',
+        pass: 'gl@ppApr2016VN',
+        auth: {
+            authdb: 'admin'
+        }
     },
     // Enable mongoose debug mode
     debug: process.env.MONGODB_DEBUG || false
