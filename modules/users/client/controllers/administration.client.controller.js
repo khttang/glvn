@@ -156,7 +156,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             modalInstance.result.then(function (modalData) {
                 var tmpDate = new Date(editUser.birthDate);
 
-                if (modalData.fatherName.toLowerCase() === editUser.fatherFirstName.toLowerCase() &&
+                if (modalData.motherName.toLowerCase() === editUser.motherFirstName.toLowerCase() &&
                     modalData.saintName.toLowerCase() === editUser.saintName.toLowerCase() &&
                     modalData.birthDate.getTime() === tmpDate.getTime()) {
 
@@ -167,6 +167,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         size: 'lg'
                     });
                     modalInstance2.registration = 'update';
+                    editUser.birthDate = new Date(editUser.birthDate);
                     userService.putUser(editUser);
                     $scope.success = $scope.error = null;
 
@@ -192,6 +193,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 size: size
             });
             modalInstance.registration = 'update';
+            editUser.birthDate = new Date(editUser.birthDate);
             userService.putUser(editUser);
         }
 
@@ -209,6 +211,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         return user.registrations;
                     },
                     user: function () {
+                        user.birthDate = new Date(user.birthDate);
                         return user;
                     }
                 }

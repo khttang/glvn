@@ -15,16 +15,15 @@ var _ = require('lodash'),
     Registration = mongoose.model('Registration');
 
 function isPhoneNumber(inputtxt) {
-    var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.exec(inputtxt);
-    if(phoneno) {
-        return true;
-    } else {
-        return false;
-    }
+    return /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(inputtxt);
 }
 
 function isAddress(inputtxt) {
-    return false;
+    return /\d{1,5}(\s+[A-Za-z])+/.test(inputtxt);
+}
+
+function isFullName(inputtxt) {
+    return /[A-Za-z]+(\s+[A-Za-z])+/.test(inputtxt);
 }
 
 function getCurrentRegStatus(inpStudents) {
@@ -103,6 +102,7 @@ exports.find = function (req, res) {
     var _student_id = req.query.student_id;
     var _class = req.query.class;
     var _student_ids = req.query.student_ids;
+    var temp;
 
     if (_criteria) {
         if (_criteria.indexOf('@') > 0) {
@@ -114,19 +114,43 @@ exports.find = function (req, res) {
                 }
             });
         } else if (isPhoneNumber(_criteria)) {
-            User.find({ 'phones.number': _criteria, 'userType': 'STUDENT' }, function(err, docs) {
+            temp = _criteria.replace(/\D/g,'');
+            User.find({ 'phones.number': temp, 'userType': 'STUDENT' }, function(err, docs) {
                 if (!err){
                     res.json(docs);
                 } else {
                     res.status(500).send(err.message);
                 }
             });
+        } else if (isAddress(_criteria)) {
+            temp = '/.*' + _criteria + '.*/';
+            User.find({ 'address': temp, 'userType': 'STUDENT' }, function(err, docs) {
+                if (!err){
+                    res.json(docs);
+                } else {
+                    res.status(500).send(err.message);
+                }
+            });
+        } else if (isFullName(_criteria)) {
+            var names = _criteria.split(' ');
 
-        } /* else if (isAddress(_criteria)) {
-            TODO: search by address line
-        }*/
+            User.find({ $or: [
+                { $and: [ { 'motherFirstName': names[0] }, { 'motherLastName': names[1] } ] },
+                { $and: [ { 'motherFirstName': names[1] }, { 'motherLastName': names[0] } ] },
+                { $and: [ { 'fatherFirstName': names[0] }, { 'fatherLastName': names[1] } ] },
+                { $and: [ { 'fatherFirstName': names[1] }, { 'fatherLastName': names[0] } ] },
+                { $and: [ { 'firstName': names[0] }, { 'lastName': names[1] } ] },
+                { $and: [ { 'firstName': names[1] }, { 'lastName': names[0] } ] }
+            ]}  , function (err, user) {
+                if (!err){
+                    res.json(user);
+                } else {
+                    res.status(500).send(err.message);
+                }
+            });
+        }
     } else if (_student_id) {
-        User.findById(_student_id, function (err, user) {
+        User.find({'username': _student_id, 'userType': 'STUDENT' }, function (err, user) {
             if (!err){
                 res.json(user);
             } else {
@@ -149,8 +173,12 @@ exports.find = function (req, res) {
         });
 
     } else {
-        res.status(400).send({
-            message: 'User is not provided'
+        User.find(function(err, docs) {
+            if (!err) {
+                res.json(docs);
+            } else {
+                res.send(500, err);
+            }
         });
     }
 };
@@ -236,8 +264,7 @@ exports.register = function (req, res, next) {
                     }
 
                     var student = new Student({
-                        username: _username,
-                        userId: user._id
+                        username: _username
                     });
                     student.save(function (err) {
                         if (err) {
@@ -317,8 +344,7 @@ function buildUser(inputUser, userType, res, next) {
                     }
 
                     var student = new Student({
-                        username: _username,
-                        userId: user._id
+                        username: _username
                     });
                     student.save(function (err) {
                         if (err) {
@@ -384,8 +410,7 @@ exports.create = function (req, res, next) {
                     }
 
                     var student = new Student({
-                        username: _username,
-                        userId: user._id
+                        username: _username
                     });
                     student.save(function (err) {
                         if (err) {
