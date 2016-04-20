@@ -24,7 +24,7 @@
         <!-- EMAIL -->
         <div class="form-group col-xs-2" ng-class="{ 'has-error' : findStudentForm.criteria.$invalid && findStudentForm.criteria.$touched }">
           <div style="width:300px;">
-            <input type="text" name="criteria" class="form-control" ng-model="criteria" ng-minlength="5" placeholder="Parent's Email or Phone or Address">
+            <input type="text" name="criteria" class="form-control" ng-model="criteria" ng-minlength="5" placeholder="Phone or Email or Full Name or Address">
           </div>
           <div class="help-block" ng-messages="findStudentForm.criteria.$error" ng-if="findStudentForm.criteria.$touched">
             <p ng-message="minlength">Email is too short</p>

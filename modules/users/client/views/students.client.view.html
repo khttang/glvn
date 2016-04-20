@@ -14,7 +14,7 @@
           <h4>Search by parents'</h4>
         </div>
         <div class="form-group col-xs-3" ng-class="{ 'has-error' : openFindStudentForm.searchCriteria.$invalid && openFindStudentForm.searchCriteria.$touched }">
-          <input type="text" name="searchCriteria" class="form-control" ng-model="searchCriteria" ng-minlength="10" ng-maxlength="32" placeholder="Phone or Email">
+          <input type="text" name="searchCriteria" class="form-control" ng-model="searchCriteria" ng-minlength="8" ng-maxlength="32" placeholder="Phone or Email or Full Name or Address">
         </div>
         <div class="form-group col-xs-4">
           <button class="btn btn-primary" ng-disabled="openFindStudentForm.$invalid" ng-click="ctrl.findStudent(searchCriteria)">Find</button>

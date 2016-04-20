@@ -33,13 +33,13 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-xs-6">
+          <div class="col-xs-7">
             <div class="row">
               <div class="form-group col-xs-7">
                 <select class="form-control" id="gender" name="gender" ng-model="user.gender" required>
                   <option value="">-- Select Gender --</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
+                  <option value="MALE">MALE</option>
+                  <option value="FEMALE">FEMALE</option>
                 </select>
                 <div class="help-block" ng-messages="createUserForm.gender.$error" ng-if="createUserForm.gender.$touched">
                   <p ng-message="required">Gender is required.</p>
@@ -104,7 +104,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="form-group col-xs-10">
+              <div class="form-group col-xs-9">
                 <label for="formEmails">Emails:</label>
                 <ul id="formEmails">
                   <li ng-repeat="email in user.emails" ng-class="{'selected':$index == selectedEmail}" ng-click="setClickedEmail($index)">
@@ -112,7 +112,7 @@
                   </li>
                 </ul>
               </div>
-              <div class="form-group col-xs-2">
+              <div class="form-group col-xs-1">
                 <button type="button" class="btn btn-primary btn-xs" ng-click="userCtrl.addNewEmail('lg')">
                   <i class="glyphicon glyphicon-plus"></i>
                 </button>
@@ -125,7 +125,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="form-group col-xs-10">
+              <div class="form-group col-xs-9">
                 <label for="formPhones">Phones:</label>
                 <ul id="formPhones">
                   <li ng-repeat="phone in user.phones" ng-class="{'selected':$index == selectedPhone}" ng-click="setClickedPhone($index)">
@@ -133,7 +133,7 @@
                   </li>
                 </ul>
               </div>
-              <div class="form-group col-xs-2">
+              <div class="form-group col-xs-1">
                 <button type="button" class="btn btn-primary btn-xs" ng-click="userCtrl.addNewPhone('lg')">
                   <i class="glyphicon glyphicon-plus"></i>
                 </button>
@@ -146,7 +146,7 @@
               </div>
             </div>
           </div>
-          <div class="col-xs-6">
+          <div class="col-xs-5">
             <div class="form-group">
               <img ng-src="data:image/jpeg;base64,{{user.picture}}" id="photo-id" width="260px" height="260px" placeholder="Student Photo"/>
               <div class="help-block" ng-messages="createUserForm.picture.$error" ng-if="createUserForm.picture.$touched">

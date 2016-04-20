@@ -1,26 +1,26 @@
-<div ng-controller="RegistrationController as ctrl">
-    <div class="row">
-        <select ng-options="itemClass as itemClass.label for itemClass in itemClasses track by itemClass.id" ng-change="selectAction()" ng-model="selected"></select>
-    </div>
-    <div class="row">
-        <div class="col-sm-6" ng-repeat="user in students">
-            <div class="row">
-                <div class="col-xs-10">
-                    <h1>
-                        {{user.firstName}} {{user.lastName}}
-                    </h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-10">
-                    <p>Student ID: {{user.username}}</p>
-                    <p>Student Father: {{user.fatherFirstName}} {{user.fatherLastName}}</p>
-                    <p>Student Father: {{user.motherFirstName}} {{user.motherLastName}}</p>
-                    <p>{{user.address}}, {{user.city}}, {{user.zipCode}}</p>
-                    <p></p>
-                </div>
-            </div>
+<body>
+
+    <style>
+        .grid {
+            width: 100%;
+            height: 600px;
+        }
+        .grid-container {
+            height: 600px;
+            width: 100%;
+            position: relative;
+        }
+        .grid select {
+            width: 100%;
+            font-size: 16px;
+        }
+    </style>
+
+    <h3>GLVN Nguyễn Duy Khang</h3>
+    <div ng-controller="MyAppCtrl">
+        <div class="grid-container">
+            <div ui-grid-resize-columns ui-grid="gridOptions" class="grid"></div>
         </div>
     </div>
 
-</div>
+</body>

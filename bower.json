@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js",
   "dependencies": {
-    "bootstrap": "~3",
+    "bootstrap": "~3.3",
+    "jquery": "~2.1",
     "angular": "~1.4",
     "angular-resource": "~1.4",
     "angular-animate": "~1.4",
@@ -15,7 +16,9 @@
     "angular-messages": "~1.4",
     "ngSelect": "1.0.0",
     "ng-img-crop": "ngImgCrop#~0.3.2",
-    "ng-img-crop-full-extended": "ngImgCropFullExtended#~0.4.9"
+    "ng-img-crop-full-extended": "ngImgCropFullExtended#~0.4.9",
+    "angular-touch": "^1.5.5",
+    "angular-ui-grid": "^3.1.1"
   },
   "resolutions": {
     "angular": "~1.4"
