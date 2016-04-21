@@ -6,7 +6,7 @@
         <form name="registerUserForm" novalidate>
             <fieldset>
                 <div class="row">
-                    <div class="form-group col-xs-6">
+                    <div class="form-group col-xs-7">
                         <label>Student Name:</label>
                         <div class="row">
                             <div class="form-group col-xs-6">
@@ -15,9 +15,9 @@
                         </div>
                         <label>Classes:</label>
                         <div class=row">
-                            <div class="form-group col-xs-3">
-                                <select class="form-control" id="gradeLevel" name="gradeLevel" ng-model="user.current_reg.schoolGrade" ng-init="user.current_reg.schoolGrade=''" required>
-                                    <option value="">-- Select --</option>
+                            <div class="form-group col-xs-4">
+                                <select class="form-control" id="gradeLevel" name="gradeLevel" ng-model="user.current_reg.schoolGrade" ng-init="user.current_reg.schoolGrade" required>
+                                    <option value="">-- Grade --</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
@@ -35,11 +35,9 @@
                                     <p ng-message="required">Grade level is required.</p>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-xs-3">
+                            <div class="form-group col-xs-4">
                                 <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass" required>
-                                    <option value="">-- Select --</option>
+                                    <option value="">-- GL --</option>
                                     <option value="gl-01">GL-01</option>
                                     <option value="gl-02">GL-02</option>
                                     <option value="gl-03">GL-03</option>
@@ -56,9 +54,9 @@
                                 </div>
                             </div>
 
-                            <div class="form-group col-xs-3">
+                            <div class="form-group col-xs-4">
                                 <select class="form-control" id="vnClass" name="vnClass" ng-model="user.current_reg.vnClass" ng-init="user.current_reg.vnClass" required>
-                                    <option value="">-- Select --</option>
+                                    <option value="">-- VN --</option>
                                     <option value="vn-01">VN-01</option>
                                     <option value="vn-02">VN-02</option>
                                     <option value="vn-03">VN-03</option>
@@ -92,7 +90,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group col-xs-6">
+                    <div class="form-group col-xs-5">
                         <label>Previous Registrations:</label>
                         <div class="row" ng-repeat="reg in registrations">
                              <p class="indented">{{reg.year}}: {{reg.glClass}}, {{reg.vnClass}}</p>
