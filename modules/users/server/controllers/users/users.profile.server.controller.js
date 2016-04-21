@@ -187,15 +187,16 @@ exports.addRegistration = function (req, res) {
     var _registration = req.body;
     var regYear = new Date().getFullYear();
 
-    if (_registration._id === null) {
+    if (_registration._id === undefined) {
         var registration = new Registration({
             studentId: _registration.studentId,
             year: regYear,
             glClass: _registration.glClass,
             vnClass: _registration.vnClass,
+            schoolGrade: _registration.schoolGrade,
             receivedBy: _registration.receivedBy
         });
-        Registration.save(function (err) {
+        registration.save(function (err) {
             if (err) {
                 return res.status(400).send(err.message);
             }

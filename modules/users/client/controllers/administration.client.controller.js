@@ -46,6 +46,30 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             if (studentId !== undefined && criteria === undefined) {
                 $http.get('/api/users?student_id='+studentId).success(function (response) {
                     $scope.students = response;
+
+                    var studentids = [];
+                    for(var i=0, len=response.length; i < len; i++){
+                        studentids.push(response[i].username);
+                    }
+                    $http.get('/api/users/registrations?student_ids='+JSON.stringify(studentids)).success(function (response2) {
+                        $scope.registrations = response2;
+                        var currentyr = new Date().getFullYear();
+
+                        for(var i=0, len=response.length; i < len; i++) {
+                            response[i].registrations = [];
+                            for (var j = 0, len2=response2.length; j < len2; j++) {
+                                if (response[i].username === response2[j].studentId) {
+                                    if (response2[j].year === currentyr) {
+                                        response[i].current_reg = response2[j];
+                                    } else {
+                                        response[i].registrations.push(response2[j]);
+                                    }
+                                }
+                            }
+                        }
+                    }).error(function (response) {
+                        $scope.error = response.message;
+                    });
                 }).error(function (response) {
                     $scope.error = response.message;
                 });
@@ -219,7 +243,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             modalInstance.reg_step = reg_step;
             modalInstance.modalTitle = 'Register student ' + user.username + ' for school Year '+ new Date().getFullYear();
             modalInstance.result.then(function (modalData) {
-                if (reg_step === 'register') {
+                if (reg_step === 'intake') {
                     user.current_reg.receivedBy = $scope.authentication.user.username;
                     user.current_reg.studentId = user.username;
                 } else if (reg_step === 'approve') {
