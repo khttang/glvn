@@ -1,29 +1,26 @@
 'use strict';
 
-/* $$$$ 'ngImgCrop'
-
-angular.module('core', [])
+// 'ngImgCrop'
+angular.module('users', [])
     .directive('photoCapture', function () {
 
     var CropImageCtrl = function($scope, $element, $attrs) {
-        $scope.myImage='';
-        $scope.myCroppedImage='';
-        $scope.cropType='rectangle';
-    }
+        $scope.my_image='';
+    };
 
     return {
-        restrict: 'EA', //E = element, A = attribute, C = class, M = comment
+        restrict: 'E', //E = element, A = attribute, C = class, M = comment
         scope: {
-            //@ reads the attribute value, = provides two-way binding, & works with functions
-            title: '@'
+            ngModel: '='
         },
         controller: CropImageCtrl,
-        templateUrl: 'modules/core/client/views/directives/photo-capture.view.html',
+        templateUrl: 'modules/users/client/views/photo-capture.template.html',
         link: function (scope, elem, attrs) {
+            /*
             Webcam.set({
-                width: 180,  // 320
-                height: 260,   // 240
-                dest_width: 320,
+                width: 260,
+                height: 240,
+                dest_width: 260,
                 dest_height: 240,
                 image_format: 'jpeg',
                 jpeg_quality: 90,
@@ -40,11 +37,12 @@ angular.module('core', [])
 
             scope.take_snapshot = function () {
                 Webcam.snap( function(data_uri) {
-                    document.getElementById('my_photo_capture').innerHTML = '<img src="'+data_uri+'"/>';
+                    scope.my_image = data_uri;
                 } );
                 scope.captureMode = false;
-            }
+            };
+            */
         }
-    }
+    };
 });
-*/
+

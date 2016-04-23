@@ -30,6 +30,6 @@ angular.module('core').controller('HeaderController', ['$scope', '$state', 'Auth
                 }
             }
             return admin;
-        }
+        };
     }
 ]);

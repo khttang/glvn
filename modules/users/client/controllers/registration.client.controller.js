@@ -142,8 +142,7 @@ angular.module('users')
             }).error(function (response) {
                 $scope.error = response.message;
             });
-
-        }
+        };
 
         $scope.load();
 

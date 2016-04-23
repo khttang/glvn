@@ -30,7 +30,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 }
             }
             return false;
-        }
+        };
 
         this.findStudent = function(criteria) {
             $scope.success = $scope.error = null;
@@ -219,7 +219,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             modalInstance.registration = 'update';
             editUser.birthDate = new Date(editUser.birthDate);
             userService.putUser(editUser);
-        }
+        };
 
         this.modalAdminRegisterStudent = function (size, user, reg_step) {
             $scope.success = $scope.error = null;
@@ -257,7 +257,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     $scope.error = response;
                 });
             });
-        }
+        };
     }
 ]);
 

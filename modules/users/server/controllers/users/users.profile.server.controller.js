@@ -213,7 +213,7 @@ exports.addRegistration = function (req, res) {
             }
         });
     }
-}
+};
 
 exports.register = function (req, res, next) {
     var inputUser = req.body;
