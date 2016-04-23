@@ -37,7 +37,7 @@ angular.module('users').service('userService', function() {
       phones: [],
       current_reg: {}
     };
-  }
+  };
 
   var getUser = function() {
     return user;
