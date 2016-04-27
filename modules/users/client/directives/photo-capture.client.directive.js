@@ -10,7 +10,7 @@ angular.module('users')
     return {
         restrict: 'E', //E = element, A = attribute, C = class, M = comment
         scope: {
-            ngModel: '='
+            myCroppedImage: '=ngModel'
         },
         controller: CropImageCtrl,
 

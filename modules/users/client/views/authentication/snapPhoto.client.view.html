@@ -3,10 +3,10 @@
         <h3 class="modal-title">{{modalTitle}}</h3>
     </div>
     <div class="modal-body">
-        <photo-capture></photo-capture>
+        <photo-capture ng-model="modalData.photo" id="photo"/>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-success btn-lg" ng-disabled="snapPhoto.$invalid" ng-click="ok()">Add</button>
+        <button class="btn btn-success btn-lg" ng-disabled="photo.$invalid" ng-click="ok()">Add</button>
         <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
     </div>
 </section>

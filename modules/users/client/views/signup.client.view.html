@@ -145,7 +145,7 @@
           </div>
           <div class="col-xs-5">
             <div class="form-group">
-              <img ng-src="data:image/jpeg;base64,{{user.picture}}" id="photo-id" width="260px" height="240px" placeholder="Student Photo"/>
+              <img ng-src="{{user.picture}}" id="photo-id" width="260px" height="240px" placeholder="Student Photo"/>
             </div>
             <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.selectPhoto('student')">
               <i class="glyphicon glyphicon-open-file"></i>
