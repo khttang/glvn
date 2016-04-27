@@ -1,7 +1,6 @@
 'use strict';
 
-// 'ngImgCrop'
-angular.module('users', [])
+angular.module('users')
     .directive('photoCapture', function () {
 
     var CropImageCtrl = function($scope, $element, $attrs) {
@@ -14,9 +13,9 @@ angular.module('users', [])
             ngModel: '='
         },
         controller: CropImageCtrl,
+
         templateUrl: 'modules/users/client/views/photo-capture.template.html',
         link: function (scope, elem, attrs) {
-            /*
             Webcam.set({
                 width: 260,
                 height: 240,
@@ -41,7 +40,6 @@ angular.module('users', [])
                 } );
                 scope.captureMode = false;
             };
-            */
         }
     };
 });

@@ -22,7 +22,7 @@
         <a ui-sref="home">Home</a>
       </li>
       <li class="divider-vertical"></li>
-      <li ui-sref-active="active">
+      <li ui-sref-active="active" ng-show="ctrl.isTeacher()">
         <a ui-sref="teachers">Teachers</a>
       </li>
       <li class="divider-vertical"></li>
@@ -38,11 +38,14 @@
           <li ui-sref-active="active">
             <a ui-sref="registration.intake">Registration Intake</a>
           </li>
-          <li ui-sref-active="active">
+          <li ui-sref-active="active" ng-show="ctrl.isAdminUser() && ctrl.isTeacher()">
             <a ui-sref="registration.approval">Registration Approval</a>
           </li>
           <li ui-sref-active="active">
             <a ui-sref="registration.show">Show Active Users</a>
+          </li>
+          <li ui-sref-active="active" ng-show="ctrl.isAdminUser() && ctrl.isTeacher()">
+            <a ui-sref="registration.signup">Admin Signup</a>
           </li>
         </ul>
       </li>

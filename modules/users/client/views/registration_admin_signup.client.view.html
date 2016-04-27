@@ -1,0 +1,143 @@
+<section ng-controller="UsersCreateController as userCtrl">
+    <div class="modal-header">
+        <h3 class="modal-title">Register an Admin</h3>
+    </div>
+    <div ng-show="error" class="text-center text-danger">
+        <h4><strong>ERROR: {{error}}</strong></h4>
+    </div>
+    <div ng-show="success" class="text-center text-success">
+        <h4><strong>{{success}}</strong></h4>
+    </div>
+    <div class="modal-body" ng-init="init()">
+        <form name="createUserForm" novalidate>
+            <fieldset>
+                <label>Teacher/Student/Parent Admin:</label>
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <input type="text" id="loginName" name="loginName" class="form-control" ng-model="user.username" placeholder="Login Name" required>
+                        <div class="help-block" ng-messages="createUserForm.loginName.$error" ng-if="createUserForm.loginName.$touched">
+                            <p ng-message="required">Login name is required.</p>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-2">
+                        <input type="password" id="password" name="password" class="form-control" ng-model="user.password" placeholder="Password" required>
+                        <div class="help-block" ng-messages="createUserForm.password.$error" ng-if="createUserForm.password.$touched">
+                            <p ng-message="required">Password is required.</p>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-2">
+                        <select class="form-control" id="userType" name="userType" ng-model="user.userType" required>
+                            <option value="">-- User Type --</option>
+                            <option value="STUDENT">STUDENT</option>
+                            <option value="PARENT">PARENT</option>
+                            <option value="TEACHER">TEACHER</option>
+                        </select>
+                        <div class="help-block" ng-messages="createUserForm.userType.$error" ng-if="createUserForm.userType.$touched">
+                            <p ng-message="required">User type is required.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3">
+                        <input type="text" id="lastname" name="lastname" class="form-control" ng-model="user.lastName" placeholder="Last Name" required>
+                        <div class="help-block" ng-messages="createUserForm.lastName.$error" ng-if="createUserForm.lastName.$touched">
+                            <p ng-message="required">Last name is required.</p>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-2">
+                        <input type="text" id="middlename" name="middlename" class="form-control" ng-model="user.middleName" placeholder="Middle Name">
+                    </div>
+                    <div class="form-group col-xs-3">
+                        <input type="text" id="firstname" name="firstname" class="form-control" ng-model="user.firstName" placeholder="First Name" required>
+                        <div class="help-block" ng-messages="createUserForm.firstName.$error" ng-if="createUserForm.firstName.$touched">
+                            <p ng-message="required">First name is required.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <div class="form-group col-xs-4">
+                                <select class="form-control" id="gender" name="gender" ng-model="user.gender" required>
+                                    <option value="">-- Select Gender --</option>
+                                    <option value="MALE">MALE</option>
+                                    <option value="FEMALE">FEMALE</option>
+                                </select>
+                                <div class="help-block" ng-messages="createUserForm.gender.$error" ng-if="createUserForm.gender.$touched">
+                                    <p ng-message="required">Gender is required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <label>Contacts:</label>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="addressline" name="addressline" class="form-control" ng-model="user.address" placeholder="Address Line" required>
+                                <div class="help-block" ng-messages="createUserForm.addressline.$error" ng-if="createUserForm.addressline.$touched">
+                                    <p ng-message="required">Address is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-3">
+                                <input type="text" id="city" name="city" class="form-control" ng-model="user.city" placeholder="City" required>
+                                <div class="help-block" ng-messages="createUserForm.city.$error" ng-if="createUserForm.city.$touched">
+                                    <p ng-message="required">City is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-3">
+                                <input type="text" id="zipcode" name="zipcode" class="form-control" ng-model="user.zipCode" placeholder="Zip Code" required>
+                                <div class="help-block" ng-messages="createUserForm.zipcode.$error" ng-if="createUserForm.zipcode.$touched">
+                                    <p ng-message="required">Zip code is required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xs-9">
+                                <label for="formEmails">Emails:</label>
+                                <ul id="formEmails">
+                                    <li ng-repeat="email in user.emails" ng-class="{'selected':$index == selectedEmail}" ng-click="setClickedEmail($index)">
+                                        {{email.owner}}: {{email.address}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="form-group col-xs-1">
+                                <button type="button" class="btn btn-primary btn-xs" ng-click="userCtrl.addNewEmail('lg')">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.emails.$isEmpty()" ng-click="userCtrl.removeEmail(selectedEmail)">
+                                    <i class="glyphicon glyphicon-minus-sign"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.emails.$isEmpty()" ng-click="userCtrl.editEmail(selectedEmail, 'lg')">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xs-9">
+                                <label for="formPhones">Phones:</label>
+                                <ul id="formPhones">
+                                    <li ng-repeat="phone in user.phones" ng-class="{'selected':$index == selectedPhone}" ng-click="setClickedPhone($index)">
+                                        {{phone.owner}} {{phone.type}}: {{phone.number | phonenumber}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="form-group col-xs-1">
+                                <button type="button" class="btn btn-primary btn-xs" ng-click="userCtrl.addNewPhone('lg')">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.phones.$isEmpty()" ng-click="userCtrl.removePhone(selectedPhone)">
+                                    <i class="glyphicon glyphicon-minus-sign"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.phones.$isEmpty()" ng-click="userCtrl.editPhone(selectedPhone, 'lg')">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success btn-lg" ng-disabled="createUserForm.$invalid" ng-click="userCtrl.submitAdmin(user); user = {}; user.emails = []; user.phones = [];">Submit</button>
+    </div>
+
+</section>

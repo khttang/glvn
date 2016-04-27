@@ -44,6 +44,13 @@ angular.module('users').config(['$stateProvider',
                 },
                 templateUrl: 'modules/users/client/views/registration_show.client.view.html'
             })
+            .state('registration.signup', {
+                url: '/registration_admin_signup',
+                data: {
+                    roles: ['ADMIN']
+                },
+                templateUrl: 'modules/users/client/views/registration_admin_signup.client.view.html'
+            })
             .state('settings', {
                 abstract: true,
                 url: '/settings',
@@ -81,10 +88,12 @@ angular.module('users').config(['$stateProvider',
                 url: '/signin?err',
                 templateUrl: 'modules/users/client/views/authentication/signin.client.view.html'
             })
+            /*
             .state('authentication.testing', {
                 url: '/testing',
                 templateUrl: 'modules/users/client/views/authentication/testing.client.view.html'
             })
+            */
             .state('password', {
                 abstract: true,
                 url: '/password',

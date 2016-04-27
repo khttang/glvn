@@ -1,4 +1,38 @@
-<section class="row">
-  <div class="col-xs-offset-1 col-xs-10 col-md-offset-4 col-md-4">
+<body>
+<h1 class="page-title" >Show Students</h1>
+<style>
+  .grid {
+    width: 100%;
+    height: 600px;
+  }
+  .grid-container {
+    height: 600px;
+    width: 100%;
+    position: relative;
+  }
+  .grid select {
+    width: 100%;
+    font-size: 16px;
+  }
+  .scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+    width: 40px;
+  }
+
+</style>
+
+<div ng-controller="ShowRegCtrl">
+  <dropdown-multiselect dropdown-title="Select GL classes" pre-selected="preselected_gl" model="selected_glclasses" options="glClasses"></dropdown-multiselect>
+  <dropdown-multiselect dropdown-title="Select VN classes" pre-selected="preselected_vn" model="selected_vnclasses" options="vnClasses"></dropdown-multiselect>
+
+
+  <!--
+  <div class="grid-container">
+    <div ui-grid-resize-columns ui-grid="gridOptions" class="grid"></div>
   </div>
-</section>
+  -->
+</div>
+
+</body>

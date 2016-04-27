@@ -31,5 +31,14 @@ angular.module('core').controller('HeaderController', ['$scope', '$state', 'Auth
             }
             return admin;
         };
+
+        this.isTeacher = function() {
+            var teacher = false;
+            if ($scope.authentication.user) {
+                teacher = ($scope.authentication.user.userType === 'TEACHER');
+            }
+            return teacher;
+
+        };
     }
 ]);

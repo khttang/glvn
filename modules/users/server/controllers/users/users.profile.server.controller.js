@@ -298,6 +298,37 @@ exports.register = function (req, res, next) {
     }
 };
 
+exports.createAdmin = function(req, res, next) {
+    var inputUser = req.body;
+    // Create a new user
+    var user = new User({
+        status: 'PROVISIONED',
+        userType: inputUser.userType,
+        firstName: inputUser.firstName,
+        lastName: inputUser.lastName,
+        username: inputUser.username,
+        password: inputUser.password,
+        gender: inputUser.gender,
+        address: inputUser.address,
+        city: inputUser.city,
+        zipCode: inputUser.zipCode,
+        roles: ['ADMIN']
+    });
+
+    for (var i = 0; i < inputUser.emails.length; i++) {
+        user.emails.push(inputUser.emails[i]);
+    }
+    for (i = 0; i < inputUser.phones.length; i++) {
+        user.phones.push(inputUser.phones[i]);
+    }
+
+    user.save(function (err) {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+    });
+};
+
 function buildUser(inputUser, userType, res, next) {
     if (inputUser) {
         var _username = inputUser.firstName.toLowerCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toLowerCase().charAt(0);

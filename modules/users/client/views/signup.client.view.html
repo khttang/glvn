@@ -20,10 +20,7 @@
             </div>
           </div>
           <div class="form-group col-xs-2">
-            <input type="text" id="middlename" name="middlename" class="form-control" ng-model="user.middleName" placeholder="Middle Name" required>
-            <div class="help-block" ng-messages="createUserForm.middleName.$error" ng-if="createUserForm.middleName.$touched">
-              <p ng-message="required">Middle name is required.</p>
-            </div>
+            <input type="text" id="middlename" name="middlename" class="form-control" ng-model="user.middleName" placeholder="Middle Name">
           </div>
           <div class="form-group col-xs-3">
             <input type="text" id="firstname" name="firstname" class="form-control" ng-model="user.firstName" placeholder="First Name" required>
@@ -148,10 +145,7 @@
           </div>
           <div class="col-xs-5">
             <div class="form-group">
-              <img ng-src="data:image/jpeg;base64,{{user.picture}}" id="photo-id" width="260px" height="260px" placeholder="Student Photo"/>
-              <div class="help-block" ng-messages="createUserForm.picture.$error" ng-if="createUserForm.picture.$touched">
-                <p ng-message="required">Picture is required.</p>
-              </div>
+              <img ng-src="data:image/jpeg;base64,{{user.picture}}" id="photo-id" width="260px" height="240px" placeholder="Student Photo"/>
             </div>
             <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.selectPhoto('student')">
               <i class="glyphicon glyphicon-open-file"></i>
@@ -161,10 +155,10 @@
             </button>
           </div>
         </div>
-        <label ng-show="registration==='register'">Classes:</label>
-        <div class="row" ng-show="registration==='register'">
+        <label ng-if="registration==='register'">Classes:</label>
+        <div class="row" ng-if="registration==='register'">
           <div class="form-group col-xs-3">
-            <select class="form-control" id="gradeLevel" name="gradeLevel" ng-model="user.current_reg.schoolGrade" ng-init="user.current_reg.schoolGrade=''" required>
+            <select class="form-control" id="gradeLevel" name="gradeLevel" ng-model="user.current_reg.schoolGrade" ng-init="user.current_reg.schoolGrade=''" ng-required="true">
               <option value="">-- Select Grade Level --</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -184,9 +178,9 @@
             </div>
           </div>
         </div>
-        <div class="row" ng-show="registration==='register'">
+        <div class="row" ng-if="registration==='register'">
           <div class="form-group col-xs-3">
-            <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass=''" required>
+            <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass=''" ng-required="true">
               <option value="">-- Select GL Class --</option>
               <option value="gl-01">GL-01</option>
               <option value="gl-02">GL-02</option>
@@ -200,12 +194,12 @@
               <option value="confirmation">CONFIRMATION</option>
             </select>
             <div class="help-block" ng-messages="createUserForm.glClass.$error" ng-if="createUserForm.glClass.$touched">
-              <p ng-message="required">glClass is required.</p>
+              <p ng-message="required">GL class is required.</p>
             </div>
           </div>
 
           <div class="form-group col-xs-3">
-            <select class="form-control" id="vnClass" name="vnClass" ng-model="user.current_reg.vnClass" ng-init="user.current_reg.vnClass=''" required>
+            <select class="form-control" id="vnClass" name="vnClass" ng-model="user.current_reg.vnClass" ng-init="user.current_reg.vnClass=''">
               <option value="">-- Select VN Class --</option>
               <option value="vn-01">VN-01</option>
               <option value="vn-02">VN-02</option>
@@ -217,12 +211,9 @@
               <option value="vn-08">VN-08</option>
               <option value="vn-09">VN-09</option>
             </select>
-            <div class="help-block" ng-messages="createUserForm.vnClass.$error" ng-if="createUserForm.vnClass.$touched">
-              <p ng-message="required">vnClass is required.</p>
-            </div>
           </div>
         </div>
-        <div class="row" ng-show="registration==='register'">
+        <div class="row" ng-if="registration==='register'">
           <div class="form-group col-xs-3">
             <label>Baptism certificate&nbsp;&nbsp;</label>
             <input type="checkbox" ng-model="user.hasBaptismCert" onclick="return false"/>
@@ -244,11 +235,7 @@
   </div>
   <div class="modal-footer">
     <!-- createUserForm.$invalid -->
-
-    <!--
-    <button class="btn btn-success btn-lg" ng-disabled="formValid" ng-click="userCtrl.saveUserInfo('student', registration);ok()">Save & Close</button>
-    -->
-    <button class="btn btn-success btn-lg" ng-disabled="formValid" ng-click="ok()">Save & Close</button>
+    <button class="btn btn-success btn-lg" ng-disabled="createUserForm.$invalid" ng-click="ok(); user = {}; user.emails = []; user.phones = [];">Save & Close</button>
     <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
   </div>
  </section>
