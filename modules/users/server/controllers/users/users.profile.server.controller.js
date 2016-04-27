@@ -213,7 +213,7 @@ exports.addRegistration = function (req, res) {
             }
         });
     }
-}
+};
 
 exports.register = function (req, res, next) {
     var inputUser = req.body;
@@ -296,6 +296,37 @@ exports.register = function (req, res, next) {
             message: 'Registration is not provided'
         });
     }
+};
+
+exports.createAdmin = function(req, res, next) {
+    var inputUser = req.body;
+    // Create a new user
+    var user = new User({
+        status: 'PROVISIONED',
+        userType: inputUser.userType,
+        firstName: inputUser.firstName,
+        lastName: inputUser.lastName,
+        username: inputUser.username,
+        password: inputUser.password,
+        gender: inputUser.gender,
+        address: inputUser.address,
+        city: inputUser.city,
+        zipCode: inputUser.zipCode,
+        roles: ['ADMIN']
+    });
+
+    for (var i = 0; i < inputUser.emails.length; i++) {
+        user.emails.push(inputUser.emails[i]);
+    }
+    for (i = 0; i < inputUser.phones.length; i++) {
+        user.phones.push(inputUser.phones[i]);
+    }
+
+    user.save(function (err) {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+    });
 };
 
 function buildUser(inputUser, userType, res, next) {

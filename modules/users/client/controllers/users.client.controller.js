@@ -8,9 +8,21 @@ angular.module('users').controller('UsersController', ['$scope', '$stateParams',
 
 angular.module('users').controller('UsersCreateController', ['$scope', '$http', 'userService', '$uibModal', '$log', 'Authentication',
     function ($scope, $http, userService, $uibModal, $log, Authentication) {
+        $scope.success = $scope.error = null;
+
         $scope.authentication = Authentication;
         $scope.user = userService.getUser();
-        
+
+        this.submitAdmin = function(user) {
+            var uri = '/api/users/admin';
+            $http.post(uri, user).success(function() {
+                userService.clearUser();
+                $scope.success = 'Create an admin completed successfully!';
+            }).error(function(response) {
+                $scope.error = response;
+            });
+        };
+
         this.addNewEmail = function(size) {
             $scope.modalData = {};
             var modalInstance = $uibModal.open({

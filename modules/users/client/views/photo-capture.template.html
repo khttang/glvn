@@ -1,0 +1,28 @@
+<style>
+    .cropArea {
+        background: #E4E4E4;
+        overflow: hidden;
+        width:260px;
+        height:240px;
+    }
+</style>
+
+<table>
+    <tr>
+        <td>
+            <div id="my_camera" style="width:320px; height:240px;"></div>
+            <span><a href="#" ng-click="take_snapshot()">Take Snapshot</a></span>
+        </td>
+        <td>
+            <div class="cropArea">
+                <img-crop
+                        area-type="rectangle" image="my_image" result-image="myCroppedImage"
+                        result-image-size="{w:260,h:240}"
+                ></img-crop>
+            </div>
+        </td>
+        <td>
+            <div><img ng-src="{{myCroppedImage}}" /></div>
+        </td>
+    </tr>
+</table>

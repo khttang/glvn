@@ -11,13 +11,6 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
 
         $scope.user = userService.getUser();
 
-        /* $$$$KT
-        // If user is signed in then redirect back home
-        if ($scope.authentication.user) {
-            $location.path('/');
-        }
-        */
-
         this.isRegistered = function (studentId) {
             if ($scope.registrations !== undefined) {
                 var regYear = new Date().getFullYear();
@@ -30,7 +23,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 }
             }
             return false;
-        }
+        };
 
         this.findStudent = function(criteria) {
             $scope.success = $scope.error = null;
@@ -146,6 +139,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
         };
 
         this.modalCreateNewStudent = function (size, registration) {
+            userService.clearUser();
             var modalInstance = $uibModal.open({
                 animation: $scope.animationsEnabled,
                 templateUrl: 'modules/users/client/views/signup.client.view.html',
@@ -219,7 +213,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             modalInstance.registration = 'update';
             editUser.birthDate = new Date(editUser.birthDate);
             userService.putUser(editUser);
-        }
+        };
 
         this.modalAdminRegisterStudent = function (size, user, reg_step) {
             $scope.success = $scope.error = null;
@@ -257,7 +251,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     $scope.error = response;
                 });
             });
-        }
+        };
     }
 ]);
 

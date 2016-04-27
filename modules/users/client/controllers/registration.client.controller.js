@@ -61,12 +61,94 @@ angular.module('users')
             });
         };
     }
-]).controller('MyAppCtrl', ['$scope', '$http', '$filter', 'uiGridConstants',
+]).controller('ShowRegCtrl', ['$scope', '$http', '$filter', 'uiGridConstants',
     function($scope, $http, $filter, uiGridConstants) {
+
+        $scope.glClasses = [
+            { 'name': 'GL-01', 'id': 'gl-01' },
+            { 'name': 'GL-02', 'id': 'gl-02' },
+            { 'name': 'GL-03', 'id': 'gl-03' },
+            { 'name': 'GL-04', 'id': 'gl-04' },
+            { 'name': 'GL-05', 'id': 'gl-05' },
+            { 'name': 'GL-06', 'id': 'gl-06' },
+            { 'name': 'GL-07', 'id': 'gl-07' },
+            { 'name': 'GL-08', 'id': 'gl-08' },
+            { 'name': 'PRE-CON', 'id': 'pre-con' },
+            { 'name': 'CONFIRMATION', 'id': 'confirmation' }
+        ];
+
+        $scope.vnClasses = [
+            { 'name': 'VN-01', 'id': 'vn-01' },
+            { 'name': 'VN-02', 'id': 'vn-02' },
+            { 'name': 'VN-03', 'id': 'vn-03' },
+            { 'name': 'VN-04', 'id': 'vn-04' },
+            { 'name': 'VN-05', 'id': 'vn-05' },
+            { 'name': 'VN-06', 'id': 'vn-06' },
+            { 'name': 'VN-07', 'id': 'vn-07' },
+            { 'name': 'VN-08', 'id': 'vn-08' },
+            { 'name': 'VN-09', 'id': 'vn-09' }
+        ];
+        $scope.selected_vnclasses = [];
+        $scope.selected_glclasses = [];
+        $scope.preselected_gl = [];
+        $scope.preselected_vn = [];
 
         $scope.filterOptions = {
             filterText: ''
         };
+
+        // begin tabs control
+        $scope.tabManager = {};
+
+        $scope.tabManager.tabItems = [];
+
+        $scope.tabManager.checkIfMaxTabs = function(){
+            var max = 4;
+            var i = $scope.tabManager.tabItems.length;
+            if(i > max){
+                return true;
+            }
+            return false;
+        };
+
+        $scope.tabManager.getTitle = function(tabInfo){
+            console.log('[ title ] -> ',tabInfo.title);
+            tabInfo.title.substr(0,10);
+        };
+
+        $scope.tabManager.resetSelected = function(){
+            angular.forEach($scope.tabManager.tabItems, function(pane) {
+                pane.selected = false;
+            });
+        };
+
+        $scope.tabManager.addTab = function(){
+            if($scope.tabManager.checkIfMaxTabs()){
+                alert('[Max Tabs] You have opened max tabs for this page.');
+                return;
+            }
+            $scope.tabManager.resetSelected();
+            var i = ($scope.tabManager.tabItems.length +1);
+            $scope.tabManager.tabItems.push({
+                title: 'Tab No: ' + i,
+                content: 'Lores sum ep sum news test [' + i +']',
+                selected: true
+            });
+        };
+
+        //to select the tab
+        $scope.tabManager.select = function(i) {
+            angular.forEach($scope.tabManager.tabItems, function(tabInfo) {
+                tabInfo.selected = false;
+            });
+            $scope.tabManager.tabItems[i].selected = true;
+        };
+
+
+        // init the first active tab
+        //$scope.tabManager.select(0);
+
+        // end tabs control
 
         var phoneTemplate = '<div><select><option ng-repeat="p in row.entity.phones">{{p.owner}} {{p.type}}: {{p.number | phonenumber}}</option></select> </div>';
         var emailTemplate = '<div><select><option ng-repeat="e in row.entity.emails">{{e.owner}}: {{e.address}}</option></select> </div>';
@@ -142,8 +224,7 @@ angular.module('users')
             }).error(function (response) {
                 $scope.error = response.message;
             });
-
-        }
+        };
 
         $scope.load();
 
