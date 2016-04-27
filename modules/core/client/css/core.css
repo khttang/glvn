@@ -1,9 +1,16 @@
 header {
   background-color: #a6e1ec;
+  opacity: 0.75;
 }
 
 .content {
   margin-top: 180px;
+}
+
+body {
+  background-image: url("../img/brand/background1.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .undecorated-link:hover {
