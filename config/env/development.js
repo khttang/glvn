@@ -3,8 +3,7 @@
 var defaultEnvConfig = require('./default');
 
 module.exports = {
-
-  /* $$$KT */
+  
   // Enable SSL
   secure: {
     ssl: true,
