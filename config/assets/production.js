@@ -6,7 +6,8 @@ module.exports = {
       css: [
         'public/lib/bootstrap/dist/css/bootstrap.min.css',
         'public/lib/bootstrap/dist/css/bootstrap-theme.min.css',
-        'public/lib/angular-ui-grid/ui-grid.min.css'
+        'public/lib/angular-ui-grid/ui-grid.min.css',
+        'public/lib/ng-img-crop-full-extended/compile/minified/ng-img-crop.css'
       ],
       js: [
         'public/lib/angular/angular.min.js',
@@ -19,7 +20,9 @@ module.exports = {
         'public/lib/angular-file-upload/angular-file-upload.min.js',
         'public/lib/ngSelect/ngSelect.js',
         'public/lib/angular-touch/angular-touch.min.js',
-        'public/lib/angular-ui-grid/ui-grid.min.js'
+        'public/lib/angular-ui-grid/ui-grid.min.js',
+        'public/lib/ng-img-crop-full-extended/compile/minified/ng-img-crop.js',
+        'public/lib/webcam/webcam.min.js'
       ]
     },
     css: 'public/dist/application.min.css',
