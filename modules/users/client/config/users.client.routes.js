@@ -26,28 +26,28 @@ angular.module('users').config(['$stateProvider',
             .state('registration.intake', {
                 url: '/registration_intake',
                 data: {
-                    roles: ['ADMIN']
+                    roles: ['ADMIN','ADMIN-a']
                 },
                 templateUrl: 'modules/users/client/views/registration_intake.client.view.html'
             })
             .state('registration.approval', {
                 url: '/registration_approval',
                 data: {
-                    roles: ['ADMIN']
+                    roles: ['ADMIN-a']
                 },
                 templateUrl: 'modules/users/client/views/registration_approval.client.view.html'
             })
             .state('registration.show', {
                 url: '/registration_show',
                 data: {
-                    roles: ['ADMIN']
+                    roles: ['ADMIN','ADMIN-a']
                 },
                 templateUrl: 'modules/users/client/views/registration_show.client.view.html'
             })
             .state('registration.signup', {
                 url: '/registration_admin_signup',
                 data: {
-                    roles: ['ADMIN']
+                    roles: ['ADMIN-a']
                 },
                 templateUrl: 'modules/users/client/views/registration_admin_signup.client.view.html'
             })
