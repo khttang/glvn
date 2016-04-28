@@ -55,7 +55,7 @@ var validateUserType = function (searchStr) {
 };
 
 var validateRole = function (searchStr) {
-  var roleArray = ['ADMIN', 'PARENT', 'TEACHER', 'STUDENT', 'GUEST'];
+  var roleArray = ['ADMIN', 'ADMIN-a', 'ADMIN-n', 'ADMIN-l', 'PARENT', 'TEACHER', 'STUDENT', 'GUEST'];  // -a super, -n normal, -l low
   return (roleArray.indexOf(searchStr) > -1);
 };
 
