@@ -24,7 +24,19 @@ angular.module('core').controller('HeaderController', ['$scope', '$state', 'Auth
             var admin = false;
             if ($scope.authentication.user) {
                 for (var i = 0, len = $scope.authentication.user.roles.length; i < len; i++) {
-                    if ($scope.authentication.user.roles[i] === 'ADMIN') {
+                    if ($scope.authentication.user.roles[i].startsWith('ADMIN')) {
+                        return true;
+                    }
+                }
+            }
+            return admin;
+        };
+
+        this.isSuperAdminUser = function() {
+            var admin = false;
+            if ($scope.authentication.user) {
+                for (var i = 0, len = $scope.authentication.user.roles.length; i < len; i++) {
+                    if ($scope.authentication.user.roles[i] === 'ADMIN-a') {
                         return true;
                     }
                 }
