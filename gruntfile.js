@@ -132,6 +132,7 @@ module.exports = function (grunt) {
       }
     },
     cssmin: {
+      options: { rebase: true, sourceMap: true },
       combine: {
         files: {
           'public/dist/application.min.css': defaultAssets.client.css
