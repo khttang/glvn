@@ -78,13 +78,13 @@
                                 <input type="checkbox" ng-model="user.hasBaptismCert" onclick="return false"/>
                             </div>
                             <div class="form-group col-xs-6">
-                                <button type="button" class="btn btn-success btn-xs" ng-disabled="!user.hasBaptismCert" ng-click="viewPhoto('certificate')">
+                                <button type="button" class="btn btn-success btn-xs" ng-disabled="!user.hasBaptismCert" ng-click="viewPhoto('certificate')" data-toggle="tooltip" tooltip-placement="right" tooltip="View baptism certificate">
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </button>
-                                <button type="button" class="btn btn-success btn-xs" ng-click="selectPhoto('certificate')">
+                                <button type="button" class="btn btn-success btn-xs" ng-click="selectPhoto('certificate')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Select a photo of baptism certificate from file">
                                     <i class="glyphicon glyphicon-open-file"></i>
                                 </button>
-                                <button type="button" class="btn btn-success btn-xs" ng-click="snapPhoto('certificate')">
+                                <button type="button" class="btn btn-success btn-xs" ng-click="snapPhoto('certificate')" data-toggle="tooltip" tooltip-placement="right" tooltip="Take a photo of baptism certificate">
                                     <i class="glyphicon glyphicon-camera"></i>
                                 </button>
                             </div>

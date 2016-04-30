@@ -60,8 +60,17 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                                 }
                             }
                         }
-
-
+                        $http.get('/api/users/progress?student_ids='+JSON.stringify(studentids)).success(function (response3) {
+                            for(var i=0, len=response.length; i < len; i++) {
+                                for (var j = 0, len2=response3.length; j < len2; j++) {
+                                    if (response[i].username === response3[j].username) {
+                                        response[i].hasBaptismCert = response3[j].hasBaptismCert;
+                                    }
+                                }
+                            }
+                        }).error(function (response) {
+                            $scope.error = response.message;
+                        });
                     }).error(function (response) {
                         $scope.error = response.message;
                     });
@@ -92,6 +101,17 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                                 }
                             }
                         }
+                        $http.get('/api/users/progress?student_ids='+JSON.stringify(studentids)).success(function (response3) {
+                            for(var i=0, len=response.length; i < len; i++) {
+                                for (var j = 0, len2=response3.length; j < len2; j++) {
+                                    if (response[i].username === response3[j].username) {
+                                        response[i].hasBaptismCert = response3[j].hasBaptismCert;
+                                    }
+                                }
+                            }
+                        }).error(function (response) {
+                            $scope.error = response.message;
+                        });
                     }).error(function (response) {
                         $scope.error = response.message;
                     });
@@ -215,6 +235,15 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             modalInstance.registration = 'update';
             editUser.birthDate = new Date(editUser.birthDate);
             userService.putUser(editUser);
+
+            modalInstance.result.then(function (modalData) {
+                $http.put('/api/users', userService.getUser()).success(function () {
+                    userService.clearUser();
+                    $scope.success = 'update student completed successfully!';
+                }).error(function (response) {
+                    $scope.error = response;
+                });
+            });
         };
 
         this.modalAdminRegisterStudent = function (size, user, reg_step) {
