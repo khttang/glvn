@@ -90,11 +90,13 @@ angular.module('users')
         ];
         $scope.selected_vnclasses = [];
         $scope.selected_glclasses = [];
-        $scope.preselected_gl = [];
-        $scope.preselected_vn = [];
 
         $scope.filterOptions = {
             filterText: ''
+        };
+
+        $scope.onChangeSelection = function() {
+            console.log('onChangeSelection');
         };
 
         // begin tabs control
@@ -171,6 +173,7 @@ angular.module('users')
                 { field: 'emails', displayName: 'Emails',
                     cellTemplate: emailTemplate, enableFiltering: false,
                     width: '20%', enableCellEdit: false, enableColumnMenu: false },
+                { field: 'hasBaptismCert', displayName: 'Baptism Cert', width: '10%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
                 { field: 'registrations', displayName: 'Registrations',
                     enableFiltering: false, cellTemplate: registrationTemplate,
                     width: '20%', enableCellEdit: false, enableColumnMenu: false },

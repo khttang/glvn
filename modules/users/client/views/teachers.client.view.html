@@ -24,8 +24,8 @@
 </style>
 
 <div ng-controller="ShowRegCtrl">
-  <dropdown-multiselect dropdown-title="Select GL classes" pre-selected="preselected_gl" model="selected_glclasses" options="glClasses"></dropdown-multiselect>
-  <dropdown-multiselect dropdown-title="Select VN classes" pre-selected="preselected_vn" model="selected_vnclasses" options="vnClasses"></dropdown-multiselect>
+  <dropdown-multiselect dropdown-title="Select GL classes" onchange="onChangeSelection()" model="selected_glclasses" options="glClasses"></dropdown-multiselect>
+  <dropdown-multiselect dropdown-title="Select VN classes" onchange="onChangeSelection()" model="selected_vnclasses" options="vnClasses"></dropdown-multiselect>
 
 
   <!--

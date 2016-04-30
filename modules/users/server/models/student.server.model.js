@@ -19,6 +19,10 @@ var StudentSchema = new Schema({
         unique: 'UserName already exists',
         required: 'Please fill in userName'
     },
+    hasBaptismCert: {
+        type: Boolean,
+        default: false
+    },
     baptismCert: {
         data: Buffer,
         contentType: String

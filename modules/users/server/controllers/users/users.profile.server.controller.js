@@ -97,6 +97,18 @@ exports.getRegistrations = function (req, res) {
     }
 };
 
+exports.getProgress = function (req, res) {
+    var _student_ids = JSON.parse(req.query.student_ids);
+    Student.find({ 'studentId': { $in: _student_ids }}, function(err, docs) {
+            if (!err) {
+                res.json(docs);
+            } else {
+                res.send(500, err);
+            }
+        }).sort({'studentId': 1, 'year':-1});
+
+};
+
 exports.find = function (req, res) {
     var _criteria = req.query.criteria;
     var _student_id = req.query.student_id;
