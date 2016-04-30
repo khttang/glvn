@@ -52,6 +52,17 @@ angular.module('users')
                                 }
                             }
                         }
+                        $http.get('/api/users/progress?student_ids='+JSON.stringify(studentids)).success(function (response3) {
+                            for(var i=0, len=response2.length; i < len; i++) {
+                                for (var j = 0, len2=response3.length; j < len2; j++) {
+                                    if (response2[i].username === response3[j].username) {
+                                        response2[i].hasBaptismCert = response3[j].hasBaptismCert;
+                                    }
+                                }
+                            }
+                        }).error(function (response) {
+                            $scope.error = response.message;
+                        });
                     }).error(function (response) {
                         $scope.error = response.message;
                     });
@@ -152,8 +163,8 @@ angular.module('users')
 
         // end tabs control
 
-        var phoneTemplate = '<div><select><option ng-repeat="p in row.entity.phones">{{p.owner}} {{p.type}}: {{p.number | phonenumber}}</option></select> </div>';
-        var emailTemplate = '<div><select><option ng-repeat="e in row.entity.emails">{{e.owner}}: {{e.address}}</option></select> </div>';
+        var phoneTemplate = '<div><select><option ng-repeat="p in row.entity.phones">{{p.number | phonenumber}}</option></select> </div>';
+        var emailTemplate = '<div><select><option ng-repeat="e in row.entity.emails">{{e.address}}</option></select> </div>';
         var registrationTemplate = '<div><select><option ng-repeat="r in row.entity.registrations">{{r.year}}: {{r.glClass}} {{r.vnClass}} {{r.status}}</option></select> </div>';
 
         $scope.gridOptions = {
@@ -169,10 +180,10 @@ angular.module('users')
                     displayName: 'Birth Date', width: '8%', enableCellEdit: false, enableColumnMenu: false},
                 { field: 'phones', displayName: 'Phones',
                     cellTemplate: phoneTemplate, enableFiltering: false,
-                    width: '22%', enableCellEdit: false, enableColumnMenu: false },
+                    width: '16%', enableCellEdit: false, enableColumnMenu: false },
                 { field: 'emails', displayName: 'Emails',
                     cellTemplate: emailTemplate, enableFiltering: false,
-                    width: '20%', enableCellEdit: false, enableColumnMenu: false },
+                    width: '18%', enableCellEdit: false, enableColumnMenu: false },
                 { field: 'hasBaptismCert', displayName: 'Baptism Cert', width: '10%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
                 { field: 'registrations', displayName: 'Registrations',
                     enableFiltering: false, cellTemplate: registrationTemplate,
@@ -221,6 +232,17 @@ angular.module('users')
                             }
                         }
                     }
+                    $http.get('/api/users/progress?student_ids='+JSON.stringify(studentids)).success(function (response3) {
+                        for(var i=0, len=response.length; i < len; i++) {
+                            for (var j = 0, len2=response3.length; j < len2; j++) {
+                                if (response[i].username === response3[j].username) {
+                                    response[i].hasBaptismCert = response3[j].hasBaptismCert;
+                                }
+                            }
+                        }
+                    }).error(function (response) {
+                        $scope.error = response.message;
+                    });
                 }).error(function (response) {
                     $scope.error = response.message;
                 });

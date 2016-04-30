@@ -110,13 +110,13 @@
                 </ul>
               </div>
               <div class="form-group col-xs-1">
-                <button type="button" class="btn btn-primary btn-xs" ng-click="userCtrl.addNewEmail('lg')">
+                <button type="button" class="btn btn-primary btn-xs" ng-click="userCtrl.addNewEmail('lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Add a new email">
                   <i class="glyphicon glyphicon-plus"></i>
                 </button>
-                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.emails.$isEmpty()" ng-click="userCtrl.removeEmail(selectedEmail)">
+                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.emails.$isEmpty()" ng-click="userCtrl.removeEmail(selectedEmail)" data-toggle="tooltip" tooltip-placement="right" tooltip="Remove selected email">
                   <i class="glyphicon glyphicon-minus-sign"></i>
                 </button>
-                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.emails.$isEmpty()" ng-click="userCtrl.editEmail(selectedEmail, 'lg')">
+                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.emails.$isEmpty()" ng-click="userCtrl.editEmail(selectedEmail, 'lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Edit selected email">
                   <i class="glyphicon glyphicon-edit"></i>
                 </button>
               </div>
@@ -131,13 +131,13 @@
                 </ul>
               </div>
               <div class="form-group col-xs-1">
-                <button type="button" class="btn btn-primary btn-xs" ng-click="userCtrl.addNewPhone('lg')">
+                <button type="button" class="btn btn-primary btn-xs" ng-click="userCtrl.addNewPhone('lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Add a new phone">
                   <i class="glyphicon glyphicon-plus"></i>
                 </button>
-                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.phones.$isEmpty()" ng-click="userCtrl.removePhone(selectedPhone)">
+                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.phones.$isEmpty()" ng-click="userCtrl.removePhone(selectedPhone)" data-toggle="tooltip" tooltip-placement="right" tooltip="Remove selected phone">
                   <i class="glyphicon glyphicon-minus-sign"></i>
                 </button>
-                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.phones.$isEmpty()" ng-click="userCtrl.editPhone(selectedPhone, 'lg')">
+                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.phones.$isEmpty()" ng-click="userCtrl.editPhone(selectedPhone, 'lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Edit selected phone">
                   <i class="glyphicon glyphicon-edit"></i>
                 </button>
               </div>
@@ -147,10 +147,10 @@
             <div class="form-group">
               <img ng-src="{{user.picture}}" id="photo-id" width="260px" height="240px" placeholder="Student Photo"/>
             </div>
-            <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.selectPhoto('student')">
+            <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.selectPhoto('student')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Select a student picture from file">
               <i class="glyphicon glyphicon-open-file"></i>
             </button>
-            <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.snapPhoto('student')">
+            <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.snapPhoto('student')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Take a picture of student">
               <i class="glyphicon glyphicon-camera"></i>
             </button>
           </div>
@@ -219,13 +219,13 @@
             <input type="checkbox" ng-model="user.hasBaptismCert" onclick="return false"/>
           </div>
           <div class="form-group col-xs-2">
-            <button type="button" class="btn btn-success btn-xs" ng-disabled="!user.hasBaptismCert" ng-click="userCtrl.viewPhoto('certificate')">
+            <button type="button" class="btn btn-success btn-xs" ng-disabled="!user.hasBaptismCert" ng-click="userCtrl.viewPhoto('certificate')" data-toggle="tooltip" tooltip-placement="right" tooltip="View baptism certificate">
               <i class="glyphicon glyphicon-eye-open"></i>
             </button>
-            <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.selectPhoto('certificate')">
+            <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.selectPhoto('certificate')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Select a photo of baptism certificate from file">
               <i class="glyphicon glyphicon-open-file"></i>
             </button>
-            <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.snapPhoto('certificate')">
+            <button type="button" class="btn btn-success btn-xs" ng-click="userCtrl.snapPhoto('certificate')" data-toggle="tooltip" tooltip-placement="right" tooltip="Take a photo of baptism certificate">
               <i class="glyphicon glyphicon-camera"></i>
             </button>
           </div>

@@ -99,14 +99,13 @@ exports.getRegistrations = function (req, res) {
 
 exports.getProgress = function (req, res) {
     var _student_ids = JSON.parse(req.query.student_ids);
-    Student.find({ 'studentId': { $in: _student_ids }}, function(err, docs) {
-            if (!err) {
-                res.json(docs);
-            } else {
-                res.send(500, err);
-            }
-        }).sort({'studentId': 1, 'year':-1});
-
+    Student.find({ 'username': { $in: _student_ids }}, function(err, docs) {
+        if (!err) {
+            res.json(docs);
+        } else {
+            res.send(500, err);
+        }
+    });
 };
 
 exports.find = function (req, res) {
