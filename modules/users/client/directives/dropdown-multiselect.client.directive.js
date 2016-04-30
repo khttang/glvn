@@ -7,8 +7,7 @@ angular.module('users')
         scope: {
             model: '=',
             options: '=',
-            //select: '&onSelect',
-            pre_selected: '=preSelected',
+            changeSelection: '&onchange',
             dropdownTitle: '@'
         },
         template: '<div class=\'btn-group\' data-ng-class=\'{open: open}\'>' +
@@ -28,13 +27,6 @@ angular.module('users')
 
             function init() {
                 console.log('init function');
-                for (var i = 0; i < $scope.pre_selected.length; i++) {
-                    $scope.model.push($scope.pre_selected[i].id);
-                    $scope.selectedItems[$scope.pre_selected[i].id] = true;
-                }
-                if ($scope.pre_selected.length === $scope.options.length) {
-                    $scope.checkAll = true;
-                }
             }
 
             $scope.openDropDown = function () {
@@ -59,12 +51,14 @@ angular.module('users')
                     $scope.selectedItems[id] = true;
                 });
                 console.log($scope.model);
+                changeSelection();
             }
 
             function deselectAll() {
                 $scope.model = [];
                 $scope.selectedItems = {};
                 console.log($scope.model);
+                changeSelection();
             }
 
             $scope.setSelectedItem = function (id) {
@@ -79,6 +73,7 @@ angular.module('users')
                     $scope.checkAll = false;
                 }
                 console.log(filteredArray);
+                changeSelection();
                 return false;
             };
         }

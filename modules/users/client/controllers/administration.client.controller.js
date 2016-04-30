@@ -60,6 +60,8 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                                 }
                             }
                         }
+
+
                     }).error(function (response) {
                         $scope.error = response.message;
                     });
