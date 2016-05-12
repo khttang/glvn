@@ -6,6 +6,8 @@
 var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
+    nodemailer = require('nodemailer'),
+    smtpTransport = require('nodemailer-smtp-transport'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     dateFormat = require('dateformat'),
     mongoose = require('mongoose'),
@@ -13,6 +15,18 @@ var _ = require('lodash'),
     Parents = mongoose.model('Parents'),
     Student = mongoose.model('Student'),
     Registration = mongoose.model('Registration');
+
+var smtpOptions = {
+    host: "smtp.gmail.com", // hostname
+    secureConnection: true, // use SSL
+    port: 465, // port for secure SMTP
+    auth: {
+        user: 'khttang@gmail.com',
+        pass: '~Khtt0911'
+    }
+};
+var mailTransporter = nodemailer.createTransport(smtpTransport(smtpOptions));
+
 
 function isPhoneNumber(inputtxt) {
     return /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(inputtxt);
@@ -38,6 +52,28 @@ function getCurrentRegStatus(inpStudents) {
     }
     return outStudents;
 }
+
+exports.postGmail = function (req, res) {
+
+    var data = req.body;
+    var mailOptions = {
+        to: data.contactEmail,
+        from: 'khttang@gmail.com',
+        subject: 'Welcome '+data.contactName,
+        text: data.contactMsg // body
+        //html: html
+    };
+
+    mailTransporter.sendMail(mailOptions, function(error, response) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("Message sent: " + response.content);
+        }
+
+        mailTransporter.close(); // shut down the connection pool, no more messages.  Comment this line out to continue sending emails.
+    });
+};
 
 exports.getRegistrations = function (req, res) {
     var _status = req.query.status;
@@ -205,7 +241,11 @@ exports.addRegistration = function (req, res) {
             glClass: _registration.glClass,
             vnClass: _registration.vnClass,
             schoolGrade: _registration.schoolGrade,
-            receivedBy: _registration.receivedBy
+            receivedBy: _registration.receivedBy,
+            regTeacherExempt: _registration.regTeacherExempt,
+            regFee: _registration.regFee,
+            regReceipt: _registration.regReceipt,
+            regConfirmEmail: _registration.regConfirmEmail
         });
         registration.save(function (err) {
             if (err) {
@@ -278,6 +318,36 @@ exports.register = function (req, res, next) {
                     var student = new Student({
                         username: _username
                     });
+
+                    // save image to file
+                    if (inputUser.picture !== undefined) {
+                        if (inputUser.picture.startsWith('data:image')) {
+                            var imageBuffer = decodeBase64Image(inputUser.picture);
+                            student.photo = 'photo-'+_username+'.png';
+                            fs.writeFile('./uploads/'+student.photo, imageBuffer.data, function(err){
+                                if (err) {
+                                    return res.status(500).send(err.message);
+                                }
+                            });
+
+                        } else {
+
+                        }
+                    }
+                    if (inputUser.baptismCert !== undefined) {
+                        if (inputUser.baptismCert.startsWith('data:image')) {
+                            var imageBuffer = decodeBase64Image(inputUser.baptismCert);
+                            student.baptismCert = 'bapcert-'+_username+'.png'
+                            fs.writeFile('./uploads/'+student.baptismCert, imageBuffer.data, function(err){
+                                if (err) {
+                                    return res.status(500).send(err.message);
+                                }
+                            });
+                        } else {
+
+                        }
+                    }
+
                     student.save(function (err) {
                         if (err) {
                             return next(err);
@@ -389,6 +459,34 @@ function buildUser(inputUser, userType, res, next) {
                     var student = new Student({
                         username: _username
                     });
+                    if (inputUser.picture !== undefined) {
+                        if (inputUser.picture.startsWith('data:image')) {
+                            var imageBuffer = decodeBase64Image(inputUser.picture);
+                            student.photo = 'photo-'+_username+'.png';
+                            fs.writeFile('./uploads/'+student.photo, imageBuffer.data, function(err){
+                                if (err) {
+                                    return res.status(500).send(err.message);
+                                }
+                            });
+
+                        } else {
+
+                        }
+                    }
+                    if (inputUser.baptismCert !== undefined) {
+                        if (inputUser.baptismCert.startsWith('data:image')) {
+                            var imageBuffer = decodeBase64Image(inputUser.baptismCert);
+                            student.baptismCert = 'bapcert-'+_username+'.png'
+                            fs.writeFile('./uploads/'+student.baptismCert, imageBuffer.data, function(err){
+                                if (err) {
+                                    return res.status(500).send(err.message);
+                                }
+                            });
+                        } else {
+
+                        }
+                    }
+
                     student.save(function (err) {
                         if (err) {
                             return next(err);
@@ -403,6 +501,20 @@ function buildUser(inputUser, userType, res, next) {
     } else {
         res.status(400).send('Registration is not provided');
     }
+}
+
+function decodeBase64Image(dataString) {
+    var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
+        response = {};
+
+    if (matches.length !== 3) {
+        return new Error('Invalid input string');
+    }
+
+    response.type = matches[1];
+    response.data = new Buffer(matches[2], 'base64');
+
+    return response;
 }
 
 exports.create = function (req, res, next) {
@@ -455,6 +567,36 @@ exports.create = function (req, res, next) {
                     var student = new Student({
                         username: _username
                     });
+
+                    // save image to file
+                    if (inputUser.picture !== undefined) {
+                        if (inputUser.picture.startsWith('data:image')) {
+                            var imageBuffer = decodeBase64Image(inputUser.picture);
+                            student.photo = 'photo-'+_username+'.png';
+                            fs.writeFile('./uploads/'+student.photo, imageBuffer.data, function(err){
+                                if (err) {
+                                    return res.status(500).send(err.message);
+                                }
+                            });
+
+                        } else {
+
+                        }
+                    }
+                    if (inputUser.baptismCert !== undefined) {
+                        if (inputUser.baptismCert.startsWith('data:image')) {
+                            var imageBuffer = decodeBase64Image(inputUser.baptismCert);
+                            student.baptismCert = 'bapcert-'+_username+'.png'
+                            fs.writeFile('./uploads/'+student.baptismCert, imageBuffer.data, function(err){
+                                if (err) {
+                                    return res.status(500).send(err.message);
+                                }
+                            });
+                        } else {
+
+                        }
+                    }
+
                     student.save(function (err) {
                         if (err) {
                             return next(err);

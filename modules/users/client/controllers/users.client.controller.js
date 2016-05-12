@@ -161,7 +161,11 @@ angular.module('users').controller('UsersCreateController', ['$scope', '$http', 
             });
             modalInstance.modalTitle = 'Take ' + photoType + ' photo';
             modalInstance.result.then(function (modalData) {
-                $scope.user.picture = modalData.photo;
+                if (photoType === 'student') {
+                    $scope.user.picture = modalData.photo;
+                } else if (photoType === 'certificate') {
+                    $scope.user.baptismCert = modalData.photo;
+                }
             });
         };
 

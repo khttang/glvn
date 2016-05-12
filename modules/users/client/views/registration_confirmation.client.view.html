@@ -1,0 +1,85 @@
+<style>
+    .boxed {
+        border: 5px solid darkblue ;
+        border-radius: 20px ;
+        moz-border-radius: 10px ;
+        webkit-border-radius: 10px ;
+    }
+</style>
+
+<section>
+    <div class="modal-header">
+        <h3 class="modal-title">{{modalTitle}}</h3>
+    </div>
+    <div class="modal-body">
+        <form name="regConfirmation" novalidate>
+            <div class="boxed">
+                <div class="row">
+                    <div class="form-group col-xs-3"><img src="modules/core/client/img/brand/logo3.png"></div>
+                    <div class="form-group col-xs-9">
+                        <div class="row">
+                            <h3>Trường GL & VN Thánh Giuse Nguyễn Duy Khang</h3>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xs-12">
+                                <p>Phone: {{modalData.schoolPhone}}</p>
+                                <p>Email: {{modalData.schoolEmail}}</p>
+                                <p>Website: {{modalData.schoolWebsite}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-12" align="center"><h2>Registration Receipt</h2></div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 col-xs-push-1"><label>Date:</label></div>
+                    <div class="form-group col-xs-6">{{user.current_reg.regDate}}</div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 col-xs-push-1"><label>Student ID:</label></div>
+                    <div class="form-group col-xs-6">{{user.username}}</div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 col-xs-push-1"><label>Student Name:</label></div>
+                    <div class="form-group col-xs-3">{{user.firstName}} {{user.lastName}}</div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 col-xs-push-1"><label>Registered Classes:</label></div>
+                    <div class="form-group col-xs-6">{{user.current_reg.glClass}}, {{user.current_reg.vnClass}}</div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 col-xs-push-1"><label>Registration Fee:</label></div>
+                    <div class="form-group col-xs-6">{{user.current_reg.regFee}}</div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 col-xs-push-1"><label>Approver:</label></div>
+                    <div class="form-group col-xs-6">{{user.current_reg.receivedBy}}</div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 col-xs-push-1"><label>Recept #:</label></div>
+                    <div class="form-group col-xs-6">{{user.current_reg.regReceipt}}</div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 col-xs-push-1"><label>Send receipt &nbsp;&nbsp;<input type="checkbox" ng-model="sendReceipt" ng-change="sendEmailToggle()"/></label></div>
+                    <div class="form-group col-xs-8" ng-if="sendReceipt">
+                        <label>To Email:</label>
+                        <select ng-model="user.current_reg.regConfirmEmail">
+                            <option
+                                    ng-repeat="email in user.emails"
+                                    value="{{email.address}}"
+                            >
+                                {{email.owner}} {{email.address}} {{email.status}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success btn-lg" ng-disabled="addEmail.$invalid" ng-click="ok()">Accept</button>
+        <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
+    </div>
+</section>

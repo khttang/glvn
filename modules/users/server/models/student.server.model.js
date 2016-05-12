@@ -19,27 +19,36 @@ var StudentSchema = new Schema({
         unique: 'UserName already exists',
         required: 'Please fill in userName'
     },
+    photo: {
+        type: String
+    },
     hasBaptismCert: {
         type: Boolean,
         default: false
     },
     baptismCert: {
-        data: Buffer,
-        contentType: String
+        type: String
+    },
+    baptismPlace: {
+        type: String
     },
     communionDate: {
         type: Date
     },
     communionCert: {
-        data: Buffer,
-        contentType: String
+        type: String
+    },
+    communionPlace: {
+        type: String
     },
     confirmedDate: {
         type: Date
     },
     confirmationCert: {
-        data: Buffer,
-        contentType: String
+        type: String
+    },
+    confirmationPlace: {
+        type: String
     },
     youthMinistry: [
         {
