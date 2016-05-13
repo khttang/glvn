@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('users').controller('AdministrationController', ['$scope', '$state', '$http', '$location', '$window', 'Authentication', '$uibModal', 'userService', '$log',
-    function ($scope, $state, $http, $location, $window, Authentication, $uibModal, userService, $log) {
+angular.module('users').controller('AdministrationController', ['$scope', '$state', '$http', '$location', '$window', 'Authentication', 'postEmailForm', '$uibModal', 'userService', '$log',
+    function ($scope, $state, $http, $location, $window, Authentication, postEmailForm, $uibModal, userService, $log) {
         $scope.authentication = Authentication;
 
         $scope.animationsEnabled = true;
@@ -271,16 +271,47 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 if (reg_step === 'intake') {
                     user.current_reg.receivedBy = $scope.authentication.user.username;
                     user.current_reg.studentId = user.username;
+
+                    $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
+                        $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
+                    }).error(function (response) {
+                        $scope.error = response;
+                    });
+
                 } else if (reg_step === 'approve') {
                     user.current_reg.reviewedBy = $scope.authentication.user.username;
                     user.current_reg.status = 'APPROVED';
-                }
 
-                $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
-                    $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
-                }).error(function (response) {
-                    $scope.error = response;
-                });
+                    var modalInstance2 = $uibModal.open({
+                        animation: $scope.animationsEnabled,
+                        templateUrl: 'modules/users/client/views/registration_confirmation.client.view.html',
+                        controller: 'regConfirm.modal as vm',
+                        size: size,
+                        resolve: {
+                            user: function () {
+                                return user;
+                            }
+                        }
+                    });
+
+                    modalInstance2.result.then(function (modalData) {
+
+                        $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
+                            $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
+                        }).error(function (response) {
+                            $scope.error = response;
+                        });
+
+                        /*
+                        var data = ({
+                            contactName: 'Khiem Tang',
+                            contactEmail: 'khiem_tang@intuit.com',
+                            contactMsg: 'This is a test'
+                        });
+                        postEmailForm.postEmail(data);
+                        */
+                    });
+                }
             });
         };
     }
@@ -320,8 +351,19 @@ angular.module('users').controller('updstudent.modal', ['$scope', '$uibModalInst
 
 }]);
 
-angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$uibModalInstance', function(user, registrations, $scope, $uibModalInstance) {
+angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $uibModalInstance, $uibModal) {
 
+    var lateDate = new Date('2016-05-21');
+    var curDate = new Date();
+    $scope.basefee = (curDate < lateDate) ? 80:130;
+    if (user.current_reg !== undefined) {
+        if (user.current_reg.glClass === 'pre-con' || user.current_reg.glClass === 'confirmation') {
+            $scope.extrafees = 20;
+        } else {
+            $scope.extrafees = 0;
+        }
+        user.current_reg.regFee = $scope.basefee + $scope.extrafees;
+    }
     $scope.modalTitle = $uibModalInstance.modalTitle;
     $scope.user = user;
     $scope.registrations = registrations;
@@ -334,4 +376,73 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
         $uibModalInstance.dismiss('cancel');
     };
 
+    $scope.glClassChange = function() {
+        if (user.current_reg.glClass === 'pre-con' || user.current_reg.glClass === 'confirmation') {
+            $scope.extrafees = 20;
+        } else {
+            $scope.extrafees = 0;
+        }
+        user.current_reg.regFee = $scope.basefee + $scope.extrafees;
+    }
+
+    $scope.teacherExemptToggle = function() {
+        if (user.current_reg.regTeacherExempt) {
+            $scope.basefee = 0;
+        } else {
+            var curDate = new Date();
+            $scope.basefee = (curDate < lateDate) ? 80:130;
+        }
+        user.current_reg.regFee = $scope.basefee + $scope.extrafees;
+    }
+
+    $scope.snapPhoto = function (photoType) {
+        $scope.modalData = {};
+
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'modules/users/client/views/authentication/snapPhoto.client.view.html',
+            controller: 'newmodal as vm',
+            size: 'lg',
+            resolve: {
+                modalData: function () {
+                    return {
+                        photoType: photoType,
+                        photo: ''
+                    };
+                }
+            }
+        });
+        modalInstance.modalTitle = 'Take ' + photoType + ' photo';
+        modalInstance.result.then(function (modalData) {
+            if (photoType === 'student') {
+                $scope.user.picture = modalData.photo;
+            } else if (photoType === 'certificate') {
+                $scope.user.current_reg.baptismCert = modalData.photo;
+            }
+        });
+    };
+}]);
+
+angular.module('users').controller('regConfirm.modal', ['user', 'Authentication', '$scope', '$uibModalInstance', function(user, Authentication, $scope, $uibModalInstance) {
+    $scope.modalData = {};
+    $scope.modalData.schoolPhone = '(858) 271-0207 ext 1260';
+    $scope.modalData.schoolEmail = 'nguyenduykhang.glvn@gmail.com';
+    $scope.modalData.schoolWebsite = 'https://nguyenduykhang.ddns.net:8443/';
+
+    user.current_reg.regDate = new Date();
+    user.current_reg.receivedBy = Authentication.user.username;
+    $scope.user = user;
+    $scope.ok = function () {
+        $uibModalInstance.close($scope.user);
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+    $scope.sendEmailToggle = function() {
+        if ($scope.sendReceipt === false) {
+            user.current_reg.regConfirmEmail = "";
+        }
+    }
 }]);

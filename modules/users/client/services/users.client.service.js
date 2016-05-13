@@ -9,7 +9,14 @@ angular.module('users').factory('Users', ['$resource',
       }
     });
   }
-]);
+]).factory('postEmailForm',['$http',function($http){
+  return {
+    postEmail: function(emailData,callback){
+      $http.post('/api/emails', emailData).success(callback);
+    }
+  };
+}]);
+
 
 //TODO this should be Users service
 angular.module('users.admin').factory('ADMIN', ['$resource',

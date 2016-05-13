@@ -9,7 +9,7 @@ var config = require('../config'),
   bodyParser = require('body-parser'),
   session = require('express-session'),
   MongoStore = require('connect-mongo')(session),
-  multer = require('multer'),
+  //multer = require('multer'),
   favicon = require('serve-favicon'),
   compress = require('compression'),
   methodOverride = require('method-override'),
@@ -37,6 +37,10 @@ module.exports.initLocalVariables = function (app) {
   app.locals.livereload = config.livereload;
   app.locals.logo = config.logo;
   app.locals.favicon = config.favicon;
+
+  // override the limits to allow image file upload
+  app.use(bodyParser.json({limit: "50mb"}));
+  app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 
   // Passing the request url to environment locals
   app.use(function (req, res, next) {
@@ -93,7 +97,7 @@ module.exports.initMiddleware = function (app) {
   // $$$$KT app.use(multer({dest: './uploads/', inMemory: true}));
   //app.use(multer({dest: './uploads/'}));
 
-  var upload = multer({ dest: './uploads' });
+  //var upload = multer({ dest: './uploads' });
   //app.use(upload);
 };
 

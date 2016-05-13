@@ -60,7 +60,20 @@ var RegistrationSchema = new Schema({
         required: 'Please fill in status',
         validate: [validateRegistrationStatus, 'Registration status must be in [RECEIVED, PROCESSING, INCOMPLETE, APPROVED]']
     },
+    regTeacherExempt: {
+        type: Boolean,
+        default: false
+    },
+    regFee: {
+        type: String
+    },
+    regReceipt: {
+        type: String
+    },
     comments: {
+        type: String
+    },
+    regConfirmEmail: {
         type: String
     },
     receivedBy: {

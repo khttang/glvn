@@ -36,7 +36,7 @@
                                 </div>
                             </div>
                             <div class="form-group col-xs-4">
-                                <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass" required>
+                                <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass" ng-change="glClassChange()" required>
                                     <option value="">-- GL --</option>
                                     <option value="gl-01">GL-01</option>
                                     <option value="gl-02">GL-02</option>
@@ -89,6 +89,34 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="form-group col-xs-4">
+                                <input type="text" id="issuedDate" name="issuedDate" class="form-control" ng-model="user.baptismDate" placeholder="Baptism Date" required>
+                            </div>
+                            <div class="form-group col-xs-8">
+                                <input type="text" id="parish" name="parish" class="form-control" ng-model="user.baptismParish" placeholder="Parish" required>
+                            </div>
+                        </div>
+                        <label ng-if="ok_text==='Complete Registration'">Fees:</label>
+                        <div class="row" ng-if="ok_text==='Complete Registration'">
+                            <div class="form-group col-xs-6">
+                                <label>Teacher's Exempt  </label>
+                                <input type="checkbox" ng-model="user.current_reg.regTeacherExempt" ng-change="teacherExemptToggle()"/>
+                            </div>
+                            <div class="form-group col-xs-6">
+                                <label>Toal due: </label>
+                                <input type="text" id="regFee" name="regFee" class="form-control" ng-model="user.current_reg.regFee" ng-readonly="true" placeholder="Registration Fee" required>
+                            </div>
+                        </div>
+                        <div class="row" ng-if="ok_text==='Complete Registration'">
+                            <div class="form-group col-xs-6"></div>
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="regReceipt" name="regReceipt" class="form-control" ng-model="user.current_reg.regReceipt" placeholder="Receipt Number" required>
+                                <div class="help-block" ng-messages="registerUserForm.regReceipt.$error" ng-if="registerUserForm.regReceipt.$touched">
+                                    <p ng-message="required">Registration Receipt is required.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group col-xs-5">
                         <label>Previous Registrations:</label>
@@ -99,6 +127,17 @@
                 </div>
             </fieldset>
         </form>
+        <div ng-if="ok_text==='Complete Registration'">
+            <p style="text-decoration: underline"><strong>Please pay special attention to the following:</strong></p>
+            <ul>
+                <li>Student profile is up to date, parents' emails, phones are accurate</li>
+                <li>Student registered in classes properly</li>
+                <li>Correct fees are collected - general fee: $80/student before 5/22, $130/student after 5/22</li>
+                <li>Teaching parent exemption - no general fee</li>
+                <li>Extra $20 fee for Pre-con and Confirmation students - additional activities</li>
+                <li>All forms are signed properly</li>
+            </ul>
+        </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-success btn-lg" ng-disabled="formValid" ng-click="ok()">{{ok_text}}</button>
