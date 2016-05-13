@@ -29,6 +29,9 @@ var StudentSchema = new Schema({
     baptismCert: {
         type: String
     },
+    baptismDate: {
+        type: String
+    },
     baptismPlace: {
         type: String
     },

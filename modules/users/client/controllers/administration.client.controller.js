@@ -271,6 +271,8 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 if (reg_step === 'intake') {
                     user.current_reg.receivedBy = $scope.authentication.user.username;
                     user.current_reg.studentId = user.username;
+                    user.current_reg.baptismDate = user.baptismDate;
+                    user.current_reg.baptismPlace = user.baptismParish;
 
                     $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
                         $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
