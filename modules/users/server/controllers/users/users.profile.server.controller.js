@@ -21,8 +21,8 @@ var smtpOptions = {
     secureConnection: true, // use SSL
     port: 465, // port for secure SMTP
     auth: {
-        user: 'khttang@gmail.com',
-        pass: '~Khtt0911'
+        user: 'goodshepherdglvn@gmail.com',
+        pass: 'gl@ppApr2016VNM@il'
     }
 };
 var mailTransporter = nodemailer.createTransport(smtpTransport(smtpOptions));
@@ -58,7 +58,7 @@ exports.postGmail = function (req, res) {
     var data = req.body;
     var mailOptions = {
         to: data.contactEmail,
-        from: 'khttang@gmail.com',
+        from: 'goodshepherdglvn@gmail.com',
         subject: 'Welcome '+data.contactName,
         text: data.contactMsg // body
         //html: html
@@ -235,6 +235,27 @@ exports.addRegistration = function (req, res) {
     var regYear = new Date().getFullYear();
 
     if (_registration._id === undefined) {
+
+        if (_registration.baptismCert !== undefined) {
+            var student = new Student({
+                username: _registration.studentId
+            });
+
+            if (_registration.baptismCert.startsWith('data:image')) {
+                var imageBuffer = decodeBase64Image(_registration.baptismCert);
+                student.baptismCert = 'bapcert-'+_registration.studentId+'.png';
+                fs.writeFile('./uploads/'+student.baptismCert, imageBuffer.data, function(err){
+                    if (err) {
+                        return res.status(500).send(err.message);
+                    }
+                });
+
+                student.save(function (err) {
+                   // should do something...
+                });
+            }
+        }
+
         var registration = new Registration({
             studentId: _registration.studentId,
             year: regYear,
@@ -329,22 +350,17 @@ exports.register = function (req, res, next) {
                                     return res.status(500).send(err.message);
                                 }
                             });
-
-                        } else {
-
                         }
                     }
                     if (inputUser.baptismCert !== undefined) {
                         if (inputUser.baptismCert.startsWith('data:image')) {
                             var imageBuffer = decodeBase64Image(inputUser.baptismCert);
-                            student.baptismCert = 'bapcert-'+_username+'.png'
+                            student.baptismCert = 'bapcert-'+_username+'.png';
                             fs.writeFile('./uploads/'+student.baptismCert, imageBuffer.data, function(err){
                                 if (err) {
                                     return res.status(500).send(err.message);
                                 }
                             });
-                        } else {
-
                         }
                     }
 
@@ -410,6 +426,7 @@ exports.createAdmin = function(req, res, next) {
     });
 };
 
+/*
 function buildUser(inputUser, userType, res, next) {
     if (inputUser) {
         var _username = inputUser.firstName.toLowerCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toLowerCase().charAt(0);
@@ -502,6 +519,7 @@ function buildUser(inputUser, userType, res, next) {
         res.status(400).send('Registration is not provided');
     }
 }
+*/
 
 function decodeBase64Image(dataString) {
     var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
@@ -631,6 +649,9 @@ exports.update = function (req, res) {
         if (err) {
             res.status(400).send(err);
         } else {
+
+            // TODO: update student photo
+
             res.json(ret_user);
         }
     });

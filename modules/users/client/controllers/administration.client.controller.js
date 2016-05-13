@@ -302,12 +302,14 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                             $scope.error = response;
                         });
 
+                        /*
                         var data = ({
                             contactName: 'Khiem Tang',
                             contactEmail: 'khiem_tang@intuit.com',
                             contactMsg: 'This is a test'
                         });
                         postEmailForm.postEmail(data);
+                        */
                     });
                 }
             });
@@ -415,13 +417,17 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
             if (photoType === 'student') {
                 $scope.user.picture = modalData.photo;
             } else if (photoType === 'certificate') {
-                $scope.user.baptismCert = modalData.photo;
+                $scope.user.current_reg.baptismCert = modalData.photo;
             }
         });
     };
 }]);
 
 angular.module('users').controller('regConfirm.modal', ['user', 'Authentication', '$scope', '$uibModalInstance', function(user, Authentication, $scope, $uibModalInstance) {
+    $scope.modalData = {};
+    $scope.modalData.schoolPhone = '(858) 271-0207 ext 1260';
+    $scope.modalData.schoolEmail = 'nguyenduykhang.glvn@gmail.com';
+    $scope.modalData.schoolWebsite = 'https://nguyenduykhang.ddns.net:8443/';
 
     user.current_reg.regDate = new Date();
     user.current_reg.receivedBy = Authentication.user.username;
