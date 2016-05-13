@@ -403,7 +403,7 @@ exports.createAdmin = function(req, res, next) {
         userType: inputUser.userType,
         firstName: inputUser.firstName,
         lastName: inputUser.lastName,
-        username: inputUser.username,
+        username: inputUser.username.toLowerCase(),
         password: inputUser.password,
         gender: inputUser.gender,
         address: inputUser.address,
