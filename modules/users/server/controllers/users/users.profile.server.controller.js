@@ -250,9 +250,15 @@ exports.addRegistration = function (req, res) {
                     }
                 });
 
+                student.baptismDate = _registration.baptismDate;
+                student.baptismPlace = _registration.baptismPlace;
+                /* Need to come back to figure this out
                 student.save(function (err) {
-                   // should do something...
+                    if (err) {
+                        res.status(400).send(err);
+                    }
                 });
+                */
             }
         }
 
