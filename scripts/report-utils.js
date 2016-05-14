@@ -12,20 +12,19 @@ mg.connect(function (db) {
     var Student = mongoose.model('Student');
     var Registration = mongoose.model('Registration');
 
-    var beginDate = new Date('2016-05-11');
-    var endDate = new Date('2016-05-15');
+    var beginDate = new Date('2016-05-13');
+    var endDate = new Date('2016-05-20');
 
     Registration.find({
-        /*
         'received' : {
             $lt: endDate,
             $gte: beginDate
-        }
-        */
+        },
         'status': 'APPROVED'
     }, function(err, docs) {
         if (!err) {
 
+            var preConAndCon = 0;
             var feeCollected = 0;
             var exempts = new Number(0);
             var mapClasses = new HashMap();
@@ -39,6 +38,10 @@ mg.connect(function (db) {
 
                 var counter;
                 if (reg.glClass !== null) {
+                    if (reg.glClass === 'pre-con' || reg.glClass === 'confirmation') {
+                        preConAndCon += 1;
+                    }
+
                     counter = mapClasses.get(reg.glClass);
                     if (counter === undefined) {
                         counter = new Number(0);
@@ -62,8 +65,10 @@ mg.connect(function (db) {
                 console.log(key + " : " + value);
             });
 
+            var activityFees = 20 * preConAndCon;
             console.log('Registrations received: '+ docs.length);
-            console.log('Fees collected: ' + feeCollected + '$');
+            console.log('Activity fees: $' + activityFees);
+            console.log('Total fees collected: $' + feeCollected);
             console.log('Teacher exempts: ' + exempts);
         }
     });
