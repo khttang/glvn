@@ -1,5 +1,29 @@
 <div ng-controller="AdministrationController as ctrl">
     <h1 class="page-title" >Registration Approval</h1>
+
+    <style>
+        .grid {
+            width: 100%;
+            height: 600px;
+        }
+        .grid-container {
+            height: 600px;
+            width: 100%;
+            position: relative;
+        }
+        .grid select {
+            width: 100%;
+            font-size: 16px;
+        }
+    </style>
+
+    <div ng-controller="ShowApprovalCtrl">
+        <div class="grid-container">
+            <div ui-grid-resize-columns ui-grid-selection ui-grid="gridOptions" class="grid"></div>
+        </div>
+    </div>
+
+    <!--
     <form name="regApprovalForm" novalidate>
         <fieldset>
             <div class="row">
@@ -46,5 +70,6 @@
             </div>
         </fieldset>
     </form>
+    -->
 
 </div>

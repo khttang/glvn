@@ -102,7 +102,7 @@ exports.getRegistrations = function (req, res) {
             } else {
                 res.send(500, err);
             }
-        });
+        }).sort({'studentId': 1, 'year':-1});
     } else {
         var _student_ids = JSON.parse(req.query.student_ids);
         if (_year === undefined) {

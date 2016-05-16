@@ -5,14 +5,161 @@
     <div class="modal-body" ng-init="init()">
         <form name="registerUserForm" novalidate>
             <fieldset>
+
+                <label>Student:</label>
                 <div class="row">
-                    <div class="form-group col-xs-7">
-                        <label>Student Name:</label>
+                    <div class="form-group col-xs-3">
+                        <input type="text" id="saintname" name="saintname" class="form-control" ng-model="user.saintName" placeholder="Saint Name">
+                        <div class="help-block" ng-messages="registerUserForm.saintName.$error" ng-if="registerUserForm.saintName.$touched">
+                            <p ng-message="required">Saint name is required.</p>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-3">
+                        <input type="text" id="lastname" name="lastname" class="form-control" ng-model="user.lastName" placeholder="Last Name" required>
+                        <div class="help-block" ng-messages="registerUserForm.lastName.$error" ng-if="registerUserForm.lastName.$touched">
+                            <p ng-message="required">Last name is required.</p>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-2">
+                        <input type="text" id="middlename" name="middlename" class="form-control" ng-model="user.middleName" placeholder="Middle Name">
+                    </div>
+                    <div class="form-group col-xs-3">
+                        <input type="text" id="firstname" name="firstname" class="form-control" ng-model="user.firstName" placeholder="First Name" required>
+                        <div class="help-block" ng-messages="registerUserForm.firstName.$error" ng-if="registerUserForm.firstName.$touched">
+                            <p ng-message="required">First name is required.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-7">
                         <div class="row">
-                            <div class="form-group col-xs-6">
-                                {{user.saintName}} {{user.firstName}} {{user.lastName}}
+                            <div class="form-group col-xs-7">
+                                <select class="form-control" id="gender" name="gender" ng-model="user.gender" required>
+                                    <option value="">-- Select Gender --</option>
+                                    <option value="MALE">MALE</option>
+                                    <option value="FEMALE">FEMALE</option>
+                                </select>
+                                <div class="help-block" ng-messages="registerUserForm.gender.$error" ng-if="registerUserForm.gender.$touched">
+                                    <p ng-message="required">Gender is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-5">
+                                <input type="date" id="birthdate" name="birthdate" class="form-control" ng-model="user.birthDate" required>
+                                <div class="help-block" ng-messages="registerUserForm.birthdate.$error" ng-if="registerUserForm.birthdate.$touched">
+                                    <p ng-message="required">Birth date is required.</p>
+                                </div>
                             </div>
                         </div>
+                        <label>Student Father:</label>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="fatherlastmame" name="fatherlastmame" class="form-control" ng-model="user.fatherLastName" placeholder="Father Last Name" required>
+                                <div class="help-block" ng-messages="registerUserForm.fatherlastmame.$error" ng-if="registerUserForm.fatherlastmame.$touched">
+                                    <p ng-message="required">Father last name is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="fatherfirstmame" name="fatherfirstmame" class="form-control" ng-model="user.fatherFirstName" placeholder="Father First Name" required>
+                                <div class="help-block" ng-messages="registerUserForm.fatherfirstmame.$error" ng-if="registerUserForm.fatherfirstmame.$touched">
+                                    <p ng-message="required">Father first name is required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <label>Student Mother:</label>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="motherlastmame" name="motherlastmame" class="form-control" ng-model="user.motherLastName" placeholder="Mother Last Name" required>
+                                <div class="help-block" ng-messages="registerUserForm.motherlastmame.$error" ng-if="registerUserForm.motherlastmame.$touched">
+                                    <p ng-message="required">Mother last name is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="motherfirstmame" name="motherfirstmame" class="form-control" ng-model="user.motherFirstName" placeholder="Mother First Name" required>
+                                <div class="help-block" ng-messages="registerUserForm.motherfirstmame.$error" ng-if="registerUserForm.motherfirstmame.$touched">
+                                    <p ng-message="required">Mother first name is required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <label>Contacts:</label>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="addressline" name="addressline" class="form-control" ng-model="user.address" placeholder="Address Line" required>
+                                <div class="help-block" ng-messages="registerUserForm.addressline.$error" ng-if="registerUserForm.addressline.$touched">
+                                    <p ng-message="required">Address is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-3">
+                                <input type="text" id="city" name="city" class="form-control" ng-model="user.city" placeholder="City" required>
+                                <div class="help-block" ng-messages="registerUserForm.city.$error" ng-if="registerUserForm.city.$touched">
+                                    <p ng-message="required">City is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-3">
+                                <input type="text" id="zipcode" name="zipcode" class="form-control" ng-model="user.zipCode" placeholder="Zip Code" required>
+                                <div class="help-block" ng-messages="registerUserForm.zipcode.$error" ng-if="registerUserForm.zipcode.$touched">
+                                    <p ng-message="required">Zip code is required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xs-9">
+                                <label for="formEmails">Emails:</label>
+                                <ul id="formEmails">
+                                    <li ng-repeat="email in user.emails" ng-class="{'selected':$index == selectedEmail}" ng-click="setClickedEmail($index)">
+                                        {{email.owner}}: {{email.address}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="form-group col-xs-1">
+                                <button type="button" class="btn btn-primary btn-xs" ng-click="addNewEmail('lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Add a new email">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.emails.$isEmpty()" ng-click="removeEmail(selectedEmail)" data-toggle="tooltip" tooltip-placement="right" tooltip="Remove selected email">
+                                    <i class="glyphicon glyphicon-minus-sign"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.emails.$isEmpty()" ng-click="editEmail(selectedEmail, 'lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Edit selected email">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xs-9">
+                                <label for="formPhones">Phones:</label>
+                                <ul id="formPhones">
+                                    <li ng-repeat="phone in user.phones" ng-class="{'selected':$index == selectedPhone}" ng-click="setClickedPhone($index)">
+                                        {{phone.owner}}: {{phone.number | phonenumber}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="form-group col-xs-1">
+                                <button type="button" class="btn btn-primary btn-xs" ng-click="addNewPhone('lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Add a new phone">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.phones.$isEmpty()" ng-click="removePhone(selectedPhone)" data-toggle="tooltip" tooltip-placement="right" tooltip="Remove selected phone">
+                                    <i class="glyphicon glyphicon-minus-sign"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="user.phones.$isEmpty()" ng-click="editPhone(selectedPhone, 'lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Edit selected phone">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-5">
+                        <div class="form-group">
+                            <img ng-src="{{user.picture}}" id="photo-id" width="260px" height="240px" placeholder="Student Photo"/>
+                        </div>
+                        <button type="button" class="btn btn-success btn-xs" ng-click="selectPhoto('student')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Select a student picture from file">
+                            <i class="glyphicon glyphicon-open-file"></i>
+                        </button>
+                        <button type="button" class="btn btn-success btn-xs" ng-click="snapPhoto('student')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Take a picture of student">
+                            <i class="glyphicon glyphicon-camera"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-xs-7">
+
                         <label>Classes:</label>
                         <div class=row">
                             <div class="form-group col-xs-4">
@@ -36,7 +183,7 @@
                                 </div>
                             </div>
                             <div class="form-group col-xs-4">
-                                <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass" ng-change="glClassChange()" required>
+                                <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass" ng-change="glClassChange()">
                                     <option value="">-- GL --</option>
                                     <option value="gl-01">GL-01</option>
                                     <option value="gl-02">GL-02</option>
@@ -55,7 +202,7 @@
                             </div>
 
                             <div class="form-group col-xs-4">
-                                <select class="form-control" id="vnClass" name="vnClass" ng-model="user.current_reg.vnClass" ng-init="user.current_reg.vnClass" required>
+                                <select class="form-control" id="vnClass" name="vnClass" ng-model="user.current_reg.vnClass" ng-init="user.current_reg.vnClass">
                                     <option value="">-- VN --</option>
                                     <option value="vn-01">VN-01</option>
                                     <option value="vn-02">VN-02</option>
@@ -109,9 +256,14 @@
                             </div>
                         </div>
                         <div class="row" ng-if="ok_text==='Complete Registration'">
-                            <div class="form-group col-xs-6"></div>
                             <div class="form-group col-xs-6">
-                                <input type="text" id="regReceipt" name="regReceipt" class="form-control" ng-model="user.current_reg.regReceipt" placeholder="Receipt Number" required>
+                                <input type="text" id="regReceivedFrom" name="regReceivedFrom" class="form-control" ng-model="user.current_reg.regReceivedFrom" placeholder="Received From" required>
+                                <div class="help-block" ng-messages="registerUserForm.regReceipt.$error" ng-if="registerUserForm.regReceipt.$touched">
+                                    <p ng-message="required">Registration Receipt is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="regReceipt" name="regReceipt" class="form-control" ng-model="user.current_reg.regReceipt" placeholder="Check Number" required>
                                 <div class="help-block" ng-messages="registerUserForm.regReceipt.$error" ng-if="registerUserForm.regReceipt.$touched">
                                     <p ng-message="required">Registration Receipt is required.</p>
                                 </div>
@@ -127,17 +279,6 @@
                 </div>
             </fieldset>
         </form>
-        <div ng-if="ok_text==='Complete Registration'">
-            <p style="text-decoration: underline"><strong>Please pay special attention to the following:</strong></p>
-            <ul>
-                <li>Student profile is up to date, parents' emails, phones are accurate</li>
-                <li>Student registered in classes properly</li>
-                <li>Correct fees are collected - general fee: $80/student before 5/22, $130/student after 5/22</li>
-                <li>Teaching parent exemption - no general fee</li>
-                <li>Extra $20 fee for Pre-con and Confirmation students - additional activities</li>
-                <li>All forms are signed properly</li>
-            </ul>
-        </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-success btn-lg" ng-disabled="formValid" ng-click="ok()">{{ok_text}}</button>

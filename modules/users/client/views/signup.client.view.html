@@ -8,7 +8,7 @@
         <label>Student:</label>
         <div class="row">
           <div class="form-group col-xs-3">
-            <input type="text" id="saintname" name="saintname" class="form-control" ng-model="user.saintName" placeholder="Saint Name" required>
+            <input type="text" id="saintname" name="saintname" class="form-control" ng-model="user.saintName" placeholder="Saint Name">
             <div class="help-block" ng-messages="createUserForm.saintName.$error" ng-if="createUserForm.saintName.$touched">
               <p ng-message="required">Saint name is required.</p>
             </div>
@@ -126,7 +126,7 @@
                 <label for="formPhones">Phones:</label>
                 <ul id="formPhones">
                   <li ng-repeat="phone in user.phones" ng-class="{'selected':$index == selectedPhone}" ng-click="setClickedPhone($index)">
-                    {{phone.owner}} {{phone.type}}: {{phone.number | phonenumber}}
+                    {{phone.owner}}: {{phone.number | phonenumber}}
                   </li>
                 </ul>
               </div>
