@@ -378,6 +378,16 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
         $uibModalInstance.dismiss('cancel');
     };
 
+    $scope.selectedEmail = null;  // initialize our variable to null
+    $scope.setClickedEmail = function(index) {  //function that sets the value of selectedRow to current index
+        $scope.selectedEmail = index;
+    };
+
+    $scope.selectedPhone = null;  // initialize our variable to null
+    $scope.setClickedPhone = function(index) {  //function that sets the value of selectedRow to current index
+        $scope.selectedPhone = index;
+    };
+
     $scope.glClassChange = function() {
         if (user.current_reg.glClass === 'pre-con' || user.current_reg.glClass === 'confirmation') {
             $scope.extrafees = 20;
@@ -423,6 +433,152 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
             }
         });
     };
+
+    $scope.addNewEmail = function(size) {
+        $scope.modalData = {};
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'modules/users/client/views/authentication/addEmail.client.view.html',
+            controller: 'newmodal as vm',
+            size: size,
+            resolve: {
+                modalData: function () {
+                    return {
+                        address: '',
+                        owner: 'MOM'
+                    };
+                }
+            }
+        });
+        modalInstance.modalTitle = 'Add new email';
+        modalInstance.result.then(function (modalData) {
+            $scope.user.emails.push(modalData);
+        });
+    };
+
+    $scope.editEmail = function (index, size) {
+        if (index !== null) {
+            $scope.modalData = {};
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'modules/users/client/views/authentication/addEmail.client.view.html',
+                controller: 'newmodal as vm',
+                size: size,
+                resolve: {
+                    modalData: function () {
+                        return $scope.user.emails[index];
+                    }
+                }
+            });
+            modalInstance.modalTitle = 'Update email';
+            modalInstance.result.then(function (modalData) {
+                if (modalData._id !== null) {
+                    for (var i = 0; i < $scope.user.emails.length; i++) {
+                        if ($scope.user.emails[i]._id === modalData._id) {
+                            $scope.user.emails[i].owner = modalData.owner;
+                            $scope.user.emails[i].address = modalData.address;
+                        }
+                    }
+                } else {
+                    $scope.user.emails.push(modalData);
+                }
+            });
+        }
+    };
+
+    $scope.removeEmail = function (index) {
+        if (index !== null) {
+            $scope.user.emails.splice(index, 1);
+        }
+    };
+
+    $scope.addNewPhone = function(size) {
+        $scope.modalData = {};
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'modules/users/client/views/authentication/addPhone.client.view.html',
+            controller: 'newmodal as vm',
+            size: size,
+            resolve: {
+                modalData: function () {
+                    return {
+                        number: '',
+                        owner: 'MOM',
+                        type: 'MOBILE'
+                    };
+                }
+            }
+        });
+        modalInstance.modalTitle = 'Add new phone';
+        modalInstance.result.then(function (modalData) {
+            $scope.user.phones.push(modalData);
+        });
+    };
+
+    $scope.removePhone = function (index) {
+        if (index !== null) {
+            $scope.user.phones.splice(index, 1);
+        }
+    };
+
+    $scope.editPhone = function (index, size) {
+        if (index !== null) {
+            $scope.modalData = {};
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'modules/users/client/views/authentication/addPhone.client.view.html',
+                controller: 'newmodal as vm',
+                size: size,
+                resolve: {
+                    modalData: function () {
+                        return $scope.user.phones[index];
+                    }
+                }
+            });
+            modalInstance.modalTitle = 'Update phone';
+            modalInstance.result.then(function (modalData) {
+                if (modalData._id !== null) {
+                    for (var i=0; i < $scope.user.phones.length; i++) {
+                        if ($scope.user.phones[i]._id === modalData._id) {
+                            $scope.user.phones[i].owner = modalData.owner;
+                            $scope.user.phones[i].type = modalData.type;
+                            $scope.user.phones[i].number = modalData.number;
+                        }
+                    }
+                } else {
+                    $scope.user.phones.push(modalData);
+                }
+            });
+        }
+    };
+
+    $scope.snapPhoto = function (photoType) {
+        $scope.modalData = {};
+
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'modules/users/client/views/authentication/snapPhoto.client.view.html',
+            controller: 'newmodal as vm',
+            size: 'lg',
+            resolve: {
+                modalData: function () {
+                    return {
+                        photoType: photoType,
+                        photo: ''
+                    };
+                }
+            }
+        });
+        modalInstance.modalTitle = 'Take ' + photoType + ' photo';
+        modalInstance.result.then(function (modalData) {
+            if (photoType === 'student') {
+                $scope.user.picture = modalData.photo;
+            } else if (photoType === 'certificate') {
+                $scope.user.baptismCert = modalData.photo;
+            }
+        });
+    };
 }]);
 
 angular.module('users').controller('regConfirm.modal', ['user', 'Authentication', '$scope', '$uibModalInstance', function(user, Authentication, $scope, $uibModalInstance) {
@@ -446,5 +602,22 @@ angular.module('users').controller('regConfirm.modal', ['user', 'Authentication'
         if ($scope.sendReceipt === false) {
             user.current_reg.regConfirmEmail = "";
         }
+    }
+
+    $scope.printElement = function (id) {
+        var elem = document.getElementById(id);
+        var domClone = elem.cloneNode(true);
+
+        var $printSection = document.getElementById("printSection");
+
+        if (!$printSection) {
+            var $printSection = document.createElement("div");
+            $printSection.id = "printSection";
+            document.body.appendChild($printSection);
+        }
+
+        $printSection.innerHTML = "";
+        $printSection.appendChild(domClone);
+        window.print();
     }
 }]);

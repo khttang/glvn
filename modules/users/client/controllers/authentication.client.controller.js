@@ -61,29 +61,5 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$stat
       // Effectively call OAuth authentication route:
       $window.location.href = url;
     };
-
-    // Testing
-    $scope.emails = [
-      { address: 'khttang@gmail.com', selected: true},
-      { address: 'khiem_tang@intuit.com', selected: false},
-      { address: 'thompson@gmail.com', selected: false}
-    ];
-
-    $scope.selectedRow = null;  // initialize our variable to null
-    $scope.setClickedRow = function(index) {  //function that sets the value of selectedRow to current index
-      $scope.selectedRow = index;
-    };
-
-    $scope.phones = [
-      { number: '(858)234-4567', selected: true},
-      { number: '(619)628-2314', selected: false},
-      { number: '(818)444-5432', selected: false},
-      { number: '(408)782-4553', selected: false}
-    ];
-
-    $scope.selectedRow2 = null;  // initialize our variable to null
-    $scope.setClickedRow2 = function(index) {  //function that sets the value of selectedRow to current index
-      $scope.selectedRow2 = index;
-    };
   }
 ]);

@@ -1,76 +1,29 @@
 <div ng-controller="AdministrationController as ctrl">
   <h1 class="page-title" >Registration Intake</h1>
-  <form name="findStudentForm" novalidate>
-    <fieldset>
-      <div class="row">
-        <div ng-show="error" class="text-center text-danger">
-          <h4><strong>ERROR: {{error}}</strong></h4>
-        </div>
-        <div ng-show="success" class="text-center text-success">
-          <h4><strong>{{success}}</strong></h4>
-        </div>
-      </div>
-      <div class="row">
-        <!-- STUDENT ID -->
-        <div class="form-group col-xs-2" ng-class="{ 'has-error' : findStudentForm.studentId.$invalid && findStudentForm.studentId.$touched }">
-          <div style="width:120px;">
-            <input type="text" name="studentId" class="form-control" ng-model="studentId" ng-minlength="10" ng-maxlength="12" placeholder="Student ID">
-          </div>
-          <div class="help-block" ng-messages="findStudentForm.studentId.$error" ng-if="findStudentForm.studentId.$touched">
-            <p ng-message="minlength">Student ID is too short</p>
-            <p ng-message="maxlength">Student ID is too long</p>
-          </div>
-        </div>
 
-        <!-- EMAIL -->
-        <div class="form-group col-xs-2" ng-class="{ 'has-error' : findStudentForm.criteria.$invalid && findStudentForm.criteria.$touched }">
-          <div style="width:300px;">
-            <input type="text" name="criteria" class="form-control" ng-model="criteria" ng-minlength="5" placeholder="Phone or Email or Full Name or Address">
-          </div>
-          <div class="help-block" ng-messages="findStudentForm.criteria.$error" ng-if="findStudentForm.criteria.$touched">
-            <p ng-message="minlength">Email is too short</p>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-xs-2 col-xs-push-2">
-          <button class="btn btn-primary" ng-disabled="findStudentForm.$invalid" ng-click="ctrl.findStudentForRegistration(studentId,criteria)">Find</button>
-        </div>
-        <div class="form-group col-xs-2 col-xs-push-4">
-          <button class="btn btn-primary" ng-click="ctrl.modalCreateNewStudent('lg', 'register')">Register New Student</button>
-        </div>
-      </div>
+  <style>
+    .grid {
+      width: 100%;
+      height: 600px;
+    }
+    .grid-container {
+      height: 600px;
+      width: 100%;
+      position: relative;
+    }
+    .grid select {
+      width: 100%;
+      font-size: 16px;
+    }
+  </style>
 
-      <div class="row">
-        <div class="col-sm-6" ng-repeat="user in students">
-          <div class="row">
-            <div class="col-xs-10">
-              <h1>
-                {{user.firstName}} {{user.lastName}}
-              </h1>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-10">
-              <p>Student ID: {{user.username}}</p>
-              <p>Student Father: {{user.fatherFirstName}} {{user.fatherLastName}}</p>
-              <p>Student Mother: {{user.motherFirstName}} {{user.motherLastName}}</p>
-              <p>{{user.address}}, {{user.city}}, {{user.zipCode}}</p>
-              <p></p>
-            </div>
-            <div class="col-xs-2 col-xs-pull-2">
-              <button type="button" class="btn btn-success btn-sm" ng-click="ctrl.modalAdminUpdateStudent('lg', user)" data-toggle="tooltip" tooltip-placement="top" tooltip="Update student profile">
-                <i class="glyphicon glyphicon-edit"></i>
-              </button>
-              <button type="button" ng-disabled="ctrl.isRegistered(user.username)" class="btn btn-success btn-sm" ng-click="ctrl.modalAdminRegisterStudent('lg', user,'intake')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Assign student to classes">
-                <i class="glyphicon glyphicon-thumbs-up"></i>
-              </button>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </fieldset>
-  </form>
+  <div>
+    <button class="btn btn-primary" ng-click="ctrl.modalCreateNewStudent('lg', 'register')">Register New Student</button>
+  </div>
+  <div ng-controller="ShowIntakeCtrl">
+    <div class="grid-container">
+      <div ui-grid-resize-columns ui-grid-selection ui-grid="gridOptions" class="grid"></div>
+    </div>
+  </div>
 
 </div>
