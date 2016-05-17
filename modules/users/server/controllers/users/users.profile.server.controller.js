@@ -149,6 +149,7 @@ exports.find = function (req, res) {
     var _student_id = req.query.student_id;
     var _class = req.query.class;
     var _student_ids = req.query.student_ids;
+    var _user_type = req.query.user_type;
     var temp;
 
     if (_criteria) {
@@ -219,6 +220,14 @@ exports.find = function (req, res) {
             }
         });
 
+    } else if (_user_type) {
+        User.find({'userType': _user_type}, function(err, docs) {
+            if (!err) {
+                res.json(docs);
+            } else {
+                res.send(500, err);
+            }
+        });
     } else {
         User.find(function(err, docs) {
             if (!err) {

@@ -368,6 +368,9 @@ angular.module('users')
 
                     $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
                         $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
+
+                        $scope.load();
+
                     }).error(function (response) {
                         $scope.error = response;
                     });
@@ -381,9 +384,10 @@ angular.module('users')
             var registrationTemplate = '<div><select><option ng-repeat="r in row.entity.registrations">{{r.year}}: {{r.glClass}} {{r.vnClass}} - {{r.status}}</option></select> </div>';
 
             $scope.gridOptions = {
+                data: 'GridData',
                 columnDefs: [
                     { field: 'register', displayName: 'Register', width: '5%', enableFiltering: false, enableCellEdit: false, enableColumnMenu: false,
-                        cellTemplate: '<button type="button" class="btn-small" ng-click="grid.appScope.choosePerson(row.entity)" ><i class="glyphicon glyphicon-thumbs-up"></i></button>'},
+                        cellTemplate: '<button type="button" class="btn-small" ng-click="grid.appScope.choosePerson(row.entity)"><i class="glyphicon glyphicon-thumbs-up"></i></button>'},
                     { field: 'firstName', displayName: 'First Name', width: '10%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
                     { field: 'middleName',displayName: 'Middle', width: '9%', enableFiltering: false, enableCellEdit: false, enableColumnMenu: false},
                     { field: 'lastName', displayName: 'Last Name', width: '8%', enableColumnMenu: false},
@@ -415,8 +419,9 @@ angular.module('users')
             };
 
             $scope.load = function () {
-                $http.get('/api/users').success(function (response) {
-                    $scope.gridOptions.data = response;
+                $http.get('/api/users?user_type=STUDENT').success(function (response) {
+                    //$scope.gridOptions.data = response;
+                    $scope.GridData = response;
 
                     var studentids = [];
                     for(var i=0, len=response.length; i < len; i++){
@@ -579,6 +584,7 @@ angular.module('users')
 
                         $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
                             $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
+                            $scope.load();
                         }).error(function (response) {
                             $scope.error = response;
                         });
@@ -602,9 +608,10 @@ angular.module('users')
             var registrationTemplate = '<div><select><option ng-repeat="r in row.entity.registrations">{{r.year}}: {{r.glClass}} {{r.vnClass}} - {{r.status}}</option></select> </div>';
 
             $scope.gridOptions = {
+                data: 'GridData',
                 columnDefs: [
                     { field: 'register', displayName: 'Register', width: '5%', enableFiltering: false, enableCellEdit: false, enableColumnMenu: false,
-                        cellTemplate: '<button type="button" class="btn-small" ng-click="grid.appScope.choosePerson(row.entity)" ><i class="glyphicon glyphicon-thumbs-up"></i></button>'},
+                        cellTemplate: '<button type="button" class="btn-small" ng-click="grid.appScope.choosePerson(row.entity)"><i class="glyphicon glyphicon-thumbs-up"></i></button>'},
                     { field: 'firstName', displayName: 'First Name', width: '10%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
                     { field: 'middleName',displayName: 'Middle', width: '9%', enableFiltering: false, enableCellEdit: false, enableColumnMenu: false},
                     { field: 'lastName', displayName: 'Last Name', width: '8%', enableColumnMenu: false},
@@ -646,7 +653,7 @@ angular.module('users')
                     }
 
                     $http.get('/api/users?student_ids='+JSON.stringify(studentids)).success(function (response2) {
-                        $scope.gridOptions.data = response2;
+                        $scope.GridData = response2;
 
                         for(var i=0, len=response2.length; i < len; i++) {
                             response2[i].registrations = [];
@@ -677,57 +684,6 @@ angular.module('users')
                 }).error(function (response) {
                     $scope.error = response.message;
                 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                /*
-                 $http.get('/api/users').success(function (response) {
-                 $scope.gridOptions.data = response;
-
-                 var studentids = [];
-                 for(var i=0, len=response.length; i < len; i++){
-                 studentids.push(response[i].username);
-                 }
-                 $http.get('/api/users/registrations?student_ids='+JSON.stringify(studentids)).success(function (response2) {
-                 $scope.registrations = response2;
-                 for(var i=0, len=response.length; i < len; i++) {
-                 response[i].registrations = [];
-                 for (var j = 0, len2=response2.length; j < len2; j++) {
-                 if (response[i].username === response2[j].studentId) {
-                 response[i].registrations.push(response2[j]);
-                 }
-                 }
-                 }
-                 $http.get('/api/users/progress?student_ids='+JSON.stringify(studentids)).success(function (response3) {
-                 for(var i=0, len=response.length; i < len; i++) {
-                 for (var j = 0, len2=response3.length; j < len2; j++) {
-                 if (response[i].username === response3[j].username) {
-                 response[i].hasBaptismCert = response3[j].hasBaptismCert;
-                 }
-                 }
-                 }
-                 }).error(function (response) {
-                 $scope.error = response.message;
-                 });
-                 }).error(function (response) {
-                 $scope.error = response.message;
-                 });
-                 }).error(function (response) {
-                 $scope.error = response.message;
-                 });
-                 */
             };
 
             $scope.load();
