@@ -459,8 +459,8 @@ angular.module('users')
             $scope.load();
 
         }])
-    .controller('ShowApprovalCtrl', ['$scope', '$http', '$filter', '$uibModal', 'uiGridConstants',
-        function($scope, $http, $filter, $uibModal, uiGridConstants) {
+    .controller('ShowApprovalCtrl', ['$scope', '$http', '$filter', '$uibModal', 'uiGridConstants', 'postEmailForm',
+        function($scope, $http, $filter, $uibModal, uiGridConstants, postEmailForm) {
 
             $scope.glClasses = [
                 { 'name': 'GL-01', 'id': 'gl-01' },
@@ -584,19 +584,33 @@ angular.module('users')
 
                         $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
                             $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
+
+                            if (user.current_reg.regConfirmEmail !== undefined) {
+                                var context = {
+                                    schoolPhone: '(858) 271-0207 ext 1260',
+                                    schoolEmail: 'nguyenduykhang.glvn@gmail.com',
+                                    schoolWebsite: 'https://nguyenduykhang.ddns.net:8443/',
+                                    schoolYear: '2016-17',
+                                    regDate: $filter('date')(user.current_reg.regDate, "MM/dd/yyyy"),
+                                    username: user.username,
+                                    firstName: user.firstName,
+                                    lastName: user.lastName,
+                                    glClass: user.current_reg.glClass,
+                                    vnClass: user.current_reg.vnClass,
+                                    regFee: user.current_reg.regFee,
+                                    reviewedBy: user.current_reg.reviewedBy,
+                                    regReceivedFrom: user.current_reg.regReceivedFrom,
+                                    regReceipt: user.current_reg.regReceipt,
+                                    subject: 'Receipt of payment for registration of '+ user.firstName + ' ' + user.lastName,
+                                    contactEmail: user.current_reg.regConfirmEmail
+                                };
+                                postEmailForm.postEmail(context);
+                            }
                             $scope.load();
                         }).error(function (response) {
                             $scope.error = response;
                         });
 
-                        /*
-                            var data = ({
-                            contactName: 'Khiem Tang',
-                             contactEmail: 'khiem_tang@intuit.com',
-                             contactMsg: 'This is a test'
-                             });
-                             postEmailForm.postEmail(data);
-                             */
                     });
                 });
             };
