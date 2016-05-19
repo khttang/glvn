@@ -10,6 +10,7 @@ var _ = require('lodash'),
     smtpTransport = require('nodemailer-smtp-transport'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     dateFormat = require('dateformat'),
+    _jade = require('jade'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
     Parents = mongoose.model('Parents'),
@@ -55,23 +56,27 @@ function getCurrentRegStatus(inpStudents) {
 
 exports.postGmail = function (req, res) {
 
+    var template = './modules/core/server/views/templates/registration-receipt.jade';
+
+    var compiledTmpl = _jade.compileFile(template);
+
     var data = req.body;
+
+    // get html back as a string with the context applied;
+    var html = compiledTmpl(data);
     var mailOptions = {
         to: data.contactEmail,
         from: 'goodshepherdglvn@gmail.com',
-        subject: 'Welcome '+data.contactName,
-        text: data.contactMsg // body
-        //html: html
+        subject: data.subject,
+        html: html
     };
 
     mailTransporter.sendMail(mailOptions, function(error, response) {
         if (error) {
             console.log(error);
         } else {
-            console.log("Message sent: " + response.content);
+            console.log("Message sent.");
         }
-
-        mailTransporter.close(); // shut down the connection pool, no more messages.  Comment this line out to continue sending emails.
     });
 };
 

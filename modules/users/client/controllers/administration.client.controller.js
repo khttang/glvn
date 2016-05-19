@@ -581,7 +581,7 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
     };
 }]);
 
-angular.module('users').controller('regConfirm.modal', ['user', 'Authentication', '$scope', '$uibModalInstance', function(user, Authentication, $scope, $uibModalInstance) {
+angular.module('users').controller('regConfirm.modal', ['user', 'Authentication', '$scope', '$uibModalInstance', 'postEmailForm', function(user, Authentication, $scope, $uibModalInstance, postEmailForm) {
     $scope.modalData = {};
     $scope.modalData.schoolPhone = '(858) 271-0207 ext 1260';
     $scope.modalData.schoolEmail = 'nguyenduykhang.glvn@gmail.com';
@@ -620,4 +620,5 @@ angular.module('users').controller('regConfirm.modal', ['user', 'Authentication'
         $printSection.appendChild(domClone);
         window.print();
     }
+
 }]);
