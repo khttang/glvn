@@ -39,8 +39,8 @@ module.exports.initLocalVariables = function (app) {
   app.locals.favicon = config.favicon;
 
   // override the limits to allow image file upload
-  app.use(bodyParser.json({limit: "50mb"}));
-  app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+  app.use(bodyParser.json({limit: '50mb'}));
+  app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit:50000}));
 
   // Passing the request url to environment locals
   app.use(function (req, res, next) {

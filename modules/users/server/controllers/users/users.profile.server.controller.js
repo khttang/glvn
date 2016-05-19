@@ -18,7 +18,7 @@ var _ = require('lodash'),
     Registration = mongoose.model('Registration');
 
 var smtpOptions = {
-    host: "smtp.gmail.com", // hostname
+    host: 'smtp.gmail.com', // hostname
     secureConnection: true, // use SSL
     port: 465, // port for secure SMTP
     auth: {
@@ -75,7 +75,7 @@ exports.postGmail = function (req, res) {
         if (error) {
             console.log(error);
         } else {
-            console.log("Message sent.");
+            console.log('Message sent.');
         }
     });
 };
@@ -360,10 +360,12 @@ exports.register = function (req, res, next) {
                         username: _username
                     });
 
+                    var imageBuffer;
+
                     // save image to file
                     if (inputUser.picture !== undefined) {
                         if (inputUser.picture.startsWith('data:image')) {
-                            var imageBuffer = decodeBase64Image(inputUser.picture);
+                            imageBuffer = decodeBase64Image(inputUser.picture);
                             student.photo = 'photo-'+_username+'.png';
                             fs.writeFile('./uploads/'+student.photo, imageBuffer.data, function(err){
                                 if (err) {
@@ -374,7 +376,7 @@ exports.register = function (req, res, next) {
                     }
                     if (inputUser.baptismCert !== undefined) {
                         if (inputUser.baptismCert.startsWith('data:image')) {
-                            var imageBuffer = decodeBase64Image(inputUser.baptismCert);
+                            imageBuffer = decodeBase64Image(inputUser.baptismCert);
                             student.baptismCert = 'bapcert-'+_username+'.png';
                             fs.writeFile('./uploads/'+student.baptismCert, imageBuffer.data, function(err){
                                 if (err) {
@@ -607,31 +609,27 @@ exports.create = function (req, res, next) {
                     });
 
                     // save image to file
+                    var imageBuffer;
                     if (inputUser.picture !== undefined) {
                         if (inputUser.picture.startsWith('data:image')) {
-                            var imageBuffer = decodeBase64Image(inputUser.picture);
+                            imageBuffer = decodeBase64Image(inputUser.picture);
                             student.photo = 'photo-'+_username+'.png';
-                            fs.writeFile('./uploads/'+student.photo, imageBuffer.data, function(err){
+                            fs.writeFile('./uploads/'+student.photo, imageBuffer.data, function(err) {
                                 if (err) {
                                     return res.status(500).send(err.message);
                                 }
                             });
-
-                        } else {
-
                         }
                     }
                     if (inputUser.baptismCert !== undefined) {
                         if (inputUser.baptismCert.startsWith('data:image')) {
-                            var imageBuffer = decodeBase64Image(inputUser.baptismCert);
-                            student.baptismCert = 'bapcert-'+_username+'.png'
-                            fs.writeFile('./uploads/'+student.baptismCert, imageBuffer.data, function(err){
+                            imageBuffer = decodeBase64Image(inputUser.baptismCert);
+                            student.baptismCert = 'bapcert-' + _username + '.png';
+                            fs.writeFile('./uploads/' + student.baptismCert, imageBuffer.data, function (err) {
                                 if (err) {
                                     return res.status(500).send(err.message);
                                 }
                             });
-                        } else {
-
                         }
                     }
 
