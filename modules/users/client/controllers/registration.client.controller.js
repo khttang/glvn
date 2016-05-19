@@ -361,16 +361,22 @@ angular.module('users')
                 modalInstance.reg_step = 'intake';
                 modalInstance.modalTitle = 'Register ' + user.firstName+ ' ' + user.lastName + ' for school Year '+ new Date().getFullYear();
                 modalInstance.result.then(function (modalData) {
-                    user.current_reg.receivedBy = $scope.authentication.user.username;
-                    user.current_reg.studentId = user.username;
-                    user.current_reg.baptismDate = user.baptismDate;
-                    user.current_reg.baptismPlace = user.baptismParish;
 
-                    $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
-                        $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
+                    $http.put('/api/users', user).success(function () {
+                        user.current_reg = {};
+                        user.current_reg.receivedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
+                        user.current_reg.studentId = user.username;
+                        user.current_reg.baptismDate = user.baptismDate;
+                        user.current_reg.baptismPlace = user.baptismParish;
 
-                        $scope.load();
+                        $http.put('/api/users/registration?student_id=' + user.username, user.current_reg).success(function () {
+                            $scope.success = 'Completed registration for student ' + user.username + '. Congratulations!';
 
+                            $scope.load();
+
+                        }).error(function (response) {
+                            $scope.error = response;
+                        });
                     }).error(function (response) {
                         $scope.error = response;
                     });
@@ -582,31 +588,34 @@ angular.module('users')
 
                     modalInstance2.result.then(function (modalData) {
 
-                        $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
-                            $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
+                        $http.put('/api/users', user).success(function () {
 
-                            if (user.current_reg.regConfirmEmail !== undefined) {
-                                var context = {
-                                    schoolPhone: '(858) 271-0207 ext 1260',
-                                    schoolEmail: 'nguyenduykhang.glvn@gmail.com',
-                                    schoolWebsite: 'https://nguyenduykhang.ddns.net:8443/',
-                                    schoolYear: '2016-17',
-                                    regDate: $filter('date')(user.current_reg.regDate, "MM/dd/yyyy"),
-                                    username: user.username,
-                                    firstName: user.firstName,
-                                    lastName: user.lastName,
-                                    glClass: user.current_reg.glClass,
-                                    vnClass: user.current_reg.vnClass,
-                                    regFee: user.current_reg.regFee,
-                                    reviewedBy: user.current_reg.reviewedBy,
-                                    regReceivedFrom: user.current_reg.regReceivedFrom,
-                                    regReceipt: user.current_reg.regReceipt,
-                                    subject: 'Receipt of payment for registration of '+ user.firstName + ' ' + user.lastName,
-                                    contactEmail: user.current_reg.regConfirmEmail
-                                };
-                                postEmailForm.postEmail(context);
-                            }
-                            $scope.load();
+                            $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
+                                $scope.success = 'Completed registration for student ' + user.username + '. Congratulations!';
+
+                                if (user.current_reg.regConfirmEmail !== undefined) {
+                                    var context = {
+                                        schoolPhone: '(858) 271-0207 ext 1260',
+                                        schoolEmail: 'nguyenduykhang.glvn@gmail.com',
+                                        schoolWebsite: 'https://nguyenduykhang.ddns.net:8443/',
+                                        schoolYear: '2016-17',
+                                        regDate: $filter('date')(user.current_reg.regDate, 'MM/dd/yyyy'),
+                                        username: user.username,
+                                        firstName: user.firstName,
+                                        lastName: user.lastName,
+                                        glClass: user.current_reg.glClass,
+                                        vnClass: user.current_reg.vnClass,
+                                        regFee: user.current_reg.regFee,
+                                        reviewedBy: user.current_reg.reviewedBy,
+                                        regReceivedFrom: user.current_reg.regReceivedFrom,
+                                        regReceipt: user.current_reg.regReceipt,
+                                        subject: 'Receipt of payment for registration of ' + user.firstName + ' ' + user.lastName,
+                                        contactEmail: user.current_reg.regConfirmEmail
+                                    };
+                                    postEmailForm.postEmail(context);
+                                }
+                                $scope.load();
+                            });
                         }).error(function (response) {
                             $scope.error = response;
                         });

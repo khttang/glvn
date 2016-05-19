@@ -2,6 +2,7 @@
 
 angular.module('users')
     .directive('dropdownMultiselect', function () {
+/*
     return {
         restrict: 'E',
         scope: {
@@ -78,4 +79,5 @@ angular.module('users')
             };
         }
     };
+    */
 });

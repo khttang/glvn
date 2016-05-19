@@ -395,7 +395,7 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
             $scope.extrafees = 0;
         }
         user.current_reg.regFee = $scope.basefee + $scope.extrafees;
-    }
+    };
 
     $scope.teacherExemptToggle = function() {
         if (user.current_reg.regTeacherExempt) {
@@ -405,7 +405,7 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
             $scope.basefee = (curDate < lateDate) ? 80:130;
         }
         user.current_reg.regFee = $scope.basefee + $scope.extrafees;
-    }
+    };
 
     $scope.snapPhoto = function (photoType) {
         $scope.modalData = {};
@@ -600,25 +600,25 @@ angular.module('users').controller('regConfirm.modal', ['user', 'Authentication'
 
     $scope.sendEmailToggle = function() {
         if ($scope.sendReceipt === false) {
-            user.current_reg.regConfirmEmail = "";
+            user.current_reg.regConfirmEmail = '';
         }
-    }
+    };
 
     $scope.printElement = function (id) {
         var elem = document.getElementById(id);
         var domClone = elem.cloneNode(true);
 
-        var $printSection = document.getElementById("printSection");
+        var $printSection = document.getElementById('printSection');
 
         if (!$printSection) {
-            var $printSection = document.createElement("div");
-            $printSection.id = "printSection";
+            var $printSection = document.createElement('div');
+            $printSection.id = 'printSection';
             document.body.appendChild($printSection);
         }
 
-        $printSection.innerHTML = "";
+        $printSection.innerHTML = '';
         $printSection.appendChild(domClone);
         window.print();
-    }
+    };
 
 }]);
