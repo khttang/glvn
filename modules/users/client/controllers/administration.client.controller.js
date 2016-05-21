@@ -355,7 +355,7 @@ angular.module('users').controller('updstudent.modal', ['$scope', '$uibModalInst
 
 angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $uibModalInstance, $uibModal) {
 
-    var lateDate = new Date('2016-05-21');
+    var lateDate = new Date('2016-06-21');
     var curDate = new Date();
     $scope.basefee = (curDate < lateDate) ? 80:130;
     if (user.current_reg !== undefined) {
