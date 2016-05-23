@@ -6,9 +6,26 @@ angular.module('users').config(['$stateProvider',
 
         // Users state routing
         $stateProvider
+            /*
             .state('teachers', {
                 url: '/teachers',
                 templateUrl: 'modules/users/client/views/teachers.client.view.html'
+            })
+            */
+            .state('teachers', {
+                abstract: true,
+                url: '/teachers',
+                template: '<ui-view/>'
+            })
+            .state('catechism', {
+                abstract: true,
+                url: '/catechism',
+                template: '<ui-view/>'
+            })
+            .state('vietnamese', {
+                abstract: true,
+                url: '/vietnamese',
+                template: '<ui-view/>'
             })
             .state('students', {
                 url: '/students',
@@ -36,6 +53,13 @@ angular.module('users').config(['$stateProvider',
                     roles: ['ADMIN-a']
                 },
                 templateUrl: 'modules/users/client/views/registration_approval.client.view.html'
+            })
+            .state('registration.fixup', {
+                url: '/registration_fixup',
+                data: {
+                    roles: ['ADMIN-a']
+                },
+                templateUrl: 'modules/users/client/views/registration_fixup.client.view.html'
             })
             .state('registration.show', {
                 url: '/registration_show',

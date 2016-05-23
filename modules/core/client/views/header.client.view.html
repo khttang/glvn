@@ -23,9 +23,35 @@
         <a ui-sref="home">Home</a>
       </li>
       <li class="divider-vertical"></li>
-      <li ui-sref-active="active" ng-show="ctrl.isTeacher()">
-        <a ui-sref="teachers">Teachers</a>
+      -->
+      <li class="dropdown" dropdown ng-show="ctrl.isTeacher()">
+        <a class="dropdown-toggle" dropdown-toggle role="button">Teachers</a>
+        <ul class="dropdown-menu" role="menu">
+          <li  class="dropdown" dropdown>
+            <a class="dropdown-toggle" dropdown-toggle role="button">Catechism</a>
+            <ul class="dropdown-menu" role="menu">
+              <li ui-sref-active="active">
+                <a ui-sref="teachers.catechism.gl-01">GL-01</a>
+              </li>
+              <li ui-sref-active="active">
+                <a ui-sref="teachers.catechism.gl-02">GL-02</a>
+              </li>
+            </ul>
+          </li>
+          <li  class="dropdown" dropdown>
+            <a class="dropdown-toggle" dropdown-toggle role="button">Vietnamese</a>
+            <ul class="dropdown-menu" role="menu">
+              <li ui-sref-active="active">
+                <a ui-sref="teachers.vietnamese.vn-01">VN-01</a>
+              </li>
+              <li ui-sref-active="active">
+                <a ui-sref="teachers.vietnamese.vn-21">VN-02</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </li>
+      <!--
       <li class="divider-vertical"></li>
       <li ui-sref-active="active">
         <a ui-sref="students">Students</a>
@@ -42,6 +68,9 @@
           </li>
           <li ui-sref-active="active" ng-show="ctrl.isSuperAdminUser() && ctrl.isTeacher()">
             <a ui-sref="registration.approval">Registration Approval</a>
+          </li>
+          <li ui-sref-active="active" ng-show="ctrl.isSuperAdminUser() && ctrl.isTeacher()">
+            <a ui-sref="registration.fixup">Registration Fixup</a>
           </li>
           <li ui-sref-active="active">
             <a ui-sref="registration.show">Show Active Students</a>

@@ -56,7 +56,7 @@ function getCurrentRegStatus(inpStudents) {
 
 exports.postGmail = function (req, res) {
 
-    var template = './modules/core/server/views/templates/registration-receipt.jade';
+    var template = './modules/users/server/templates/registration-receipt.jade';
 
     var compiledTmpl = _jade.compileFile(template);
 
