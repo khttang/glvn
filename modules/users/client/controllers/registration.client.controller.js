@@ -897,7 +897,8 @@ angular.module('users')
                         width: '20%', enableCellEdit: false, enableColumnMenu: false },
                     { field: 'regFee', displayName: 'Fee', width: '4%', enableColumnMenu: false },
                     { field: 'regTeacherExempt', displayName: 'Exempt', width: '6%', enableColumnMenu: false },
-                    { field: 'regConfirmEmail', displayName: 'Email', width: '16%', enableColumnMenu: false }
+                    { field: 'regConfirmEmail', displayName: 'Email', width: '16%', enableColumnMenu: false },
+                    { field: 'regReceivedFrom', displayName: 'From', width: '10%', enableColumnMenu: false }
                 ],
                 excludeProperties: '__metadata',
                 enableFiltering: true,
@@ -934,6 +935,7 @@ angular.module('users')
                                         response[i].regFee = response2[j].regFee;
                                         response[i].regTeacherExempt = response2[j].regTeacherExempt;
                                         response[i].regConfirmEmail = response2[j].regConfirmEmail;
+                                        response[i].regReceivedFrom = response2[j].regReceivedFrom;
                                         response[i].reviewed = response2[j].reviewed;
                                     }
                                 }

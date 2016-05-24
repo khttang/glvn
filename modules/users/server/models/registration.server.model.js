@@ -76,6 +76,9 @@ var RegistrationSchema = new Schema({
     regConfirmEmail: {
         type: String
     },
+    regReceivedFrom: {
+        type: String
+    },
     receivedBy: {
         type: String,
         trim: true,
