@@ -52,3 +52,17 @@ li.selected {
 h1.page-title {
   color:#1A3FB4;
 }
+
+.cropAreaPhoto {
+  background: #E4E4E4;
+  overflow: hidden;
+  width:260px;
+  height:240px;
+}
+
+.cropAreaCert {
+  background: #E4E4E4;
+  overflow: hidden;
+  width:260px;
+  height:200px;
+}

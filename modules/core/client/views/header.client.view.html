@@ -63,11 +63,8 @@
       <li class="dropdown" dropdown ng-show="ctrl.isAdminUser()">
         <a class="dropdown-toggle" dropdown-toggle role="button">Administration</a>
         <ul class="dropdown-menu" role="menu">
-          <li ui-sref-active="active">
-            <a ui-sref="registration.intake">Registration Intake</a>
-          </li>
           <li ui-sref-active="active" ng-show="ctrl.isSuperAdminUser() && ctrl.isTeacher()">
-            <a ui-sref="registration.approval">Registration Approval</a>
+            <a ui-sref="registration.intake">Registration</a>
           </li>
           <li ui-sref-active="active" ng-show="ctrl.isSuperAdminUser() && ctrl.isTeacher()">
             <a ui-sref="registration.fixup">Registration Fixup</a>
