@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('users').controller('AdministrationController', ['$scope', '$state', '$http', '$location', '$window', 'Authentication', 'postEmailForm', '$uibModal', 'userService', '$log',
-    function ($scope, $state, $http, $location, $window, Authentication, postEmailForm, $uibModal, userService, $log) {
+angular.module('users').controller('AdministrationController', ['$scope', '$state', '$http', '$location', '$window', '$q', 'Authentication', 'postEmailForm', '$uibModal', 'userService', '$log',
+    function ($scope, $state, $http, $location, $window, $q, Authentication, postEmailForm, $uibModal, userService, $log) {
         $scope.authentication = Authentication;
 
         $scope.animationsEnabled = true;
@@ -223,30 +223,23 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             });
         };
 
-        this.modalAdminUpdateStudent = function (size, editUser) {
-            $scope.success = $scope.error = null;
-            $scope.modalData = {};
-            var modalInstance = $uibModal.open({
-                animation: $scope.animationsEnabled,
-                templateUrl: 'modules/users/client/views/signup.client.view.html',
-                controller: 'newstudent.modal as vm',
-                size: size
-            });
-            modalInstance.registration = 'update';
-            editUser.birthDate = new Date(editUser.birthDate);
-            userService.putUser(editUser);
+        var createUserPromise = function (url, user) {
+            var deferred = $q.defer();
+            if (user.username === undefined) {
 
-            modalInstance.result.then(function (modalData) {
-                $http.put('/api/users', userService.getUser()).success(function () {
-                    userService.clearUser();
-                    $scope.success = 'update student completed successfully!';
-                }).error(function (response) {
-                    $scope.error = response;
+                $http.post(url, user).then(function (response) {
+                    deferred.resolve(response.data);
+                }, function (response) {
+                    deferred.reject(response);
                 });
-            });
+            }
+            return deferred.promise;
         };
 
-        this.modalAdminRegisterStudent = function (size, user, reg_step) {
+        this.modalAdminRegisterNewStudent = function (size) {
+            userService.clearUser();
+            var _user = userService.getUser();
+
             $scope.success = $scope.error = null;
             $scope.modalData = {};
 
@@ -257,32 +250,32 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 size: size,
                 resolve: {
                     registrations: function () {
-                        return user.registrations;
+                        return _user.registrations;
                     },
                     user: function () {
-                        user.birthDate = new Date(user.birthDate);
-                        return user;
+                        if (_user.birthDate !== undefined) {
+                            _user.birthDate = new Date(_user.birthDate);
+                        }
+                        return _user;
                     }
                 }
             });
-            modalInstance.reg_step = reg_step;
-            modalInstance.modalTitle = 'Register student ' + user.username + ' for school Year '+ new Date().getFullYear();
+
+            modalInstance.reg_step = 'approve';
+            var tmpMsg = (_user.username !== undefined) ? 'Register student ' + _user.username : 'Register new student';
+            modalInstance.modalTitle = tmpMsg + ' for school Year '+ new Date().getFullYear();
             modalInstance.result.then(function (modalData) {
-                if (reg_step === 'intake') {
-                    user.current_reg.receivedBy = $scope.authentication.user.username;
-                    user.current_reg.studentId = user.username;
-                    user.current_reg.baptismDate = user.baptismDate;
-                    user.current_reg.baptismPlace = user.baptismParish;
 
-                    $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
-                        $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
-                    }).error(function (response) {
-                        $scope.error = response;
-                    });
+                createUserPromise('/api/users', _user).then(function(data) {
+                    data.photo = _user.photo;
+                    data.baptismCert = _user.baptismCert;
+                    data.current_reg = _user.current_reg;
+                    userService.putUser(data);
+                    _user = userService.getUser();
 
-                } else if (reg_step === 'approve') {
-                    user.current_reg.reviewedBy = $scope.authentication.user.username;
-                    user.current_reg.status = 'APPROVED';
+                    _user.current_reg.receivedBy = $scope.authentication.user.username;
+                    _user.current_reg.reviewedBy = $scope.authentication.user.username;
+                    _user.current_reg.status = 'APPROVED';
 
                     var modalInstance2 = $uibModal.open({
                         animation: $scope.animationsEnabled,
@@ -291,30 +284,43 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         size: size,
                         resolve: {
                             user: function () {
-                                return user;
+                                return _user;
                             }
                         }
                     });
 
                     modalInstance2.result.then(function (modalData) {
+                        $http.put('/api/users', _user).success(function () {
+                            $scope.success = 'Completed registration for student ' + _user.username + '. Congratulations!';
 
-                        $http.put('/api/users/registration?student_id='+user.username, user.current_reg).success(function () {
-                            $scope.success = 'Completed registration for student '+user.username+'. Congratulations!';
-                        }).error(function (response) {
-                            $scope.error = response;
+                            if (_user.current_reg.regConfirmEmail !== undefined) {
+                                var context = {
+                                    schoolPhone: '(858) 271-0207 ext 1260',
+                                    schoolEmail: 'nguyenduykhang.glvn@gmail.com',
+                                    schoolWebsite: 'https://nguyenduykhang.ddns.net:8443/',
+                                    schoolYear: '2016-17',
+                                    regDate: $filter('date')(_user.current_reg.regDate, 'MM/dd/yyyy'),
+                                    username: _user.username,
+                                    firstName: _user.firstName,
+                                    lastName: _user.lastName,
+                                    glClass: _user.current_reg.glClass,
+                                    vnClass: _user.current_reg.vnClass,
+                                    regFee: _user.current_reg.regFee,
+                                    reviewedBy: _user.current_reg.reviewedBy,
+                                    regReceivedFrom: _user.current_reg.regReceivedFrom,
+                                    regReceipt: _user.current_reg.regReceipt,
+                                    subject: 'Receipt of payment for registration of ' + _user.firstName + ' ' + _user.lastName,
+                                    contactEmail: _user.current_reg.regConfirmEmail
+                                    //contactEmail: 'khttang@gmail.com'
+                                };
+                                postEmailForm.postEmail(context);
+                            }
+                            $scope.load();
                         });
-
-                        /*
-                        var data = ({
-                            contactName: 'Khiem Tang',
-                            contactEmail: 'khiem_tang@intuit.com',
-                            contactMsg: 'This is a test'
-                        });
-                        postEmailForm.postEmail(data);
-                        */
                     });
-                }
+                });
             });
+
         };
     }
 ]);
@@ -353,7 +359,7 @@ angular.module('users').controller('updstudent.modal', ['$scope', '$uibModalInst
 
 }]);
 
-angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $uibModalInstance, $uibModal) {
+angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$http', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $http, $uibModalInstance, $uibModal) {
 
     var lateDate = new Date('2016-06-21');
     var curDate = new Date();
@@ -429,7 +435,7 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
             if (photoType === 'student') {
                 $scope.user.picture = modalData.photo;
             } else if (photoType === 'certificate') {
-                $scope.user.current_reg.baptismCert = modalData.photo;
+                $scope.user.baptismCert = modalData.photo;
             }
         });
     };
@@ -577,6 +583,31 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
             } else if (photoType === 'certificate') {
                 $scope.user.baptismCert = modalData.photo;
             }
+        });
+    };
+
+    $scope.viewPhoto = function (photoType) {
+        $http.get('/api/users/photo?username='+$scope.user.username+'&type='+photoType).success(function (response) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'modules/users/client/views/authentication/viewPhoto.client.view.html',
+                controller: 'newmodal as vm',
+                size: 'lg',
+                resolve: {
+                    modalData: function () {
+                        return {
+                            photoType: photoType,
+                            photo: response
+                        };
+                    }
+                }
+            });
+            modalInstance.modalTitle = 'View ' + photoType + ' photo';
+            modalInstance.result.then(function (modalData) {
+
+            });
+        }).error(function (response) {
+            $scope.error = response.message;
         });
     };
 }]);

@@ -5,27 +5,38 @@ angular.module('users')
 
     var CropImageCtrl = function($scope, $element, $attrs) {
         $scope.my_image='';
+
+        $scope.getTemplateUrl = function() {
+            if ($scope.myType === 'photo')
+                return 'modules/users/client/views/photo-capture.template.html';
+            if ($scope.myType === 'certificate')
+                return 'modules/users/client/views/photo-capture.template.html';
+        }
     };
+
+    var contentURL;
 
     return {
         restrict: 'E', //E = element, A = attribute, C = class, M = comment
         scope: {
-            myCroppedImage: '=ngModel'
+            myCroppedImage: '=ngModel',
+            myImgWidth: '@imgWidth',
+            myImgHeight: '@imgHeight',
+            myType: '@type'
         },
         controller: CropImageCtrl,
-
-        templateUrl: 'modules/users/client/views/photo-capture.template.html',
         link: function (scope, elem, attrs) {
             Webcam.set({
-                width: 260,
-                height: 240,
-                dest_width: 260,
-                dest_height: 240,
+                width: scope.myImgWidth,
+                height: scope.myImgHeight,
+                dest_width: scope.myImgWidth,
+                dest_height: scope.myImgHeight,
                 image_format: 'jpeg',
-                jpeg_quality: 90,
+                jpeg_quality: 100,
                 force_flash: false,
                 flip_horiz: true,
-                fps: 45
+                //fps: 45
+                fps: 30
             });
 
             Webcam.attach('#my_camera');
@@ -40,7 +51,14 @@ angular.module('users')
                 } );
                 scope.captureMode = false;
             };
+        },
+        templateUrl: function(tElement,tAttrs){
+            if (tAttrs.type === 'certificate') {
+                return 'modules/users/client/views/certificate-capture.template.html';
+            } else {
+                return 'modules/users/client/views/photo-capture.template.html';
+            }
         }
-    };
+    }
 });
 
