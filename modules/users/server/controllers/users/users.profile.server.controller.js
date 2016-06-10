@@ -769,17 +769,11 @@ exports.findPhoto = function (req, res) {
         } else if (_type === 'certificate') {
             filePath = './uploads/bapcert-' + _username + '.png';
         }
-        fs.readFile(filePath, function (err, content) {
-            if (err) {
-                res.writeHead(400, {'Content-type':'text/html'})
-                console.log(err);
-                res.end("No such image");
-            } else {
-                //specify the content type in the response will be an image
-                res.writeHead(200,{'Content-type':'image/jpg'});
-                res.end(content);
-            }
-        });
+
+        var img = fs.readFileSync(filePath);
+        res.writeHead(200, {'Content-Type': 'image/jpg' });
+        res.end(img, 'binary');
+
     } else {
         res.status(401).send('Authorization required!');
     }

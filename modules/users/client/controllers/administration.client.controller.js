@@ -365,6 +365,9 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
     var curDate = new Date();
     $scope.basefee = (curDate < lateDate) ? 80:130;
     if (user.current_reg !== undefined) {
+        if (user.current_reg.regTeacherExempt) {
+            $scope.basefee = 0;
+        }
         if (user.current_reg.glClass === 'pre-con' || user.current_reg.glClass === 'confirmation') {
             $scope.extrafees = 20;
         } else {
@@ -586,29 +589,26 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
         });
     };
 
-    $scope.viewPhoto = function (photoType) {
-        $http.get('/api/users/photo?username='+$scope.user.username+'&type='+photoType).success(function (response) {
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'modules/users/client/views/authentication/viewPhoto.client.view.html',
-                controller: 'newmodal as vm',
-                size: 'lg',
-                resolve: {
-                    modalData: function () {
-                        return {
-                            photoType: photoType,
-                            photo: response
-                        };
-                    }
+    $scope.viewPhoto = function (username, photoType) {
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'modules/users/client/views/authentication/viewPhoto.client.view.html',
+            controller: 'newmodal as vm',
+            size: 'lg',
+            resolve: {
+                modalData: function () {
+                    return {
+                        photoUrl: '/api/users/photo?username='+username+'&type=certificate',
+                    };
                 }
-            });
-            modalInstance.modalTitle = 'View ' + photoType + ' photo';
-            modalInstance.result.then(function (modalData) {
-
-            });
-        }).error(function (response) {
-            $scope.error = response.message;
+            }
         });
+        modalInstance.modalTitle = 'View ' + photoType + ' photo';
+        /*
+        modalInstance.result.then(function (modalData) {
+
+        });
+        */
     };
 }]);
 

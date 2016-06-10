@@ -300,7 +300,7 @@ angular.module('users')
                                     contactEmail: user.current_reg.regConfirmEmail
                                     //contactEmail: 'khttang@gmail.com'
                                 };
-                                postEmailForm.postEmail(context);
+                                //postEmailForm.postEmail(context);
                             }
                             $scope.load();
                         });
@@ -468,7 +468,7 @@ angular.module('users')
                                     contactEmail: user.current_reg.regConfirmEmail
                                     //contactEmail: 'khttang@gmail.com'
                                 };
-                                postEmailForm.postEmail(context);
+                                //postEmailForm.postEmail(context);
                             }
                             $scope.load();
                         });

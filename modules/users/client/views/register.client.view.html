@@ -225,7 +225,7 @@
                                 <input type="checkbox" ng-model="user.hasBaptismCert" onclick="return false"/>
                             </div>
                             <div class="form-group col-xs-6">
-                                <button type="button" class="btn btn-success btn-xs" ng-disabled="!user.hasBaptismCert" ng-click="viewPhoto('certificate')" data-toggle="tooltip" tooltip-placement="right" tooltip="View baptism certificate">
+                                <button type="button" class="btn btn-success btn-xs" ng-disabled="!user.hasBaptismCert" ng-click="viewPhoto(user.username, 'certificate')" data-toggle="tooltip" tooltip-placement="right" tooltip="View baptism certificate">
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </button>
                                 <button type="button" class="btn btn-success btn-xs" ng-click="selectPhoto('certificate')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Select a photo of baptism certificate from file">
@@ -248,10 +248,11 @@
                         <div class="row" ng-if="ok_text==='Complete Registration'">
                             <div class="form-group col-xs-6">
                                 <label>Teacher's Exempt  </label>
+                                <!-- ng-init="user.current_reg.regTeacherExempt" -->
                                 <input type="checkbox" ng-model="user.current_reg.regTeacherExempt" ng-change="teacherExemptToggle()"/>
                             </div>
                             <div class="form-group col-xs-6">
-                                <label>Toal due: </label>
+                                <label>Total due: </label>
                                 <input type="text" id="regFee" name="regFee" class="form-control" ng-model="user.current_reg.regFee" ng-readonly="true" placeholder="Registration Fee" required>
                             </div>
                         </div>
