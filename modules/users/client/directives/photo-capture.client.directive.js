@@ -27,16 +27,15 @@ angular.module('users')
         controller: CropImageCtrl,
         link: function (scope, elem, attrs) {
             Webcam.set({
-                width: scope.myImgWidth,
-                height: scope.myImgHeight,
+                width: 260,
+                height: 240,
                 dest_width: scope.myImgWidth,
                 dest_height: scope.myImgHeight,
                 image_format: 'jpeg',
                 jpeg_quality: 100,
                 force_flash: false,
-                flip_horiz: true,
-                //fps: 45
-                fps: 30
+                flip_horiz: false,
+                fps: 45
             });
 
             Webcam.attach('#my_camera');
