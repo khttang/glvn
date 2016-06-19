@@ -1,12 +1,14 @@
 var mongoose = require('mongoose'),
     chalk = require('chalk'),
     mg = require('../config/lib/mongoose'),
+    mysql = require('mysql'),
     fs = require('fs');
 
 mg.loadModels();
 
 mg.connect(function (db) {
 
+    /*
     var User = mongoose.model('User');
     var Student = mongoose.model('Student');
     var Registration = mongoose.model('Registration');
@@ -43,4 +45,17 @@ mg.connect(function (db) {
             }
         });
     }
+    */
+    
+    var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'P@ssw0rd',
+        database: 'glvn'
+    })
+
+    connection.connect(function(err) {
+        if (err) throw err;
+        console.log('You are now connected...')
+    })
 });

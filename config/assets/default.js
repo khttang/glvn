@@ -7,11 +7,13 @@ module.exports = {
         'public/lib/bootstrap/dist/css/bootstrap.css',
         'public/lib/bootstrap/dist/css/bootstrap-theme.css',
         'public/lib/angular-ui-grid/ui-grid.min.css',
-        'public/lib/ng-img-crop-full-extended/compile/minified/ng-img-crop.css'
-
+        'public/lib/ng-img-crop-full-extended/compile/minified/ng-img-crop.css',
+        'public/lib/angular-bootstrap-calendar/dist/css/angular-bootstrap-calendar.min.css'
 ],
       js: [
         'public/lib/angular/angular.js',
+        'public/lib/moment/moment.js',
+        'public/lib/interact/dist/interact.js',
         'public/lib/angular-resource/angular-resource.js',
         'public/lib/angular-animate/angular-animate.js',
         'public/lib/angular-messages/angular-messages.js',
@@ -23,6 +25,7 @@ module.exports = {
         'public/lib/angular-touch/angular-touch.min.js',
         'public/lib/angular-ui-grid/ui-grid.min.js',
         'public/lib/ng-img-crop-full-extended/compile/minified/ng-img-crop.js',
+        'public/lib/angular-bootstrap-calendar/dist/js/angular-bootstrap-calendar-tpls.min.js',
         'public/lib/webcam/webcam.min.js'
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']

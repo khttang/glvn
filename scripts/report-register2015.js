@@ -46,24 +46,31 @@ mg.connect(function (db) {
                     }
                 }
 
+                var unregistered = 0;
                 var stream = fs.createWriteStream("/Users/ktang/Personal/Khiem/GLVN/WebProject/export/registered-2015.csv");
                 stream.once('open', function (fd) {
                     stream.write('ID|FirstName|LastName|BirthDate|FatherName|MotherName|Address|Phone|Email|RegYear|SchoolGrade|VNClass|GLClass\n');
                     for (var k = 0, len3 = retStudents.length; k < len3; k++) {
-                        var phoneNumber = (retStudents[k].phones.length > 0 ) ?  retStudents[k].phones[0].number : null;
-                        var emailAddr = (retStudents[k].emails.length > 0) ? retStudents[k].emails[0].address : null;
-                        stream.write(
-                            retStudents[k].username+'|'+
-                            retStudents[k].firstName + '|' + retStudents[k].lastName + '|' +
-                            dateFormat(retStudents[k].birthDate, 'mm/dd/yyyy') + '|' +
-                            retStudents[k].fatherFirstName + ' ' + retStudents[k].fatherLastName + '|' +
-                            retStudents[k].motherFirstName + ' ' + retStudents[k].motherLastName + '|' +
-                            retStudents[k].address + '|' + phoneNumber + '|' + emailAddr + '|' +
-                            retStudents[k].reg2015.year + '|' + retStudents[k].reg2015.schoolGrade + '|' + retStudents[k].reg2015.vnClass + '|' +
-                            retStudents[k].reg2015.glClass + '\n');
+                        if (retStudents[k].reg2015.glClass !== "Confirmation") {
+                            ++unregistered;
+                            var phoneNumber = (retStudents[k].phones.length > 0 ) ?  retStudents[k].phones[0].number : null;
+                            var emailAddr = (retStudents[k].emails.length > 0) ? retStudents[k].emails[0].address : null;
+                            stream.write(
+                                retStudents[k].username+'|'+
+                                retStudents[k].firstName + '|' + retStudents[k].lastName + '|' +
+                                dateFormat(retStudents[k].birthDate, 'mm/dd/yyyy') + '|' +
+                                retStudents[k].fatherFirstName + ' ' + retStudents[k].fatherLastName + '|' +
+                                retStudents[k].motherFirstName + ' ' + retStudents[k].motherLastName + '|' +
+                                retStudents[k].address + '|' + phoneNumber + '|' + emailAddr + '|' +
+                                retStudents[k].reg2015.year + '|' + retStudents[k].reg2015.schoolGrade + '|' + retStudents[k].reg2015.vnClass + '|' +
+                                retStudents[k].reg2015.glClass + '\n');
+                          }
                     }
                     stream.end();
+
+                    console.log('Students not yet registered: '+unregistered);
                 });
+
             });
         });
     });
