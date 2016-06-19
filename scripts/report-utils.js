@@ -14,7 +14,6 @@ mg.connect(function (db) {
 
     var beginDate = new Date('2016-05-13');
     var endDate = new Date('2016-05-23');
-    var fixupDate = new Date('2016-05-25');
 
     var unregistered = new Array();
     var registered2016 = new Array();
@@ -143,7 +142,7 @@ mg.connect(function (db) {
 
                             var activityFees = 20 * preConAndCon;
                             console.log('Registrations received: ' + docs.length + ', approved: ' + approvedCnt + ', collected fees: $' + feeCollected);
-                            console.log('Activity fees: $' + activityFees);
+                            console.log('Youth ministry fee: $' + activityFees);
                             feeCollected += activityFees;
                             console.log('Total fees collected: $' + feeCollected);
                             console.log('Teacher exempts: ' + exempts);
@@ -153,21 +152,6 @@ mg.connect(function (db) {
                 }
             });
 
-            Registration.find({
-                $and: [
-                    {
-                        'reviewed': {$gte: fixupDate}
-                    },
-                    {'year': '2016'},
-                    {
-                        'status': {$in: ['APPROVED', 'RECEIVED']}
-                    }
-                ]
-            }, function (err, docs) {
-                if (!err) {
-                    console.log('Number of fixups: '+ docs.length);
-                }
-            });
         }
     });
 });
