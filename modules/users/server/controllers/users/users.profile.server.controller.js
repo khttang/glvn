@@ -759,6 +759,8 @@ exports.changeProfilePicture = function (req, res) {
 };
 
 exports.findPhoto = function (req, res) {
+
+    /* Temporarily disable loading photo because this may cause crashing...
     var _type = req.query.type;
     var _username = req.query.username;
     var filePath;
@@ -777,6 +779,7 @@ exports.findPhoto = function (req, res) {
     } else {
         res.status(401).send('Authorization required!');
     }
+    */
 }
 
 
