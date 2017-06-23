@@ -1,0 +1,114 @@
+<section>
+    <div class="modal-header">
+        <h3 class="modal-title">Register a New Household</h3>
+    </div>
+    <div class="modal-body" ng-init="init()">
+        <form name="registerHouseholdForm" novalidate>
+            <fieldset>
+                <div class="row">
+                    <div class="col-xs-7">
+                        <label>Student Father: (Last, First)</label>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="fatherlastmame" name="fatherlastmame" class="form-control" ng-model="household.fatherLastName" placeholder="Father Last Name" required>
+                                <div class="help-block" ng-messages="registerHouseholdForm.fatherlastmame.$error" ng-if="registerHouseholdForm.fatherlastmame.$touched">
+                                    <p ng-message="required">Father last name is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="fatherfirstmame" name="fatherfirstmame" class="form-control" ng-model="household.fatherFirstName" placeholder="Father First Name" required>
+                                <div class="help-block" ng-messages="registerHouseholdForm.fatherfirstmame.$error" ng-if="registerHouseholdForm.fatherfirstmame.$touched">
+                                    <p ng-message="required">Father first name is required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <label>Student Mother: (Last, First)</label>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="motherlastmame" name="motherlastmame" class="form-control" ng-model="household.motherLastName" placeholder="Mother Last Name" required>
+                                <div class="help-block" ng-messages="registerHouseholdForm.motherlastmame.$error" ng-if="registerHouseholdForm.motherlastmame.$touched">
+                                    <p ng-message="required">Mother last name is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="motherfirstmame" name="motherfirstmame" class="form-control" ng-model="household.motherFirstName" placeholder="Mother First Name" required>
+                                <div class="help-block" ng-messages="registerHouseholdForm.motherfirstmame.$error" ng-if="registerHouseholdForm.motherfirstmame.$touched">
+                                    <p ng-message="required">Mother first name is required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <label>Address:</label>
+                        <div class="row">
+                            <div class="form-group col-xs-6">
+                                <input type="text" id="addressline" name="addressline" class="form-control" ng-model="household.address" placeholder="Address Line" required>
+                                <div class="help-block" ng-messages="registerHouseholdForm.addressline.$error" ng-if="registerHouseholdForm.addressline.$touched">
+                                    <p ng-message="required">Address is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-3">
+                                <input type="text" id="city" name="city" class="form-control" ng-model="household.city" placeholder="City" required>
+                                <div class="help-block" ng-messages="registerHouseholdForm.city.$error" ng-if="registerHouseholdForm.city.$touched">
+                                    <p ng-message="required">City is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-xs-3">
+                                <input type="text" id="zipcode" name="zipcode" class="form-control" ng-model="household.zipCode" placeholder="Zip Code" required>
+                                <div class="help-block" ng-messages="registerHouseholdForm.zipcode.$error" ng-if="registerHouseholdForm.zipcode.$touched">
+                                    <p ng-message="required">Zip code is required.</p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="form-group col-xs-9">
+                                <label for="formEmails">Emails:</label>
+                                <ul id="formEmails">
+                                    <li ng-repeat="email in household.emails" ng-class="{'selected':$index == selectedEmail}" ng-click="setClickedEmail($index)">
+                                        {{email.owner}}: {{email.address}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="form-group col-xs-1">
+                                <button type="button" class="btn btn-primary btn-xs" ng-click="addNewEmail('lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Add a new email">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="household.emails.$isEmpty()" ng-click="removeEmail(selectedEmail)" data-toggle="tooltip" tooltip-placement="right" tooltip="Remove selected email">
+                                    <i class="glyphicon glyphicon-minus-sign"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="household.emails.$isEmpty()" ng-click="editEmail(selectedEmail, 'lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Edit selected email">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-xs-9">
+                                <label for="formPhones">Phones:</label>
+                                <ul id="formPhones">
+                                    <li ng-repeat="phone in household.phones" ng-class="{'selected':$index == selectedPhone}" ng-click="setClickedPhone($index)">
+                                        {{phone.owner}}: {{phone.number | phonenumber}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="form-group col-xs-1">
+                                <button type="button" class="btn btn-primary btn-xs" ng-click="addNewPhone('lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Add a new phone">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="household.phones.$isEmpty()" ng-click="removePhone(selectedPhone)" data-toggle="tooltip" tooltip-placement="right" tooltip="Remove selected phone">
+                                    <i class="glyphicon glyphicon-minus-sign"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-disabled="household.phones.$isEmpty()" ng-click="editPhone(selectedPhone, 'lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Edit selected phone">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success btn-lg" ng-disabled="formValid" ng-click="ok()">Register</button>
+        <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
+    </div>
+</section>

@@ -1,0 +1,69 @@
+<section>
+    <div class="modal-header">
+        <h3 class="modal-title">{{modalTitle}}</h3>
+    </div>
+    <div class="modal-body" ng-init="init()">
+        <form name="payFeeUserForm" novalidate>
+
+            <table class="table table-hover table-stripped table-condensed" thead>
+                <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>School Grade</th>
+                    <th>Registered Classes</th>
+                    <th>Baptismal Certificate</th>
+                    <th>Fee Due</th>
+                    <th>Paid</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="reg in registrations"  >
+                <tr>
+                    <td>{{reg.name}}</td>
+                    <td>{{reg.grade}}</td>
+                    <td>{{reg.glClass}}, {{reg.vnClass}}</td>
+                    <td>{{reg.hasBaptismCert}}</td>
+                    <td>{{reg.regFee}}</td>
+                    <td>{{reg.regPaid}}</td>
+                </tr>
+                </tbody>
+
+
+
+                <div class="col-xs-7">
+                    <label ng-if="ok_text==='Submit Registration'">Fees:</label>
+                    <div class="row" ng-if="ok_text==='Submit Registration'">
+                        <div class="form-group col-xs-6">
+                            <label>Teacher's Exempt  </label>
+                            <!-- ng-init="user.current_reg.regTeacherExempt" -->
+                            <input type="checkbox" ng-model="user.current_reg.regTeacherExempt" ng-change="teacherExemptToggle()"/>
+                        </div>
+                        <div class="form-group col-xs-6">
+                            <label>Total due: </label>
+                            <input type="text" id="regFee" name="regFee" class="form-control" ng-model="user.current_reg.regFee" ng-readonly="true" placeholder="Registration Fee" required>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="ok_text==='Submit Registration'">
+                        <div class="form-group col-xs-6">
+                            <input type="text" id="regReceivedFrom" name="regReceivedFrom" class="form-control" ng-model="user.current_reg.regReceivedFrom" placeholder="Received From" required>
+                            <div class="help-block" ng-messages="registerUserForm.regReceipt.$error" ng-if="registerUserForm.regReceipt.$touched">
+                                <p ng-message="required">Registration Receipt is required.</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-xs-6">
+                            <input type="text" id="regReceipt" name="regReceipt" class="form-control" ng-model="user.current_reg.regReceipt" placeholder="Check Number" required>
+                            <div class="help-block" ng-messages="registerUserForm.regReceipt.$error" ng-if="registerUserForm.regReceipt.$touched">
+                                <p ng-message="required">Registration Receipt is required.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success btn-lg" ng-disabled="formValid" ng-click="ok()">Pay & Complete Registration</button>
+        <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
+    </div>
+</section>

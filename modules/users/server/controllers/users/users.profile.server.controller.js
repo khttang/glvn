@@ -15,7 +15,8 @@ var _ = require('lodash'),
     User = mongoose.model('User'),
     Parents = mongoose.model('Parents'),
     Student = mongoose.model('Student'),
-    Registration = mongoose.model('Registration');
+    Registration = mongoose.model('Registration'),
+    HouseholdStudent = mongoose.model('HouseholdStudent');
 
 var smtpOptions = {
     host: 'smtp.gmail.com', // hostname
@@ -290,13 +291,62 @@ exports.find = function (req, res) {
             });
         }
     } else if (_student_id) {
-        User.find({'username': _student_id, 'userType': 'STUDENT' }, function (err, user) {
-            if (!err){
+        User.find({'username': _student_id, 'userType': 'STUDENT'}).exec()
+            .then(function (user) {
+                var result = [];
+                return Registration.find({'studentId': _student_id}).exec()
+                    .then(function (registrations) {
+                        return Student.find({'studentId': _student_id}).exec()
+                            .then(function (progress) {
+                                return [user, registrations, progress];
+                            });
+                    });
+            })
+            .then(function (result) {
+                var dbUser = result[0][0];
+                var registrations = result[1];
+                var progress = result[2];
+                var regYear = new Date().getFullYear();
+                var user = {
+                    _id: dbUser._id.toHexString(),
+                    username: dbUser.username,
+                    saintName: dbUser.saintName,
+                    lastName: dbUser.lastName,
+                    middleName: dbUser.middleName,
+                    firstName: dbUser.firstName,
+                    gender: dbUser.gender,
+                    birthDate: new Date(dbUser.birthDate),
+                    phones: dbUser.phones,
+                    emails: dbUser.emails
+                };
+                user.registrations = [];
+                for (var i = 0, len = registrations.length; i < len; i++) {
+                    var registration = {
+                        _id: registrations[i]._id.toHexString(),
+                        year: registrations[i].year,
+                        glClass: registrations[i].glClass,
+                        vnClass: registrations[i].vnClass,
+                        schoolGrade: registrations[i].schoolGrade,
+                        receivedBy: registrations[i].receivedBy,
+                        regTeacherExempt: registrations[i].regTeacherExempt,
+                        regFee: registrations[i].regFee,
+                        regReceipt: registrations[i].regReceipt
+                    }
+                    user.registrations.push(registration);
+
+                    if (registration.year === regYear) {
+                        user.current_reg = registration;
+                    }
+                }
+
+                user.progress = {
+                    hasBaptismCert: progress.hasBaptismCert,
+                    baptismDate: progress.baptismDate,
+                    baptismPlace: progress.baptismPlace,
+
+                };
                 res.json(user);
-            } else {
-                res.status(500).send(err.message);
-            }
-        });
+            });
     } else if (_class) {
         /*
         TODO: should handle this case too
@@ -549,6 +599,10 @@ function decodeBase64Image(dataString) {
     return response;
 }
 
+/*
+Assumptions:
+   - household already exist
+ */
 exports.create = function (req, res, next) {
     var inputUser = req.body;
     if (inputUser) {
@@ -574,14 +628,7 @@ exports.create = function (req, res, next) {
                     username: _username,
                     password: dateFormat(inputUser.birthDate, 'mmddyyyy'),
                     gender: inputUser.gender,
-                    birthDate: inputUser.birthDate,
-                    address: inputUser.address,
-                    city: inputUser.city,
-                    zipCode: inputUser.zipCode,
-                    fatherFirstName: inputUser.fatherFirstName,
-                    fatherLastName: inputUser.fatherLastName,
-                    motherFirstName: inputUser.motherFirstName,
-                    motherLastName: inputUser.motherLastName
+                    birthDate: inputUser.birthDate
                 });
 
                 for (var i = 0; i < inputUser.emails.length; i++) {
@@ -593,16 +640,33 @@ exports.create = function (req, res, next) {
 
                 user.save(function (err) {
                     if (err) {
-                        return res.status(500).send(err.message);
+                        return res.status(400).send(err.message);
                     }
 
+                    // TODO: may want to collect baptismal certificate info
                     var student = new Student({username: user.username});
                     student.save(function (err) {
                         if (err) {
-                            return res.status(500).send(err.message);
+                            return res.status(400).send(err.message);
                         }
 
-                        res.json(user);
+                        var householdStudent = new HouseholdStudent(
+                            {
+                                houseHoldId: inputUser.householdId,
+                                studentId: _username
+                            }
+                        );
+                        householdStudent.save(function (err) {
+                            if (err) {
+                                return res.status(400).send(err.message);
+                            }
+
+                            if (inputUser.current_reg !== undefined) {
+                                err = saveRegistration(inputUser.current_reg);
+                            }
+
+                            res.json(user);
+                        });
                     });
                 });
             }
@@ -632,56 +696,24 @@ exports.update = function (req, res) {
     var saveStudent = false;
     var regYear = new Date().getFullYear();
 
-    // save image to file
-    if (req.body.picture !== undefined) {
-        if (req.body.picture.startsWith('data:image')) {
-            imageBuffer = decodeBase64Image(req.body.picture);
-            student.photo = 'photo-' + _username + '.png';
-            saveStudent = true;
-            fs.writeFile('./uploads/' + student.photo, imageBuffer.data, function (err) {
-                if (err) {
-                    return res.status(500).send(err.message);
-                }
-            });
-        }
-    }
-
-    if (req.body.baptismCert !== undefined) {
-        if (req.body.baptismCert.startsWith('data:image')) {
-            imageBuffer = decodeBase64Image(req.body.baptismCert);
-            student.baptismCert = 'bapcert-' + _username + '.png';
-            student.hasBaptismCert = true;
-            saveStudent = true;
-            fs.writeFile('./uploads/' + student.baptismCert, imageBuffer.data, function (err) {
-                if (err) {
-                    return res.status(500).send(err.message);
-                }
-            });
-        }
-    }
-
-    if (saveStudent === true) {
-        Student.find({'username':_username}, function (err, docs) {
-            if (!err) {
-                if (docs.length === 0) {
-                    var _student = new Student({
-                        username: _username,
-                        baptismCert: student.baptismCert,
-                        hasBaptismCert: student.hasBaptismCert,
-                        photo: student.photo
-                    });
-                    _student.save();
-                } else {
-                    student._id = docs[0]._id;
-                    Student.findByIdAndUpdate(student._id, student, function (err) {
-                        if (err) {
-                            res.status(400).send(err);
-                        }
-                    });
-                }
+    Student.find({'username':_username}, function (err, docs) {
+        if (!err) {
+            if (docs.length === 0) {
+                var _student = new Student({
+                    username: _username,
+                    hasBaptismCert: student.hasBaptismCert,
+                });
+                _student.save();
+            } else {
+                student._id = docs[0]._id;
+                Student.findByIdAndUpdate(student._id, student, function (err) {
+                    if (err) {
+                        res.status(400).send(err);
+                    }
+                });
             }
-        });
-    }
+        }
+    });
 
     if (_registration._id === undefined) {
         var registration = new Registration({
@@ -695,7 +727,8 @@ exports.update = function (req, res) {
             regFee: _registration.regFee,
             regReceipt: _registration.regReceipt,
             regConfirmEmail: _registration.regConfirmEmail,
-            comments: _registration.comments
+            comments: _registration.comments,
+            status: _registration.status
         });
         registration.save(function (err) {
             if (err) {
@@ -712,9 +745,9 @@ exports.update = function (req, res) {
 
     User.findByIdAndUpdate(req.body._id, user, function(err, ret_user){
         if (err) {
-            res.status(400).send(err);
+            return res.status(400).send(err);
         } else {
-            res.json(ret_user);
+            res.status(200);
         }
     });
 

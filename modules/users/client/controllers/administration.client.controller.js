@@ -14,7 +14,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
         this.isRegistered = function (studentId) {
             if ($scope.registrations !== undefined) {
                 var regYear = new Date().getFullYear();
-                for (var i = 0, len=$scope.registrations.length; i < len; i++) {
+                for (var i = 0, len = $scope.registrations.length; i < len; i++) {
                     if (studentId === $scope.registrations[i].studentId) {
                         if ($scope.registrations[i].year === regYear) {
                             return true;
@@ -25,132 +25,10 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             return false;
         };
 
-        this.findStudent = function(criteria) {
+        this.findStudent = function (criteria) {
             $scope.success = $scope.error = null;
-            $http.get('/api/users?criteria='+criteria).success(function (response) {
+            $http.get('/api/users?criteria=' + criteria).success(function (response) {
                 $scope.students = response;
-                }).error(function (response) {
-                $scope.error = response.message;
-            });
-        };
-
-        this.findStudentForRegistration = function(studentId, criteria) {
-            $scope.success = $scope.error = null;
-            if (studentId !== undefined && criteria === undefined) {
-                $http.get('/api/users?student_id='+studentId).success(function (response) {
-                    $scope.students = response;
-
-                    var studentids = [];
-                    for(var i=0, len=response.length; i < len; i++){
-                        studentids.push(response[i].username);
-                    }
-                    $http.get('/api/users/registrations?student_ids='+JSON.stringify(studentids)).success(function (response2) {
-                        $scope.registrations = response2;
-                        var currentyr = new Date().getFullYear();
-
-                        for(var i=0, len=response.length; i < len; i++) {
-                            response[i].registrations = [];
-                            for (var j = 0, len2=response2.length; j < len2; j++) {
-                                if (response[i].username === response2[j].studentId) {
-                                    if (response2[j].year === currentyr) {
-                                        response[i].current_reg = response2[j];
-                                    } else {
-                                        response[i].registrations.push(response2[j]);
-                                    }
-                                }
-                            }
-                        }
-                        $http.get('/api/users/progress?student_ids='+JSON.stringify(studentids)).success(function (response3) {
-                            for(var i=0, len=response.length; i < len; i++) {
-                                for (var j = 0, len2=response3.length; j < len2; j++) {
-                                    if (response[i].username === response3[j].username) {
-                                        response[i].hasBaptismCert = response3[j].hasBaptismCert;
-                                    }
-                                }
-                            }
-                        }).error(function (response) {
-                            $scope.error = response.message;
-                        });
-                    }).error(function (response) {
-                        $scope.error = response.message;
-                    });
-                }).error(function (response) {
-                    $scope.error = response.message;
-                });
-            } else if (studentId === undefined && criteria !== undefined) {
-                $http.get('/api/users?criteria='+criteria).success(function (response) {
-                    $scope.students = response;
-
-                    var studentids = [];
-                    for(var i=0, len=response.length; i < len; i++){
-                        studentids.push(response[i].username);
-                    }
-                    $http.get('/api/users/registrations?student_ids='+JSON.stringify(studentids)).success(function (response2) {
-                        $scope.registrations = response2;
-                        var currentyr = new Date().getFullYear();
-
-                        for(var i=0, len=response.length; i < len; i++) {
-                            response[i].registrations = [];
-                            for (var j = 0, len2=response2.length; j < len2; j++) {
-                                if (response[i].username === response2[j].studentId) {
-                                    if (response2[j].year === currentyr) {
-                                        response[i].current_reg = response2[j];
-                                    } else {
-                                        response[i].registrations.push(response2[j]);
-                                    }
-                                }
-                            }
-                        }
-                        $http.get('/api/users/progress?student_ids='+JSON.stringify(studentids)).success(function (response3) {
-                            for(var i=0, len=response.length; i < len; i++) {
-                                for (var j = 0, len2=response3.length; j < len2; j++) {
-                                    if (response[i].username === response3[j].username) {
-                                        response[i].hasBaptismCert = response3[j].hasBaptismCert;
-                                    }
-                                }
-                            }
-                        }).error(function (response) {
-                            $scope.error = response.message;
-                        });
-                    }).error(function (response) {
-                        $scope.error = response.message;
-                    });
-                }).error(function (response) {
-                    $scope.error = response.message;
-                });
-            } else {
-                $scope.error = 'Either studentId or parent email/phone/address can be specified, not both.';
-            }
-        };
-
-        this.findStudentsForApproval = function() {
-            var currentyr = new Date().getFullYear();
-            var statuses = ['RECEIVED', 'PROCESSING', 'INCOMPLETE'];
-            $http.get('/api/users/registrations?status='+JSON.stringify(statuses)).success(function (response) {
-
-                var studentids = [];
-                for(var i=0, len=response.length; i < len; i++){
-                    studentids.push(response[i].studentId);
-                }
-
-                $http.get('/api/users?student_ids='+JSON.stringify(studentids)).success(function (response2) {
-                    $scope.students = response2;
-
-                    for(var i=0, len=response2.length; i < len; i++) {
-                        response2[i].registrations = [];
-                        for (var j = 0, len2=response.length; j < len2; j++) {
-                            if (response2[i].username === response[j].studentId) {
-                                if (response[j].year === currentyr) {
-                                    response2[i].current_reg = response[j];
-                                } else {
-                                    response2[i].registrations.push(response[j]);
-                                }
-                            }
-                        }
-                    }
-                }).error(function (response) {
-                    $scope.error = response.message;
-                });
             }).error(function (response) {
                 $scope.error = response.message;
             });
@@ -175,10 +53,10 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 var uri = (registration === 'register') ? '/api/users/register' : '/api/users';
                 var _user = userService.getUser();
                 _user.current_reg.receivedBy = $scope.authentication.user.username;
-                $http.post(uri, _user).success(function() {
+                $http.post(uri, _user).success(function () {
                     userService.clearUser();
                     $scope.success = registration + ' student completed successfully!';
-                }).error(function(response) {
+                }).error(function (response) {
                     $scope.error = response;
                 });
             });
@@ -263,10 +141,10 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
 
             modalInstance.reg_step = 'approve';
             var tmpMsg = (_user.username !== undefined) ? 'Register student ' + _user.username : 'Register new student';
-            modalInstance.modalTitle = tmpMsg + ' for school Year '+ new Date().getFullYear();
+            modalInstance.modalTitle = tmpMsg + ' for school Year ' + new Date().getFullYear();
             modalInstance.result.then(function (modalData) {
 
-                createUserPromise('/api/users', _user).then(function(data) {
+                createUserPromise('/api/users', _user).then(function (data) {
                     data.photo = _user.photo;
                     data.baptismCert = _user.baptismCert;
                     data.current_reg = _user.current_reg;
@@ -320,7 +198,32 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     });
                 });
             });
+        };
 
+        this.modalAdminRegisterNewHousehold = function (size) {
+            var household = {
+                emails: [],
+                phones: []
+            };
+
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'modules/users/client/views/register_household.client.view.html',
+                controller: 'regHousehold.modal as vm',
+                size: size,
+                resolve: {
+                    household: function () {
+                        return household;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (modal_household) {
+                $http.post('/api/households/register', modal_household).success(function () {
+                    $scope.success = 'A new household was added successfully!';
+                    $scope.load();
+                });
+            });
         };
     }
 ]);
@@ -359,6 +262,19 @@ angular.module('users').controller('updstudent.modal', ['$scope', '$uibModalInst
 
 }]);
 
+angular.module('users').controller('payFee.modal', ['registrations', '$scope', '$uibModalInstance', function(registrations, $scope, $uibModalInstance) {
+
+    $scope.modalTitle = $uibModalInstance.modalTitle;
+
+    $scope.ok = function () {
+        $uibModalInstance.close($scope.modalData);
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+}]);
+
 angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$http', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $http, $uibModalInstance, $uibModal) {
 
     var lateDate = new Date('2016-06-21');
@@ -378,7 +294,7 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
     $scope.modalTitle = $uibModalInstance.modalTitle;
     $scope.user = user;
     $scope.registrations = registrations;
-    $scope.ok_text = ($uibModalInstance.reg_step === 'intake') ? 'Register':'Complete Registration';
+    $scope.ok_text = ($uibModalInstance.reg_step === 'intake') ? 'Register':'Submit Registration';
     $scope.ok = function () {
         $uibModalInstance.close($scope.user);
     };
@@ -414,33 +330,6 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
             $scope.basefee = (curDate < lateDate) ? 80:130;
         }
         user.current_reg.regFee = $scope.basefee + $scope.extrafees;
-    };
-
-    $scope.snapPhoto = function (photoType) {
-        $scope.modalData = {};
-
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'modules/users/client/views/authentication/snapPhoto.client.view.html',
-            controller: 'newmodal as vm',
-            size: 'lg',
-            resolve: {
-                modalData: function () {
-                    return {
-                        photoType: photoType,
-                        photo: ''
-                    };
-                }
-            }
-        });
-        modalInstance.modalTitle = 'Take ' + photoType + ' photo';
-        modalInstance.result.then(function (modalData) {
-            if (photoType === 'student') {
-                $scope.user.picture = modalData.photo;
-            } else if (photoType === 'certificate') {
-                $scope.user.baptismCert = modalData.photo;
-            }
-        });
     };
 
     $scope.addNewEmail = function(size) {
@@ -562,6 +451,7 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
         }
     };
 
+    /*
     $scope.snapPhoto = function (photoType) {
         $scope.modalData = {};
 
@@ -604,12 +494,8 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
             }
         });
         modalInstance.modalTitle = 'View ' + photoType + ' photo';
-        /*
-        modalInstance.result.then(function (modalData) {
-
-        });
-        */
     };
+    */
 }]);
 
 angular.module('users').controller('regConfirm.modal', ['user', 'Authentication', '$scope', '$uibModalInstance', 'postEmailForm', function(user, Authentication, $scope, $uibModalInstance, postEmailForm) {
@@ -650,6 +536,149 @@ angular.module('users').controller('regConfirm.modal', ['user', 'Authentication'
         $printSection.innerHTML = '';
         $printSection.appendChild(domClone);
         window.print();
+    };
+
+}]);
+
+angular.module('users').controller('regHousehold.modal', ['household', '$scope', '$uibModalInstance', '$uibModal', function(household, $scope, $uibModalInstance, $uibModal) {
+
+    $scope.household = household;
+
+    $scope.ok = function () {
+        $uibModalInstance.close($scope.household);
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+    $scope.selectedEmail = null;  // initialize our variable to null
+    $scope.setClickedEmail = function(index) {  //function that sets the value of selectedRow to current index
+        $scope.selectedEmail = index;
+    };
+
+    $scope.selectedPhone = null;  // initialize our variable to null
+    $scope.setClickedPhone = function(index) {  //function that sets the value of selectedRow to current index
+        $scope.selectedPhone = index;
+    };
+
+    $scope.addNewEmail = function(size) {
+        $scope.modalData = {};
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'modules/users/client/views/authentication/addEmail.client.view.html',
+            controller: 'newmodal as vm',
+            size: size,
+            resolve: {
+                modalData: function () {
+                    return {
+                        address: '',
+                        owner: 'MOM'
+                    };
+                }
+            }
+        });
+        modalInstance.modalTitle = 'Add new email';
+        modalInstance.result.then(function (modalData) {
+            $scope.household.emails.push(modalData);
+        });
+    };
+
+    $scope.editEmail = function (index, size) {
+        if (index !== null) {
+            $scope.modalData = {};
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'modules/users/client/views/authentication/addEmail.client.view.html',
+                controller: 'newmodal as vm',
+                size: size,
+                resolve: {
+                    modalData: function () {
+                        return $scope.household.emails[index];
+                    }
+                }
+            });
+            modalInstance.modalTitle = 'Update email';
+            modalInstance.result.then(function (modalData) {
+                if (modalData._id !== null) {
+                    for (var i = 0; i < $scope.household.emails.length; i++) {
+                        if ($scope.household.emails[i]._id === modalData._id) {
+                            $scope.household.emails[i].owner = modalData.owner;
+                            $scope.household.emails[i].address = modalData.address;
+                        }
+                    }
+                } else {
+                    $scope.household.emails.push(modalData);
+                }
+            });
+        }
+    };
+
+    $scope.removeEmail = function (index) {
+        if (index !== null) {
+            $scope.household.emails.splice(index, 1);
+        }
+    };
+
+    $scope.addNewPhone = function(size) {
+        $scope.modalData = {};
+        var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'modules/users/client/views/authentication/addPhone.client.view.html',
+            controller: 'newmodal as vm',
+            size: size,
+            resolve: {
+                modalData: function () {
+                    return {
+                        number: '',
+                        owner: 'MOM',
+                        type: 'MOBILE'
+                    };
+                }
+            }
+        });
+        modalInstance.modalTitle = 'Add new phone';
+        modalInstance.result.then(function (modalData) {
+            $scope.household.phones.push(modalData);
+        });
+    };
+
+    $scope.removePhone = function (index) {
+        if (index !== null) {
+            $scope.household.phones.splice(index, 1);
+        }
+    };
+
+    $scope.editPhone = function (index, size) {
+        if (index !== null) {
+            $scope.modalData = {};
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'modules/users/client/views/authentication/addPhone.client.view.html',
+                controller: 'newmodal as vm',
+                size: size,
+                resolve: {
+                    modalData: function () {
+                        return $scope.household.phones[index];
+                    }
+                }
+            });
+            modalInstance.modalTitle = 'Update phone';
+            modalInstance.result.then(function (modalData) {
+                if (modalData._id !== null) {
+                    for (var i=0; i < $scope.household.phones.length; i++) {
+                        if ($scope.household.phones[i]._id === modalData._id) {
+                            $scope.household.phones[i].owner = modalData.owner;
+                            $scope.household.phones[i].type = modalData.type;
+                            $scope.household.phones[i].number = modalData.number;
+                        }
+                    }
+                } else {
+                    $scope.household.phones.push(modalData);
+                }
+            });
+        }
     };
 
 }]);

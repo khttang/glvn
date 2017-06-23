@@ -24,6 +24,8 @@
       </li>
       <li class="divider-vertical"></li>
       -->
+
+      <!--
       <li class="dropdown" dropdown ng-show="ctrl.isTeacher()">
         <a class="dropdown-toggle" dropdown-toggle role="button">Teachers</a>
         <ul class="dropdown-menu" role="menu">
@@ -51,6 +53,9 @@
           </li>
         </ul>
       </li>
+      -->
+
+
       <!--
       <li class="divider-vertical"></li>
       <li ui-sref-active="active">
@@ -63,6 +68,9 @@
       <li class="dropdown" dropdown ng-show="ctrl.isAdminUser()">
         <a class="dropdown-toggle" dropdown-toggle role="button">Administration</a>
         <ul class="dropdown-menu" role="menu">
+          <li ui-sref-active="active" ng-show="ctrl.isSuperAdminUser() && ctrl.isTeacher()">
+            <a ui-sref="registration.intake2">Registration By Household</a>
+          </li>
           <li ui-sref-active="active" ng-show="ctrl.isSuperAdminUser() && ctrl.isTeacher()">
             <a ui-sref="registration.intake">Registration</a>
           </li>

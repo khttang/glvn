@@ -5,8 +5,7 @@
     <div class="modal-body" ng-init="init()">
         <form name="registerUserForm" novalidate>
             <fieldset>
-
-                <label>Student:</label>
+                <label>Student: (Saint, Last, Middle, First)</label>
                 <div class="row">
                     <div class="form-group col-xs-3">
                         <input type="text" id="saintname" name="saintname" class="form-control" ng-model="user.saintName" placeholder="Saint Name">
@@ -30,6 +29,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-xs-7">
                         <div class="row">
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
                         </div>
-                        <label>Student Father:</label>
+                        <label>Student Father: (Last, First)</label>
                         <div class="row">
                             <div class="form-group col-xs-6">
                                 <input type="text" id="fatherlastmame" name="fatherlastmame" class="form-control" ng-model="user.fatherLastName" placeholder="Father Last Name" required>
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
                         </div>
-                        <label>Student Mother:</label>
+                        <label>Student Mother: (Last, First)</label>
                         <div class="row">
                             <div class="form-group col-xs-6">
                                 <input type="text" id="motherlastmame" name="motherlastmame" class="form-control" ng-model="user.motherLastName" placeholder="Mother Last Name" required>
@@ -80,7 +80,7 @@
                                 </div>
                             </div>
                         </div>
-                        <label>Contacts:</label>
+                        <label>Address:</label>
                         <div class="row">
                             <div class="form-group col-xs-6">
                                 <input type="text" id="addressline" name="addressline" class="form-control" ng-model="user.address" placeholder="Address Line" required>
@@ -101,6 +101,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="col-xs-5">
+                        <div class="row">
+                            <label>Previous Registrations:</label>
+                            <div class="row" ng-repeat="reg in user.registrations">
+                                <p class="indented">{{reg.year}}: {{reg.glClass}}, {{reg.vnClass}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-7">
                         <div class="row">
                             <div class="form-group col-xs-9">
                                 <label for="formEmails">Emails:</label>
@@ -144,25 +158,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-5">
-                        <div class="form-group">
-                            <img ng-src="{{user.picture}}" id="photo-id" width="260px" height="240px" placeholder="Student Photo"/>
-                        </div>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="selectPhoto('student')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Select a student picture from file">
-                            <i class="glyphicon glyphicon-open-file"></i>
-                        </button>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="snapPhoto('student')" data-toggle="tooltip" tooltip-placement="bottom" tooltip="Take a picture of student">
-                            <i class="glyphicon glyphicon-camera"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group col-xs-7">
-
+                    <div class="form-group col-xs-5">
                         <label>Classes:</label>
                         <div class=row">
-                            <div class="form-group col-xs-4">
+                            <div class="form-group col-xs-3">
                                 <select class="form-control" id="gradeLevel" name="gradeLevel" ng-model="user.current_reg.schoolGrade" ng-init="user.current_reg.schoolGrade" required>
                                     <option value="">-- Grade --</option>
                                     <option value="1">1</option>
@@ -182,7 +181,7 @@
                                     <p ng-message="required">Grade level is required.</p>
                                 </div>
                             </div>
-                            <div class="form-group col-xs-4">
+                            <div class="form-group col-xs-5">
                                 <select class="form-control" id="glClass" name="glClass" ng-model="user.current_reg.glClass" ng-init="user.current_reg.glClass" ng-change="glClassChange()">
                                     <option value="">-- GL --</option>
                                     <option value="gl-01">GL-01</option>
@@ -219,11 +218,18 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-5">
                         <div class="row">
                             <div class="form-group col-xs-6">
-                                <label>Baptism certificate&nbsp;&nbsp;</label>
+                                <label>Baptismal certificate&nbsp;&nbsp;</label>
                                 <input type="checkbox" ng-model="user.hasBaptismCert" onclick="return false"/>
                             </div>
+                            <!-- Control buttons
                             <div class="form-group col-xs-6">
                                 <button type="button" class="btn btn-success btn-xs" ng-disabled="!user.hasBaptismCert" ng-click="viewPhoto(user.username, 'certificate')" data-toggle="tooltip" tooltip-placement="right" tooltip="View baptism certificate">
                                     <i class="glyphicon glyphicon-eye-open"></i>
@@ -235,46 +241,15 @@
                                     <i class="glyphicon glyphicon-camera"></i>
                                 </button>
                             </div>
+                            -->
                         </div>
                         <div class="row">
                             <div class="form-group col-xs-4">
-                                <input type="text" id="issuedDate" name="issuedDate" class="form-control" ng-model="user.baptismDate" placeholder="Baptism Date" required>
+                                <input type="text" id="issuedDate" name="issuedDate" class="form-control" ng-model="user.baptismDate" placeholder="Date" required>
                             </div>
                             <div class="form-group col-xs-8">
                                 <input type="text" id="parish" name="parish" class="form-control" ng-model="user.baptismParish" placeholder="Parish" required>
                             </div>
-                        </div>
-                        <label ng-if="ok_text==='Complete Registration'">Fees:</label>
-                        <div class="row" ng-if="ok_text==='Complete Registration'">
-                            <div class="form-group col-xs-6">
-                                <label>Teacher's Exempt  </label>
-                                <!-- ng-init="user.current_reg.regTeacherExempt" -->
-                                <input type="checkbox" ng-model="user.current_reg.regTeacherExempt" ng-change="teacherExemptToggle()"/>
-                            </div>
-                            <div class="form-group col-xs-6">
-                                <label>Total due: </label>
-                                <input type="text" id="regFee" name="regFee" class="form-control" ng-model="user.current_reg.regFee" ng-readonly="true" placeholder="Registration Fee" required>
-                            </div>
-                        </div>
-                        <div class="row" ng-if="ok_text==='Complete Registration'">
-                            <div class="form-group col-xs-6">
-                                <input type="text" id="regReceivedFrom" name="regReceivedFrom" class="form-control" ng-model="user.current_reg.regReceivedFrom" placeholder="Received From" required>
-                                <div class="help-block" ng-messages="registerUserForm.regReceipt.$error" ng-if="registerUserForm.regReceipt.$touched">
-                                    <p ng-message="required">Registration Receipt is required.</p>
-                                </div>
-                            </div>
-                            <div class="form-group col-xs-6">
-                                <input type="text" id="regReceipt" name="regReceipt" class="form-control" ng-model="user.current_reg.regReceipt" placeholder="Check Number" required>
-                                <div class="help-block" ng-messages="registerUserForm.regReceipt.$error" ng-if="registerUserForm.regReceipt.$touched">
-                                    <p ng-message="required">Registration Receipt is required.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group col-xs-5">
-                        <label>Previous Registrations:</label>
-                        <div class="row" ng-repeat="reg in registrations">
-                             <p class="indented">{{reg.year}}: {{reg.glClass}}, {{reg.vnClass}}</p>
                         </div>
                     </div>
                 </div>

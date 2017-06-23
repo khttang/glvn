@@ -200,6 +200,197 @@ angular.module('users')
         };
         $scope.load();
     }])
+    .controller('ShowIntakeByHouseholdCtrl', ['$scope', '$http', '$filter', '$uibModal', 'uiGridConstants', 'postEmailForm',
+        function($scope, $http, $filter, $uibModal, uiGridConstants, postEmailForm) {
+
+            $scope.filterOptions = {
+                filterText: ''
+            };
+
+            $scope.onChangeSelection = function() {
+                console.log('onChangeSelection');
+            };
+
+            $scope.createNewStudent =  function(household) {
+                $scope.modalData = {};
+
+                var user = {
+                    householdId: household.householdId,
+                    fatherLastName: household.fatherLastName,
+                    fatherFirstName: household.fatherFirstName,
+                    motherLastName: household.motherLastName,
+                    motherFirstName: household.motherFirstName,
+                    address: household.address,
+                    city: household.city,
+                    zipCode: household.zipCode,
+                    emails: [],
+                    phones: [],
+                    current_reg: {}
+                };
+
+                var modalInstance = $uibModal.open({
+                    animation: $scope.animationsEnabled,
+                    templateUrl: 'modules/users/client/views/register.client.view.html',
+                    controller: 'regstudent.modal as vm',
+                    size: 'lg',
+                    resolve: {
+                        registrations: function () {
+                            return user.registrations;
+                        },
+                        user: function () {
+                            user.birthDate = new Date(user.birthDate);
+                            return user;
+                        }
+                    }
+                });
+                modalInstance.reg_step = 'approve';
+                modalInstance.modalTitle = 'Register new student for school Year '+ new Date().getFullYear();
+                modalInstance.result.then(function (modalData) {
+                    user.current_reg.reviewedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
+                    user.current_reg.status = 'APPROVED';
+                    $http.post('/api/users', user).success(function () {
+                        $scope.success = 'Completed registration for student ' + user.username + '. Congratulations!';
+                        $scope.load();
+                    });
+                });
+
+            };
+
+            $scope.updateRegStudent = function(household, studentId) {
+                $scope.modalData = {};
+
+                var user = {};
+
+                $http.get('/api/users?student_id='+studentId).success(function (response) {
+                    user = response;
+                    user.householdId = household.householdId;
+                    user.fatherLastName = household.fatherLastName;
+                    user.fatherFirstName = household.fatherFirstName;
+                    user.motherLastName = household.motherLastName;
+                    user.motherFirstName = household.motherFirstName;
+                    user.address = household.address;
+                    user.city = household.city;
+                    user.zipCode = household.zipCode;
+
+                    var modalInstance = $uibModal.open({
+                        animation: $scope.animationsEnabled,
+                        templateUrl: 'modules/users/client/views/register.client.view.html',
+                        controller: 'regstudent.modal as vm',
+                        size: 'lg',
+                        resolve: {
+                            registrations: function () {
+                                return user.registrations;
+                            },
+                            user: function () {
+                                user.birthDate = new Date(user.birthDate);
+                                return user;
+                            }
+                        }
+                    });
+                    modalInstance.reg_step = 'approve';
+                    modalInstance.modalTitle = 'Register ' + user.firstName + ' ' + user.lastName + ' for school Year '+ new Date().getFullYear();
+                    modalInstance.result.then(function (modalData) {
+                        user.current_reg.reviewedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
+                        user.current_reg.receivedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
+                        user.current_reg.status = 'APPROVED';
+                        $http.put('/api/users', user).success(function () {
+                            $scope.success = 'Completed registration for student ' + user.username + '. Congratulations!';
+                            $scope.load();
+                        });
+                    });
+                });
+             };
+
+            $scope.payFee = function(household) {
+
+                $scope.modalData = {};
+
+                if (household.current_regs === undefined) {
+                    household.current_regs = [];
+                }
+                for (var i = 0, len = household.children.length; i < len; i++) {
+                    if (household.children[i].current_reg !== undefined) {
+                        var registration = {
+                            name: household.children[i].firstName + ' ' + household.children[i].lastName,
+                            grade: household.children[i].current_reg.schoolGrade,
+                            glClass: household.children[i].current_reg.glClass,
+                            vnClass: household.children[i].current_reg.vnClass,
+                            regFee: household.children[i].current_reg.regFee,
+                            regPaid: household.children[i].current_reg.regPaid,
+                            regTeacherExempt: household.children[i].current_reg.regTeacherExempt
+                        };
+                        household.current_regs.push(registration);
+                    }
+                }
+
+                var modalInstance = $uibModal.open({
+                    animation: $scope.animationsEnabled,
+                    templateUrl: 'modules/users/client/views/payfee.client.view.html',
+                    controller: 'payFee.modal as vm',
+                    size: 'lg',
+                    resolve: {
+                        registrations: function () {
+                            return household.current_regs;
+                        }
+                    }
+                });
+                modalInstance.modalTitle = 'Complete registration for school Year '+ new Date().getFullYear();
+                modalInstance.result.then(function (modalData) {
+                    user.current_reg.reviewedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
+                    user.current_reg.status = 'APPROVED';
+                    $http.post('/api/users', user).success(function () {
+                        $scope.success = 'Completed registration for student ' + user.username + '. Congratulations!';
+                        $scope.load();
+                    });
+                });
+            };
+
+            //var childrenTemplate = '<div><select ng-model="row.entity.index"><option value="{{r.username}}" ng-repeat="r in row.entity.children track by r.username">{{r.fullname}}  (id: {{r.username}})</option></select> </div>';
+            var childrenTemplate='<div><select ng-model="row.entity.index"><option value="{{r.username}}" ng-repeat="r in row.entity.children">{{r.fullname}}  (id: {{r.username}})</option></select> </div>';
+
+            $scope.gridOptions = {
+                data: 'GridData',
+                columnDefs: [
+                    { field: 'fatherFirstName', displayName: 'Father First', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'fatherLastName', displayName: 'Father Last', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'motherFirstName', displayName: 'Mother First', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'motherLastName', displayName: 'Mother Last', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'children', displayName: 'Children', enableFiltering: false, cellTemplate: childrenTemplate, width: '26%', enableCellEdit: false, enableColumnMenu: false },
+                    { field: 'register', displayName: '', width: '3%', enableFiltering: false, enableCellEdit: false, enableColumnMenu: false,
+                        cellTemplate: '<button type="button" class="btn-small" ng-click="grid.appScope.updateRegStudent(row.entity, row.entity.index)"><i class="glyphicon glyphicon-edit"></i></button>'},
+                    { field: 'addChild', displayName: '', width: '3%', enableFiltering: false, enableCellEdit: false, enableColumnMenu: false,
+                        cellTemplate: '<button type="button" class="btn-small" ng-click="grid.appScope.createNewStudent(row.entity)"><i class="glyphicon glyphicon-plus-sign"></i></button>'},
+                    { field: 'payfee', displayName: '', width: '3%', enableFiltering: false, enableCellEdit: false, enableColumnMenu: false,
+                        cellTemplate: '<button type="button" class="btn-small" ng-click="grid.appScope.payFee(row.entity)"><i class="glyphicon glyphicon-thumbs-up"></i></button>'},
+                    { field: 'address', displayName: 'Address', width: '18%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'city', displayName: 'City', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'zipCode', displayName: 'Zip', width: '6%', enableCellEdit: false, enableColumnMenu: false}
+                ],
+                excludeProperties: '__metadata',
+                enableFiltering: true,
+                showGridFooter: true,
+                multiSelect: false,
+                enableRowSelection: true,
+                onRegisterApi: function(gridApi){
+                    $scope.gridApi = gridApi;
+                }
+            };
+
+            $scope.filterUpdated = function () {
+                $scope.gridOptions.filterOptions.filterText = 'username: ';
+            };
+
+            $scope.load = function () {
+
+                $http.get('/api/households?').success(function (response) {
+                    $scope.GridData = response;
+
+                }).error(function (response) {
+                    $scope.error = response.message;
+                });
+            }
+            $scope.load();
+        }])
     .controller('ShowIntakeCtrl', ['$scope', '$http', '$filter', '$uibModal', 'uiGridConstants', 'postEmailForm',
         function($scope, $http, $filter, $uibModal, uiGridConstants, postEmailForm) {
 
