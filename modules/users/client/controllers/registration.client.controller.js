@@ -247,6 +247,7 @@ angular.module('users')
                 modalInstance.modalTitle = 'Register new student for school Year '+ new Date().getFullYear();
                 modalInstance.result.then(function (modalData) {
                     user.current_reg.reviewedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
+                    user.current_reg.receivedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
                     user.current_reg.status = 'APPROVED';
                     $http.post('/api/users', user).success(function () {
                         $scope.success = 'Completed registration for student ' + user.username + '. Congratulations!';

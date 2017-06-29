@@ -605,6 +605,7 @@ Assumptions:
  */
 exports.create = function (req, res, next) {
     var inputUser = req.body;
+
     if (inputUser) {
         var _username = inputUser.firstName.toLowerCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toLowerCase().charAt(0);
         User.find({ username: _username}).populate('user', 'username').exec(function (err, users) {
@@ -628,7 +629,9 @@ exports.create = function (req, res, next) {
                     username: _username,
                     password: dateFormat(inputUser.birthDate, 'mmddyyyy'),
                     gender: inputUser.gender,
-                    birthDate: inputUser.birthDate
+                    birthDate: inputUser.birthDate,
+                    emails: [],
+                    phones: []
                 });
 
                 for (var i = 0; i < inputUser.emails.length; i++) {
@@ -643,26 +646,34 @@ exports.create = function (req, res, next) {
                         return res.status(400).send(err.message);
                     }
 
-                    // TODO: may want to collect baptismal certificate info
-                    var student = new Student({username: user.username});
-                    student.save(function (err) {
+                    var progress = new Student({
+                        username: _username,
+                        hasBaptismCert: inputUser.hasBaptismCert,
+                        baptismDate: inputUser.baptismDate,
+                        baptismPlace: inputUser.baptismPlace
+                    });
+                    progress.save(function (err) {
                         if (err) {
                             return res.status(400).send(err.message);
                         }
 
-                        var householdStudent = new HouseholdStudent(
-                            {
-                                houseHoldId: inputUser.householdId,
-                                studentId: _username
-                            }
-                        );
+                        var householdStudent = new HouseholdStudent({
+                            houseHoldId: inputUser.householdId,
+                            studentId: _username
+                        });
                         householdStudent.save(function (err) {
                             if (err) {
                                 return res.status(400).send(err.message);
                             }
 
                             if (inputUser.current_reg !== undefined) {
-                                err = saveRegistration(inputUser.current_reg);
+                                var registration = new Registration(inputUser.current_reg);
+
+                                registration.save(function (err) {
+                                    if (err) {
+                                        return res.status(400).send(err.message);
+                                    }
+                                });
                             }
 
                             res.json(user);
@@ -681,32 +692,61 @@ exports.create = function (req, res, next) {
  */
 exports.update = function (req, res) {
 
+    var inputUser = req.body;
     var _registration = req.body.current_reg;
-    var _username = req.body.username;
 
     // Do not update key and security related fields
     delete req.body.roles;
     delete req.body.userType;
     delete req.body.username;
-    delete req.body.current_reg;
 
     var imageBuffer;
     var user = new User(req.body);
-    var student = {};
-    var saveStudent = false;
     var regYear = new Date().getFullYear();
 
-    Student.find({'username':_username}, function (err, docs) {
-        if (!err) {
+    Student.find({'username':inputUser.username}).exec()
+        .then(function(user) {
             if (docs.length === 0) {
                 var _student = new Student({
-                    username: _username,
-                    hasBaptismCert: student.hasBaptismCert,
+                    username: inputUser.username,
+                    hasBaptismCert: inputUser.hasBaptismCert,
+                    baptismDate: inputUser.baptismDate,
+                    baptismPlace: inputUser.baptismPlace
                 });
                 _student.save();
             } else {
-                student._id = docs[0]._id;
-                Student.findByIdAndUpdate(student._id, student, function (err) {
+                docs[0].hasBaptismCert = inputUser.hasBaptismCert;
+                docs[0].baptismDate = inputUser.baptismDate;
+                docs[0].baptismPlace = inputUser.baptismPlace;
+                Student.findByIdAndUpdate(docs[0]._id, docs[0], function (err) {
+                    if (err) {
+                        res.status(400).send(err);
+                    }
+                });
+            }
+        })
+        .then()
+
+
+
+
+
+
+    Student.find({'username':inputUser.username}, function (err, docs) {
+        if (!err) {
+            if (docs.length === 0) {
+                var _student = new Student({
+                    username: inputUser.username,
+                    hasBaptismCert: inputUser.hasBaptismCert,
+                    baptismDate: inputUser.baptismDate,
+                    baptismPlace: inputUser.baptismPlace
+                });
+                _student.save();
+            } else {
+                docs[0].hasBaptismCert = inputUser.hasBaptismCert;
+                docs[0].baptismDate = inputUser.baptismDate;
+                docs[0].baptismPlace = inputUser.baptismPlace;
+                Student.findByIdAndUpdate(docs[0]._id, docs[0], function (err) {
                     if (err) {
                         res.status(400).send(err);
                     }
@@ -743,7 +783,7 @@ exports.update = function (req, res) {
         });
     }
 
-    User.findByIdAndUpdate(req.body._id, user, function(err, ret_user){
+    User.findByIdAndUpdate(inputUser._id, inputUser, function(err, ret_user){
         if (err) {
             return res.status(400).send(err);
         } else {
@@ -751,6 +791,13 @@ exports.update = function (req, res) {
         }
     });
 
+    Household.findByIdAndUpdate(inputUser.householdId, inputUser, function(err, ret_user){
+        if (err) {
+            return res.status(400).send(err);
+        } else {
+            res.status(200);
+        }
+    });
 };
 
 /**
