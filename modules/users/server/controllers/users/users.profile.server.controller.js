@@ -16,6 +16,7 @@ var _ = require('lodash'),
     Parents = mongoose.model('Parents'),
     Student = mongoose.model('Student'),
     Registration = mongoose.model('Registration'),
+    Household = mongoose.model('Household'),
     HouseholdStudent = mongoose.model('HouseholdStudent');
 
 var smtpOptions = {
@@ -238,12 +239,13 @@ exports.getProgress = function (req, res) {
 };
 
 exports.find = function (req, res) {
-    var _criteria = req.query.criteria;
-    var _student_id = req.query.student_id;
-    var _class = req.query.class;
-    var _student_ids = req.query.student_ids;
-    var _user_type = req.query.user_type;
-    var temp;
+    let _criteria = req.query.criteria;
+    let _student_id = req.query.student_id;
+    let _household_id = req.query.household_id;
+    let _class = req.query.class;
+    let _student_ids = req.query.student_ids;
+    let _user_type = req.query.user_type;
+    let temp;
 
     if (_criteria) {
         if (_criteria.indexOf('@') > 0) {
@@ -296,9 +298,12 @@ exports.find = function (req, res) {
                 var result = [];
                 return Registration.find({'studentId': _student_id}).exec()
                     .then(function (registrations) {
-                        return Student.find({'studentId': _student_id}).exec()
+                        return Student.find({'username': _student_id}).exec()
                             .then(function (progress) {
-                                return [user, registrations, progress];
+                                return Household.findById(_household_id).exec()
+                                    .then(function(hh) {
+                                        return [user, registrations, progress, hh];
+                                    });
                             });
                     });
             })
@@ -306,7 +311,12 @@ exports.find = function (req, res) {
                 var dbUser = result[0][0];
                 var registrations = result[1];
                 var progress = result[2];
+                var hh = result[3];
                 var regYear = new Date().getFullYear();
+
+                var emails = (hh.emails !== undefined) ? hh.emails:dbUser.emails;
+                var phones = (hh.phones !== undefined) ? hh.phones:dbUser.phones;
+
                 var user = {
                     _id: dbUser._id.toHexString(),
                     username: dbUser.username,
@@ -316,8 +326,8 @@ exports.find = function (req, res) {
                     firstName: dbUser.firstName,
                     gender: dbUser.gender,
                     birthDate: new Date(dbUser.birthDate),
-                    phones: dbUser.phones,
-                    emails: dbUser.emails
+                    phones: phones,
+                    emails: emails
                 };
                 user.registrations = [];
                 for (var i = 0, len = registrations.length; i < len; i++) {
@@ -330,7 +340,9 @@ exports.find = function (req, res) {
                         receivedBy: registrations[i].receivedBy,
                         regTeacherExempt: registrations[i].regTeacherExempt,
                         regFee: registrations[i].regFee,
-                        regReceipt: registrations[i].regReceipt
+                        regPaid: registrations[i].regPaid,
+                        regReceipt: registrations[i].regReceipt,
+                        status: registrations[i].status
                     }
                     user.registrations.push(registration);
 
@@ -339,12 +351,10 @@ exports.find = function (req, res) {
                     }
                 }
 
-                user.progress = {
-                    hasBaptismCert: progress.hasBaptismCert,
-                    baptismDate: progress.baptismDate,
-                    baptismPlace: progress.baptismPlace,
+                user.hasBaptismCert = progress[0].hasBaptismCert;
+                user.baptismDate = progress[0].baptismDate;
+                user.baptismPlace = progress[0].baptismPlace;
 
-                };
                 res.json(user);
             });
     } else if (_class) {
@@ -371,13 +381,66 @@ exports.find = function (req, res) {
             }
         });
     } else {
-        User.find(function(err, docs) {
-            if (!err) {
-                res.json(docs);
-            } else {
-                res.send(500, err);
-            }
-        });
+        User.find({'userType': 'STUDENT'}).exec()
+            .then(function (users) {
+                var result = [];
+                return Registration.find().exec()
+                    .then(function (registrations) {
+                        return Student.find().exec()
+                            .then(function (progress) {
+                                return [users, registrations, progress];
+                            });
+                    });
+            })
+            .then(function (result) {
+                let users = result[0];
+                let registrations = result[1];
+                let progress = result[2];
+
+                let outputUsers = [];
+
+                for (var i = 0, len1 = users.length; i < len1; i++) {
+                    var user = {
+                        _id: users[i]._id.toHexString(),
+                        username: users[i].username,
+                        saintName: users[i].saintName,
+                        lastName: users[i].lastName,
+                        middleName: users[i].middleName,
+                        firstName: users[i].firstName,
+                        gender: users[i].gender,
+                        birthDate: new Date(users[i].birthDate),
+                    };
+                    user.registrations = [];
+
+                    for (var j = 0, len2 = registrations.length; j < len2; j++) {
+                        if (users[i].username === registrations[j].studentId) {
+                            var registration = {
+                                _id: registrations[j]._id.toHexString(),
+                                year: registrations[j].year,
+                                glClass: registrations[j].glClass,
+                                vnClass: registrations[j].vnClass,
+                                schoolGrade: registrations[j].schoolGrade,
+                                receivedBy: registrations[j].receivedBy,
+                                regTeacherExempt: registrations[j].regTeacherExempt,
+                                regFee: registrations[j].regFee,
+                                regPaid: registrations[j].regPaid,
+                                regReceipt: registrations[j].regReceipt,
+                                status: registrations[j].status
+                            };
+                            user.registrations.push(registration);
+                        }
+                    }
+                    for (var k = 0, len3 = progress.length; k < len3; k++) {
+                        if (users[i].username === progress[k].username) {
+                            user.hasBaptismCert = progress[k].hasBaptismCert;
+                            break;
+                        }
+                    }
+                    outputUsers.push(user);
+                }
+
+                res.json(outputUsers);
+            })
     }
 };
 
@@ -605,6 +668,7 @@ Assumptions:
  */
 exports.create = function (req, res, next) {
     var inputUser = req.body;
+    var regYear = new Date().getFullYear();
 
     if (inputUser) {
         var _username = inputUser.firstName.toLowerCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toLowerCase().charAt(0);
@@ -667,16 +731,25 @@ exports.create = function (req, res, next) {
                             }
 
                             if (inputUser.current_reg !== undefined) {
-                                var registration = new Registration(inputUser.current_reg);
-
+                                var registration = new Registration(
+                                {
+                                    studentId: _username,
+                                    year: regYear,
+                                    glClass: inputUser.current_reg.glClass,
+                                    vnClass: inputUser.current_reg.vnClass,
+                                    schoolGrade: inputUser.current_reg.schoolGrade,
+                                    receivedBy: inputUser.current_reg.receivedBy,
+                                    regFee: inputUser.current_reg.regFee,
+                                    status: inputUser.current_reg.status
+                                });
                                 registration.save(function (err) {
                                     if (err) {
-                                        return res.status(400).send(err.message);
+                                        return res.status(500).send(err);
                                     }
                                 });
                             }
 
-                            res.json(user);
+                            res.status(200).send();
                         });
                     });
                 });
@@ -692,112 +765,99 @@ exports.create = function (req, res, next) {
  */
 exports.update = function (req, res) {
 
-    var inputUser = req.body;
+    var _inputUser = req.body;
     var _registration = req.body.current_reg;
+    var _username = _inputUser.username;
 
     // Do not update key and security related fields
     delete req.body.roles;
     delete req.body.userType;
     delete req.body.username;
 
-    var imageBuffer;
-    var user = new User(req.body);
     var regYear = new Date().getFullYear();
 
-    Student.find({'username':inputUser.username}).exec()
-        .then(function(user) {
-            if (docs.length === 0) {
-                var _student = new Student({
-                    username: inputUser.username,
-                    hasBaptismCert: inputUser.hasBaptismCert,
-                    baptismDate: inputUser.baptismDate,
-                    baptismPlace: inputUser.baptismPlace
-                });
-                _student.save();
-            } else {
-                docs[0].hasBaptismCert = inputUser.hasBaptismCert;
-                docs[0].baptismDate = inputUser.baptismDate;
-                docs[0].baptismPlace = inputUser.baptismPlace;
-                Student.findByIdAndUpdate(docs[0]._id, docs[0], function (err) {
-                    if (err) {
-                        res.status(400).send(err);
+    Student.find({'username': _username}).exec()
+        .then(function (students) {
+            Student.update({'_id': students[0]._id},
+                {
+                    '$set': {
+                        'hasBaptismCert': _inputUser.hasBaptismCert,
+                        'baptismPlace': _inputUser.baptismPlace,
+                        'baptismDate':_inputUser.baptismDate
                     }
-                });
-            }
+                }).exec()
+                .then(function (retObj) {
+                    return User.find({'username': _username}).exec()
+                        .then(function (users) {
+                            User.update({'_id': users[0]._id},
+                                {
+                                    '$set': {
+                                        'saintName': _inputUser.saintName,
+                                        'firstName': _inputUser.firstName,
+                                        'lastName': _inputUser.lastName
+                                    }
+                                }).exec()
+                                .then(function () {
+                                    Household.update({'_id': _inputUser.householdId},
+                                        {
+                                            '$set': {
+                                                'fatherFirstName': _inputUser.fatherFirstName,
+                                                'fatherLastName': _inputUser.fatherLastName,
+                                                'motherFirstName': _inputUser.motherFirstName,
+                                                'motherLastName': _inputUser.motherLastName,
+                                                'address': _inputUser.address,
+                                                'city': _inputUser.city,
+                                                'zipCode': _inputUser.zipCode,
+                                                'emails': _inputUser.emails,
+                                                'phones': _inputUser.phones
+                                            }
+                                        }).exec()
+                                        .then(function () {
+                                            if (_registration._id === undefined) {
+                                                var registration = new Registration({
+                                                    studentId: _username,
+                                                    year: regYear,
+                                                    glClass: _registration.glClass,
+                                                    vnClass: _registration.vnClass,
+                                                    schoolGrade: _registration.schoolGrade,
+                                                    receivedBy: _registration.receivedBy,
+                                                    regTeacherExempt: _registration.regTeacherExempt,
+                                                    regFee: _registration.regFee,
+                                                    status: _registration.status
+                                                });
+                                                registration.save(function (err) {
+                                                    if (err) {
+                                                        return res.status(500).send(err);
+                                                    }
+                                                });
+                                            } else {
+                                                Registration.update({'_id': _registration._id},
+                                                    {
+                                                        '$set': {
+                                                            'glClass': _registration.glClass,
+                                                            'vnClass': _registration.vnClass,
+                                                            'schoolGrade': _registration.schoolGrade,
+                                                            'receivedBy': _registration.receivedBy,
+                                                            'regTeacherExempt': _registration.regTeacherExempt,
+                                                            'regFee': _registration.regFee,
+                                                            'status': _registration.status
+                                                        }
+                                                    }).exec()
+                                            }
+                                        })
+                                        .then(function() {
+
+                                        res.status(200);
+                                    })
+                                })
+                        })
+                })
         })
-        .then()
-
-
-
-
-
-
-    Student.find({'username':inputUser.username}, function (err, docs) {
-        if (!err) {
-            if (docs.length === 0) {
-                var _student = new Student({
-                    username: inputUser.username,
-                    hasBaptismCert: inputUser.hasBaptismCert,
-                    baptismDate: inputUser.baptismDate,
-                    baptismPlace: inputUser.baptismPlace
-                });
-                _student.save();
-            } else {
-                docs[0].hasBaptismCert = inputUser.hasBaptismCert;
-                docs[0].baptismDate = inputUser.baptismDate;
-                docs[0].baptismPlace = inputUser.baptismPlace;
-                Student.findByIdAndUpdate(docs[0]._id, docs[0], function (err) {
-                    if (err) {
-                        res.status(400).send(err);
-                    }
-                });
-            }
-        }
-    });
-
-    if (_registration._id === undefined) {
-        var registration = new Registration({
-            studentId: _username,
-            year: regYear,
-            glClass: _registration.glClass,
-            vnClass: _registration.vnClass,
-            schoolGrade: _registration.schoolGrade,
-            receivedBy: _registration.receivedBy,
-            regTeacherExempt: _registration.regTeacherExempt,
-            regFee: _registration.regFee,
-            regReceipt: _registration.regReceipt,
-            regConfirmEmail: _registration.regConfirmEmail,
-            comments: _registration.comments,
-            status: _registration.status
-        });
-        registration.save(function (err) {
-            if (err) {
-                return res.status(500).send(err);
-            }
-        });
-    } else {
-        Registration.findByIdAndUpdate(_registration._id, _registration, function (err) {
+        .then(function(err) {
             if (err) {
                 res.status(500).send(err);
             }
-        });
-    }
-
-    User.findByIdAndUpdate(inputUser._id, inputUser, function(err, ret_user){
-        if (err) {
-            return res.status(400).send(err);
-        } else {
-            res.status(200);
-        }
-    });
-
-    Household.findByIdAndUpdate(inputUser.householdId, inputUser, function(err, ret_user){
-        if (err) {
-            return res.status(400).send(err);
-        } else {
-            res.status(200);
-        }
-    });
+        })
 };
 
 /**

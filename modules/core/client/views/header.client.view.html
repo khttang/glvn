@@ -1,5 +1,5 @@
 <div ng-controller="HeaderController as ctrl">
-  <a href="#"><img class="logo" src="/modules/core/client/img/brand/logo2.png" /></a>
+  <a href="#"><img class="logo" src="/modules/core/client/img/brand/logo.png" /></a>
 
   <nav>
 
@@ -71,12 +71,6 @@
           <li ui-sref-active="active" ng-show="ctrl.isSuperAdminUser() && ctrl.isTeacher()">
             <a ui-sref="registration.intake2">Registration By Household</a>
           </li>
-          <li ui-sref-active="active" ng-show="ctrl.isSuperAdminUser() && ctrl.isTeacher()">
-            <a ui-sref="registration.intake">Registration</a>
-          </li>
-          <li ui-sref-active="active" ng-show="ctrl.isSuperAdminUser() && ctrl.isTeacher()">
-            <a ui-sref="registration.fixup">Registration Fixup</a>
-          </li>
           <li ui-sref-active="active">
             <a ui-sref="registration.show">Show Active Students</a>
           </li>
@@ -89,7 +83,7 @@
         <a ui-sref="authentication.signin">Sign In</a>
       </li>
       <li ng-show="authentication.user">
-        Signed in as: {{authentication.user.username}}
+        <span style="color:darkgreen">Signed in as: </span><span style="color:lawngreen">{{authentication.user.username}}</span>
       </li>
     </ul>
     <!--

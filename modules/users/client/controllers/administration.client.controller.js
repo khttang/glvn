@@ -262,9 +262,11 @@ angular.module('users').controller('updstudent.modal', ['$scope', '$uibModalInst
 
 }]);
 
-angular.module('users').controller('payFee.modal', ['registrations', '$scope', '$uibModalInstance', function(registrations, $scope, $uibModalInstance) {
+angular.module('users').controller('payFee.modal', ['payment','registrations', '$scope', '$uibModalInstance', function(payment, registrations, $scope, $uibModalInstance) {
 
     $scope.modalTitle = $uibModalInstance.modalTitle;
+    $scope.registrations = registrations;
+    $scope.payment = payment
 
     $scope.ok = function () {
         $uibModalInstance.close($scope.modalData);
@@ -273,6 +275,21 @@ angular.module('users').controller('payFee.modal', ['registrations', '$scope', '
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
+
+    $scope.recalcTotal = function () {
+        $scope.payment.regFee = 0;
+        if ($scope.payment.regTeacherExempt !== true) {
+            for (var i = 0, len = $scope.registrations.length; i < len; i++) {
+                if ($scope.registrations[i].regPaid !== undefined) {
+                    $scope.payment.regFee += parseInt($scope.registrations[i].regPaid, 10);
+                }
+            }
+        }
+    }
+
+    $scope.exemptToggle = function () {
+        $scope.recalcTotal();
+    }
 }]);
 
 angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$http', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $http, $uibModalInstance, $uibModal) {
