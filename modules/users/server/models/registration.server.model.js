@@ -67,6 +67,9 @@ var RegistrationSchema = new Schema({
     regFee: {
         type: String
     },
+    regPaid: {
+        type: String
+    },
     regReceipt: {
         type: String
     },

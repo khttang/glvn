@@ -87,11 +87,11 @@ mg.connect(function (db) {
                 }
             }
 
-            //insertHouseholds();
-            //insertStudents();
-            //insertPhones();
-            //insertEmails();
-            //insertRegistrations();
+            //insertHouseholds();  // 1
+            //insertStudents();    // 1
+            //insertPhones();      // 2
+            //insertEmails();      // 3
+            insertRegistrations(); // 4
         }
     });
 
@@ -214,7 +214,7 @@ mg.connect(function (db) {
                         }
                     }
                 });
-            };
+            }
         });
     }
 });

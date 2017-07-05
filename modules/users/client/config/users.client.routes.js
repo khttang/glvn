@@ -47,6 +47,13 @@ angular.module('users').config(['$stateProvider',
                 },
                 templateUrl: 'modules/users/client/views/registration_intake.client.view.html'
             })
+            .state('registration.intake2', {
+                url: '/registration_intake2',
+                data: {
+                    roles: ['ADMIN','ADMIN-a']
+                },
+                templateUrl: 'modules/users/client/views/registration_intake_by_household.client.view.html'
+            })
             .state('registration.approval', {
                 url: '/registration_approval',
                 data: {

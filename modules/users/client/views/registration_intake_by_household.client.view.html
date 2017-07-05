@@ -1,0 +1,35 @@
+<div ng-controller="AdministrationController as ctrl">
+    <h1 class="page-title" >Registration Intake By Household</h1>
+
+    <style>
+        .grid {
+            width: 100%;
+            height: 600px;
+        }
+        .grid-container {
+            height: 600px;
+            width: 100%;
+            position: relative;
+        }
+        .grid select {
+            width: 100%;
+            font-size: 16px;
+        }
+    </style>
+
+    <div ng-show="error" class="text-center text-danger">
+        <h4><strong>ERROR: {{error}}</strong></h4>
+    </div>
+    <div ng-show="success" class="text-center text-success">
+        <h4><strong>{{success}}</strong></h4>
+    </div>
+    <div>
+        <button class="btn btn-primary" ng-click="ctrl.modalAdminRegisterNewHousehold('lg')" data-toggle="tooltip" tooltip-placement="right" tooltip="Click this button to add when household is not in the system.">Register New Household</button>
+    </div>
+    <div ng-controller="ShowIntakeByHouseholdCtrl">
+        <div class="grid-container">
+            <div ui-grid-resize-columns ui-grid-selection ui-grid="gridOptions" class="grid"></div>
+        </div>
+    </div>
+
+</div>
