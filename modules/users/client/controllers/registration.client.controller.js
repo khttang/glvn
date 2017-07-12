@@ -18,7 +18,6 @@ angular.module('users')
             columnDefs: [
                 { field: 'username', displayName: 'Student ID',
                     width: '10%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
-                { field: 'saintName',displayName: 'St. Name', width: '10%', enableCellEdit: false, enableColumnMenu: false},
                 { field: 'firstName', displayName: 'First Name', width: '10%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
                 { field: 'middleName',displayName: 'Middle Name', width: '10%', enableFiltering: false, enableCellEdit: false, enableColumnMenu: false},
                 { field: 'lastName', displayName: 'Last Name', width: '10%', enableColumnMenu: false},
@@ -27,6 +26,10 @@ angular.module('users')
                     cellFilter: 'date:\'MM/dd/yyyy\'', enableFiltering: false,
                     displayName: 'Birth Date', width: '8%', enableCellEdit: false, enableColumnMenu: false},
                 { field: 'hasBaptismCert', displayName: 'Baptism Cert', width: '10%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
+                { field: 'fatherFirstName', displayName: 'Father First', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                { field: 'fatherLastName', displayName: 'Father Last', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                { field: 'motherFirstName', displayName: 'Mother First', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                { field: 'motherLastName', displayName: 'Mother Last', width: '8%', enableCellEdit: false, enableColumnMenu: false},
                 { field: 'registrations', displayName: 'Registrations',
                     enableFiltering: false, cellTemplate: registrationTemplate,
                     width: '24%', enableCellEdit: false, enableColumnMenu: false }
@@ -136,6 +139,9 @@ angular.module('users')
 
                 $http.get('/api/users?student_id='+studentId+'&household_id='+household.householdId).success(function (response) {
                     user = response;
+                    if (user.current_reg === undefined) {
+                        user.current_reg = {};
+                    }
                     user.householdId = household.householdId;
                     user.fatherLastName = household.fatherLastName;
                     user.fatherFirstName = household.fatherFirstName;
