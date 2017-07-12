@@ -56,6 +56,30 @@ function getCurrentRegStatus(inpStudents) {
     return outStudents;
 }
 
+function findHouseholdByUsername(username, households, householdStudents) {
+    var family = {};
+
+    for (var i = 0, len = householdStudents.length; i < len; i++) {
+        if (username === householdStudents[i].studentId) {
+            for (var j = 0, len2 = households.length; j < len2; j++) {
+                if (householdStudents[i].houseHoldId === households[j]._id.toHexString()) {
+                    family.houseHoldId = householdStudents[i].houseHoldId;
+                    family.fatherFirstName = households[j].fatherFirstName;
+                    family.fatherLastName = households[j].fatherLastName;
+                    family.motherFirstName = households[j].motherFirstName;
+                    family.motherLastName = households[j].motherLastName;
+                    family.address = households[j].address;
+                    family.city = households[j].city;
+                    family.zipCode = households[j].zipCode;
+                    break;
+                }
+            }
+        }
+    }
+
+    return family;
+}
+
 exports.postGmail = function (req, res) {
 
     var template = './modules/users/server/templates/registration-receipt.jade';
@@ -314,8 +338,8 @@ exports.find = function (req, res) {
                 var hh = result[3];
                 var regYear = new Date().getFullYear();
 
-                var emails = (hh.emails !== undefined) ? hh.emails:dbUser.emails;
-                var phones = (hh.phones !== undefined) ? hh.phones:dbUser.phones;
+                var emails = (hh.emails !== undefined && hh.emails.length > 0) ? hh.emails:dbUser.emails;
+                var phones = (hh.phones !== undefined && hh.phones.length > 0) ? hh.phones:dbUser.phones;
 
                 var user = {
                     _id: dbUser._id.toHexString(),
@@ -388,7 +412,13 @@ exports.find = function (req, res) {
                     .then(function (registrations) {
                         return Student.find().exec()
                             .then(function (progress) {
-                                return [users, registrations, progress];
+                                return Household.find().exec()
+                                    .then(function (households) {
+                                        return HouseholdStudent.find().exec()
+                                            .then(function (householdStudents) {
+                                                return [users, registrations, progress, households, householdStudents];
+                                            });
+                                    });
                             });
                     });
             })
@@ -396,6 +426,8 @@ exports.find = function (req, res) {
                 let users = result[0];
                 let registrations = result[1];
                 let progress = result[2];
+                let households = result[3];
+                let householdStudents = result[4];
 
                 let outputUsers = [];
 
@@ -430,6 +462,15 @@ exports.find = function (req, res) {
                             user.registrations.push(registration);
                         }
                     }
+                    var family = findHouseholdByUsername(user.username, households, householdStudents);
+                    user.fatherFirstName = family.fatherFirstName;
+                    user.fatherLastName = family.fatherLastName;
+                    user.motherFirstName = family.motherFirstName;
+                    user.motherLastName = family.motherLastName;
+                    user.address = family.address;
+                    user.city = family.city;
+                    user.zipCode = family.zipCode;
+
                     for (var k = 0, len3 = progress.length; k < len3; k++) {
                         if (users[i].username === progress[k].username) {
                             user.hasBaptismCert = progress[k].hasBaptismCert;
