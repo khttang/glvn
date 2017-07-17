@@ -68,6 +68,13 @@ angular.module('users').config(['$stateProvider',
                 },
                 templateUrl: 'modules/users/client/views/registration_fixup.client.view.html'
             })
+            .state('registration.showRegistered', {
+                url: '/registration_show_registered',
+                data: {
+                    roles: ['ADMIN','ADMIN-a']
+                },
+                templateUrl: 'modules/users/client/views/registration_show_registered.client.view.html'
+            })
             .state('registration.show', {
                 url: '/registration_show',
                 data: {
@@ -81,6 +88,13 @@ angular.module('users').config(['$stateProvider',
                     roles: ['ADMIN-a']
                 },
                 templateUrl: 'modules/users/client/views/registration_admin_signup.client.view.html'
+            })
+            .state('registration.resetPassword', {
+                url: '/registration_admin_resetpw',
+                data: {
+                    roles: ['ADMIN-a']
+                },
+                templateUrl: 'modules/users/client/views/registration_admin_resetpw.client.view.html'
             })
             .state('settings', {
                 abstract: true,

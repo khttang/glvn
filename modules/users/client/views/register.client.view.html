@@ -150,7 +150,7 @@
                         <div class="row">
                             <label ng-if="registrations!==undefined">Previous Registrations:</label>
                             <div class="row" ng-repeat="reg in user.registrations">
-                                <p class="indented">{{reg.year}}: {{reg.glClass}}, {{reg.vnClass}}</p>
+                                <p class="indented">{{reg.year}}: grade-{{reg.schoolGrade}}, {{reg.glClass}}, {{reg.vnClass}}</p>
                             </div>
                         </div>
 
