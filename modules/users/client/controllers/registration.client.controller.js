@@ -1,6 +1,59 @@
 'use strict';
 
 angular.module('users')
+    .controller('ShowRegisteredStudentsCtrl', ['$scope', '$http', '$filter', 'uiGridConstants',
+        function($scope, $http, $filter, uiGridConstants) {
+
+            $scope.filterOptions = {
+                filterText: ''
+            };
+
+            $scope.onChangeSelection = function() {
+                console.log('onChangeSelection');
+            };
+
+            $scope.gridOptions = {
+                columnDefs: [
+                    { field: 'username', displayName: 'Student ID',
+                        width: '9%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'firstName', displayName: 'First Name', width: '8%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'middleName',displayName: 'Middle Name', width: '8%', enableFiltering: false, enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'lastName', displayName: 'Last Name', width: '8%', enableColumnMenu: false},
+                    { field: 'gender', displayName: 'Gender', enableFiltering: false, width: '7%', enableColumnMenu: false},
+                    { field: 'birthDate',
+                        cellFilter: 'date:\'MM/dd/yyyy\'', enableFiltering: false,
+                        displayName: 'Birth Date', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'hasBaptismCert', displayName: 'Baptism Cert', width: '7%', resizable: false, enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'fatherFirstName', displayName: 'Father First', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'fatherLastName', displayName: 'Father Last', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'motherFirstName', displayName: 'Mother First', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'motherLastName', displayName: 'Mother Last', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'glClass', displayName: 'gl-class', width: '8%', enableCellEdit: false, enableColumnMenu: false},
+                    { field: 'vnClass', displayName: 'vn-class', width: '6%', enableCellEdit: false, enableColumnMenu: false}
+                ],
+                excludeProperties: '__metadata',
+                enableFiltering: true,
+                showGridFooter: true,
+                multiSelect: false,
+                enableRowSelection: true,
+                onRegisterApi: function(gridApi){
+                    $scope.gridApi = gridApi;
+                }
+            };
+
+            $scope.filterUpdated = function () {
+                $scope.gridOptions.filterOptions.filterText = 'username: ';
+            };
+
+            $scope.load = function () {
+                $http.get('/api/users?class='+new Date().getFullYear()).success(function (response) {
+                    $scope.gridOptions.data = response;
+                }).error(function (response) {
+                    $scope.error = response.message;
+                });
+            };
+            $scope.load();
+        }])
     .controller('ShowActiveStudentsCtrl', ['$scope', '$http', '$filter', 'uiGridConstants',
     function($scope, $http, $filter, uiGridConstants) {
 

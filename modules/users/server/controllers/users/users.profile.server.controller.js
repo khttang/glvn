@@ -263,7 +263,6 @@ exports.getProgress = function (req, res) {
 };
 
 exports.find = function (req, res) {
-    let _criteria = req.query.criteria;
     let _student_id = req.query.student_id;
     let _household_id = req.query.household_id;
     let _class = req.query.class;
@@ -271,52 +270,7 @@ exports.find = function (req, res) {
     let _user_type = req.query.user_type;
     let temp;
 
-    if (_criteria) {
-        if (_criteria.indexOf('@') > 0) {
-            User.find({ 'emails.address': _criteria, 'userType': 'STUDENT' }, function(err, docs) {
-                if (!err){
-                    res.json(docs);
-                } else {
-                    res.status(500).send(err.message);
-                }
-            });
-        } else if (isPhoneNumber(_criteria)) {
-            temp = _criteria.replace(/\D/g,'');
-            User.find({ 'phones.number': temp, 'userType': 'STUDENT' }, function(err, docs) {
-                if (!err){
-                    res.json(docs);
-                } else {
-                    res.status(500).send(err.message);
-                }
-            });
-        } else if (isAddress(_criteria)) {
-            temp = '/.*' + _criteria + '.*/';
-            User.find({ 'address': temp, 'userType': 'STUDENT' }, function(err, docs) {
-                if (!err){
-                    res.json(docs);
-                } else {
-                    res.status(500).send(err.message);
-                }
-            });
-        } else if (isFullName(_criteria)) {
-            var names = _criteria.split(' ');
-
-            User.find({ $or: [
-                { $and: [ { 'motherFirstName': names[0] }, { 'motherLastName': names[1] } ] },
-                { $and: [ { 'motherFirstName': names[1] }, { 'motherLastName': names[0] } ] },
-                { $and: [ { 'fatherFirstName': names[0] }, { 'fatherLastName': names[1] } ] },
-                { $and: [ { 'fatherFirstName': names[1] }, { 'fatherLastName': names[0] } ] },
-                { $and: [ { 'firstName': names[0] }, { 'lastName': names[1] } ] },
-                { $and: [ { 'firstName': names[1] }, { 'lastName': names[0] } ] }
-            ]}  , function (err, user) {
-                if (!err){
-                    res.json(user);
-                } else {
-                    res.status(500).send(err.message);
-                }
-            });
-        }
-    } else if (_student_id) {
+    if (_student_id) {
         User.find({'username': _student_id, 'userType': 'STUDENT'}).exec()
             .then(function (user) {
                 var result = [];
@@ -381,11 +335,6 @@ exports.find = function (req, res) {
 
                 res.json(user);
             });
-    } else if (_class) {
-        /*
-        TODO: should handle this case too
-         */
-        console.log(_class);
     } else if (_student_ids) {
         var usernames = JSON.parse(_student_ids);
         User.find({ 'username': { $in: usernames }}, function(err, docs) {
@@ -404,6 +353,72 @@ exports.find = function (req, res) {
                 res.send(500, err);
             }
         });
+    } else if (_class) {
+        Registration.find({'year': _class}).exec()
+            .then(function (registrations) {
+                var result = [];
+                return User.find({'userType': 'STUDENT'}).exec()
+                    .then(function (users) {
+                        return Student.find().exec()
+                            .then(function (progress) {
+                                return Household.find().exec()
+                                    .then(function (households) {
+                                        return HouseholdStudent.find().exec()
+                                            .then(function (householdStudents) {
+                                                return [registrations, users, progress, households, householdStudents];
+                                            })
+                                    })
+                            })
+                    })
+            })
+            .then(function (result) {
+                let registrations = result[0];
+                let users = result[1];
+                let progress = result[2];
+                let households = result[3];
+                let householdStudents = result[4];
+                let outputUsers = [];
+
+                for (var i = 0, len = registrations.length; i < len; i++) {
+                    for (var j = 0, len2 = users.length; j < len2; j++) {
+                        if (users[j].username === registrations[i].studentId) {
+                            var user = {
+                                _id: users[j]._id.toHexString(),
+                                username: users[j].username,
+                                saintName: users[j].saintName,
+                                lastName: users[j].lastName,
+                                middleName: users[j].middleName,
+                                firstName: users[j].firstName,
+                                gender: users[j].gender,
+                                birthDate: new Date(users[j].birthDate),
+                                glClass: registrations[i].glClass,
+                                vnClass: registrations[i].vnClass,
+                                schoolGrade: registrations[i].schoolGrade
+                            };
+
+                            var family = findHouseholdByUsername(user.username, households, householdStudents);
+                            user.fatherFirstName = family.fatherFirstName;
+                            user.fatherLastName = family.fatherLastName;
+                            user.motherFirstName = family.motherFirstName;
+                            user.motherLastName = family.motherLastName;
+                            user.address = family.address;
+                            user.city = family.city;
+                            user.zipCode = family.zipCode;
+
+                            for (var k = 0, len3 = progress.length; k < len3; k++) {
+                                if (user.username === progress[k].username) {
+                                    user.hasBaptismCert = progress[k].hasBaptismCert;
+                                    break;
+                                }
+                            }
+                            outputUsers.push(user);
+                            break;
+                        }
+                    }
+                }
+
+                res.json(outputUsers);
+            })
     } else {
         User.find({'userType': 'STUDENT'}).exec()
             .then(function (users) {
@@ -417,10 +432,10 @@ exports.find = function (req, res) {
                                         return HouseholdStudent.find().exec()
                                             .then(function (householdStudents) {
                                                 return [users, registrations, progress, households, householdStudents];
-                                            });
-                                    });
-                            });
-                    });
+                                            })
+                                    })
+                            })
+                    })
             })
             .then(function (result) {
                 let users = result[0];
@@ -428,7 +443,7 @@ exports.find = function (req, res) {
                 let progress = result[2];
                 let households = result[3];
                 let householdStudents = result[4];
-
+                let regYear = new Date().getFullYear();
                 let outputUsers = [];
 
                 for (var i = 0, len1 = users.length; i < len1; i++) {

@@ -1,0 +1,41 @@
+<section>
+    <div class="modal-header">
+        <h3 class="modal-title">Reset Admin Password</h3>
+    </div>
+    <div class="modal-body" ng-init="init()">
+        <form name="resetPasswordForm" novalidate>
+            <fieldset>
+                <alert type="danger" ng-show="error" class="text-center text-danger">
+                    <span ng-bind="error"></span>
+                </alert>
+                <div class="form-group">
+                    <div class="input-group input-group-lg" show-errors>
+          <span class="input-group-addon">
+            <i class="text-muted glyphicon glyphicon-user"></i>
+          </span>
+                        <input type="text" id="username" name="username" class="form-control" ng-model="credentials.username" placeholder="Username" lowercase required>
+                        <div ng-messages="userForm.username.$error" role="alert">
+                            <p class="help-block error-text" ng-message="required">Username is required.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group input-group-lg" show-errors>
+          <span class="input-group-addon">
+            <i class="text-muted glyphicon glyphicon-asterisk"></i>
+          </span>
+                        <input type="password" id="password" name="password" class="form-control" ng-model="credentials.password" placeholder="Password" required>
+                        <div ng-messages="userForm.password.$error" role="alert">
+                            <p class="help-block error-text" ng-message="required">Password is required.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success btn-lg" ng-disabled="formValid" ng-click="ok()">{{ok_text}}</button>
+        <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
+    </div>
+</section>

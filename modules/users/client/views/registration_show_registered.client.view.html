@@ -1,0 +1,25 @@
+<body>
+<h1 class="page-title" >Show Registered Students</h1>
+<style>
+    .grid {
+        width: 100%;
+        height: 600px;
+    }
+    .grid-container {
+        height: 600px;
+        width: 100%;
+        position: relative;
+    }
+    .grid select {
+        width: 100%;
+        font-size: 16px;
+    }
+</style>
+
+<div ng-controller="ShowRegisteredStudentsCtrl">
+    <div class="grid-container">
+        <div ui-grid-resize-columns ui-grid="gridOptions" class="grid"></div>
+    </div>
+</div>
+
+</body>
