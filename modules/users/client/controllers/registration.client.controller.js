@@ -113,11 +113,11 @@ angular.module('users')
     .controller('ShowIntakeByHouseholdCtrl', ['$scope', '$http', '$filter', '$uibModal', 'uiGridConstants', 'postEmailForm',
         function($scope, $http, $filter, $uibModal, uiGridConstants, postEmailForm) {
 
-            function calcRegFee(glCLass) {
+            function calcRegFee(glClass) {
                 var lateDate = new Date('2017-08-01');
                 var curDate = new Date();
                 var regFee = 0;
-                if (glCLass === 'pre-con' || glClass === 'confirmation') {
+                if (glClass === 'pre-con' || glClass === 'confirmation') {
                     regFee = 150;
                 } else {
                     regFee = 100;
@@ -315,6 +315,6 @@ angular.module('users')
                 }).error(function (response) {
                     $scope.error = response.message;
                 });
-            }
+            };
             $scope.load();
         }]);

@@ -74,7 +74,7 @@ exports.getHouseHolds = function (req, res) {
                 output.push(hh);
             }
             res.json(output);
-        })
+        });
 };
 
 exports.register = function (req, res) {
@@ -112,9 +112,9 @@ exports.getRegistrations = function (req, res) {
                             return User.find().exec()
                                 .then(function(users) {
                                     return [students, progress, registrations, users];
-                                })
-                        })
-                })
+                                });
+                        });
+                });
         })
         .then(function (result) {
             var students = result[0];
@@ -150,7 +150,7 @@ exports.getRegistrations = function (req, res) {
                 }
             }
             res.json(output);
-        })
+        });
 };
 
 exports.submitPayment = function (req, res) {

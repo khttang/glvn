@@ -321,7 +321,7 @@ exports.find = function (req, res) {
                         regPaid: registrations[i].regPaid,
                         regReceipt: registrations[i].regReceipt,
                         status: registrations[i].status
-                    }
+                    };
                     user.registrations.push(registration);
 
                     if (registration.year === regYear) {
@@ -366,10 +366,10 @@ exports.find = function (req, res) {
                                         return HouseholdStudent.find().exec()
                                             .then(function (householdStudents) {
                                                 return [registrations, users, progress, households, householdStudents];
-                                            })
-                                    })
-                            })
-                    })
+                                            });
+                                    });
+                            });
+                    });
             })
             .then(function (result) {
                 let registrations = result[0];
@@ -418,7 +418,7 @@ exports.find = function (req, res) {
                 }
 
                 res.json(outputUsers);
-            })
+            });
     } else {
         User.find({'userType': 'STUDENT'}).exec()
             .then(function (users) {
@@ -432,10 +432,10 @@ exports.find = function (req, res) {
                                         return HouseholdStudent.find().exec()
                                             .then(function (householdStudents) {
                                                 return [users, registrations, progress, households, householdStudents];
-                                            })
-                                    })
-                            })
-                    })
+                                            });
+                                    });
+                            });
+                    });
             })
             .then(function (result) {
                 let users = result[0];
@@ -496,7 +496,7 @@ exports.find = function (req, res) {
                 }
 
                 res.json(outputUsers);
-            })
+            });
     }
 };
 
@@ -898,22 +898,22 @@ exports.update = function (req, res) {
                                                             'regFee': _registration.regFee,
                                                             'status': _registration.status
                                                         }
-                                                    }).exec()
+                                                    }).exec();
                                             }
                                         })
                                         .then(function() {
 
                                         res.status(200);
-                                    })
-                                })
-                        })
-                })
+                                    });
+                                });
+                        });
+                });
         })
         .then(function(err) {
             if (err) {
                 res.status(500).send(err);
             }
-        })
+        });
 };
 
 /**
@@ -976,7 +976,7 @@ exports.findPhoto = function (req, res) {
         res.status(401).send('Authorization required!');
     }
     */
-}
+};
 
 
 /**
