@@ -850,7 +850,9 @@ exports.update = function (req, res) {
                                     '$set': {
                                         'saintName': _inputUser.saintName,
                                         'firstName': _inputUser.firstName,
-                                        'lastName': _inputUser.lastName
+                                        'lastName': _inputUser.lastName,
+                                        'gender': _inputUser.gender,
+                                        'birthDate': _inputUser.birthDate
                                     }
                                 }).exec()
                                 .then(function () {
