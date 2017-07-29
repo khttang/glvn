@@ -1,6 +1,19 @@
 'use strict';
 
-var connection = require('../connection');
+var mysql = require('./lib/mysql');
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function Glvn() {
     this.lookupByHousehold = function(householdid) {

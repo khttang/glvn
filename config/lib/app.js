@@ -6,6 +6,7 @@
 var config = require('../config'),
   mongoose = require('./mongoose'),
   express = require('./express'),
+  passport = require('passport'),
   chalk = require('chalk');
 
 // Initialize Models
@@ -16,6 +17,8 @@ if (config.seedDB) {
   require('./seed');
 }
 
+require('../passport')(passport);
+
 module.exports.loadModels = function loadModels() {
   mongoose.loadModels();
 };
@@ -23,7 +26,7 @@ module.exports.loadModels = function loadModels() {
 module.exports.init = function init(callback) {
   mongoose.connect(function (db) {
     // Initialize express
-    var app = express.init(db);
+    var app = express.init(db, passport);
     if (callback) callback(app, db, config);
 
   });

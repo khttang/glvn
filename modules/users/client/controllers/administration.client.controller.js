@@ -171,6 +171,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         $http.put('/api/users', _user).success(function () {
                             $scope.success = 'Completed registration for student ' + _user.username + '. Congratulations!';
 
+                            /*
                             if (_user.current_reg.regConfirmEmail !== undefined) {
                                 var context = {
                                     schoolPhone: '(858) 271-0207 ext 1260',
@@ -193,6 +194,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                                 };
                                 postEmailForm.postEmail(context);
                             }
+                            */
                             $scope.load();
                         });
                     });

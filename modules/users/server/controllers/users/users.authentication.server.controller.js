@@ -56,13 +56,15 @@ exports.signup = function (req, res) {
  * Signin after passport authentication
  */
 exports.signin = function (req, res, next) {
-  passport.authenticate('local', function (err, user, info) {
+  passport.authenticate('local-login', function (err, user, info) {
     if (err || !user) {
       res.status(400).send(info);
     } else {
       // Remove sensitive data before login
       user.password = undefined;
-      user.salt = undefined;
+
+      // break up roles into a list
+      user.roles = user.roles.split(',');
 
       req.login(user, function (err) {
         if (err) {

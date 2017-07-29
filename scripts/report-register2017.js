@@ -108,7 +108,7 @@ mg.connect(function (db) {
                 }
             }
 
-            var stream = fs.createWriteStream("/Users/ktang/Personal/Khiem/GLVN/WebProject/export/registered-2017.txt");
+            var stream = fs.createWriteStream("/Users/ktang/Personal/Khiem/GLVN/WebProject/export/registered-2017-r4.txt");
             stream.once('open', function (fd) {
                 stream.write('ID|Status|Gender|FirstName|LastName|BirthDate|FatherName|MotherName|Address|Phone|Email|RegYear|SchoolGrade|VNClass|GLClass|BapCert\n');
                 for (var k = 0, len10 = registered2017.length; k < len10; k++) {
