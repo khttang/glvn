@@ -16,7 +16,7 @@ angular.module('core')
 
         return {
             show: show
-        }
+        };
     })
     .controller('CalendarEventsCtrl', function (alert, moment) {
         var vm = this;

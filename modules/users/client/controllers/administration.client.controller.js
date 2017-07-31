@@ -171,6 +171,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         $http.put('/api/users', _user).success(function () {
                             $scope.success = 'Completed registration for student ' + _user.username + '. Congratulations!';
 
+                            /*
                             if (_user.current_reg.regConfirmEmail !== undefined) {
                                 var context = {
                                     schoolPhone: '(858) 271-0207 ext 1260',
@@ -193,6 +194,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                                 };
                                 postEmailForm.postEmail(context);
                             }
+                            */
                             $scope.load();
                         });
                     });
@@ -266,7 +268,7 @@ angular.module('users').controller('payFee.modal', ['payment','registrations', '
 
     $scope.modalTitle = $uibModalInstance.modalTitle;
     $scope.registrations = registrations;
-    $scope.payment = payment
+    $scope.payment = payment;
 
     $scope.ok = function () {
         $uibModalInstance.close($scope.modalData);
@@ -285,11 +287,11 @@ angular.module('users').controller('payFee.modal', ['payment','registrations', '
                 }
             }
         }
-    }
+    };
 
     $scope.exemptToggle = function () {
         $scope.recalcTotal();
-    }
+    };
 }]);
 
 angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$http', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $http, $uibModalInstance, $uibModal) {
@@ -545,7 +547,7 @@ angular.module('users').controller('regConfirm.modal', ['user', 'Authentication'
         var $printSection = document.getElementById('printSection');
 
         if (!$printSection) {
-            var $printSection = document.createElement('div');
+            $printSection = document.createElement('div');
             $printSection.id = 'printSection';
             document.body.appendChild($printSection);
         }
