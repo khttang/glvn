@@ -354,7 +354,7 @@ exports.find = function (req, res) {
             }
         });
     } else if (_class) {
-        Registration.find({'year': _class}).exec()
+        Registration.find({'year': _class, 'status': {$in: ['APPROVED', 'RECEIVED']}}).exec()
             .then(function (registrations) {
                 var result = [];
                 return User.find({'userType': 'STUDENT'}).exec()

@@ -108,33 +108,14 @@ mg.connect(function (db) {
                 }
             }
 
-            var stream = fs.createWriteStream("/Users/ktang/Personal/Khiem/GLVN/WebProject/export/registered-2017-r11.txt");
+            var stream = fs.createWriteStream("/Users/ktang/Personal/Khiem/GLVN/WebProject/export/registered-2017-emails.txt");
             stream.once('open', function (fd) {
-                stream.write('ID|Status|Gender|FirstName|LastName|BirthDate|FatherName|MotherName|Address|ZipCode|Phone|Email|RegYear|SchoolGrade|VNClass|GLClass|BapCert\n');
                 for (var k = 0, len10 = registered2017.length; k < len10; k++) {
-                    var phoneNumber = (registered2017[k].phones.length > 0 ) ?  registered2017[k].phones[0].number : null;
-                    var emailAddr = (registered2017[k].emails.length > 0) ? registered2017[k].emails[0].address : null;
-                    var gender = registered2017[k].gender[0];
-
-                    var date = Date.parse(registered2017[k].birthDate);
-                    if(isNaN(date)) {
-                        console.log('Bad date ' + registered2017[k].username+ ' ' + registered2017[k].firstName + ' ' + registered2017[k].lastName + ' ' + registered2017[k].birthDate);
-                        console.log('Father: ' + registered2017[k].fatherFirstName + ' ' + registered2017[k].fatherLastName + ', Mother: ' +
-                            registered2017[k].motherFirstName + ' ' + registered2017[k].motherLastName + ', address:' +
-                            registered2017[k].address);
+                    for (var l = 0, len11 = registered2017[k].emails.length; l < len11; l++) {
+                        stream.write(registered2017[k].emails[l].address+'\n');
                     }
-
-                    stream.write(
-                        registered2017[k].username+'|' + registered2017[k].regStatus+'|'+ gender +'|'+
-                        registered2017[k].firstName + '|' + registered2017[k].lastName + '|' +
-                        dateFormat(registered2017[k].birthDate, 'mm/dd/yyyy') + '|' +
-                        registered2017[k].fatherFirstName + ' ' + registered2017[k].fatherLastName + '|' +
-                        registered2017[k].motherFirstName + ' ' + registered2017[k].motherLastName + '|' +
-                        registered2017[k].address + '|' + registered2017[k].zipCode + '|' + phoneNumber + '|' + emailAddr + '|' +
-                        registered2017[k].regYear + '|' + registered2017[k].schoolGrade + '|' + registered2017[k].vnClass + '|' +
-                        registered2017[k].glClass + '|' + registered2017[k].hasBaptismCert  + '\n');
                 }
                 stream.end();
             });
         });
-    });
+});

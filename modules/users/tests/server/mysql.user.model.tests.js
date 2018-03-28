@@ -1,4 +1,4 @@
-
+'use strict';
 
 describe('Admin Capabilities Unit Tests:', function () {
     before(function () {
