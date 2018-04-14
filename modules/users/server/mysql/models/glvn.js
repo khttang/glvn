@@ -3,18 +3,6 @@
 var mysql = require('./lib/mysql');
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 function Glvn() {
     this.lookupByHousehold = function(householdid) {
         connection.acquire(function(err, con) {

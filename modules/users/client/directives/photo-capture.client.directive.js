@@ -11,7 +11,7 @@ angular.module('users')
                 return 'modules/users/client/views/photo-capture.template.html';
             if ($scope.myType === 'certificate')
                 return 'modules/users/client/views/photo-capture.template.html';
-        }
+        };
     };
 
     var contentURL;
@@ -58,6 +58,6 @@ angular.module('users')
                 return 'modules/users/client/views/photo-capture.template.html';
             }
         }
-    }
+    };
 });
 

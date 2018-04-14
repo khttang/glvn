@@ -46,7 +46,7 @@ angular.module('users')
             };
 
             $scope.load = function () {
-                $http.get('/api/users?class='+new Date().getFullYear()).success(function (response) {
+                $http.get('/api/users?class='+ApplicationConfiguration.regYear).success(function (response) {
                     $scope.gridOptions.data = response;
                 }).error(function (response) {
                     $scope.error = response.message;
@@ -114,20 +114,81 @@ angular.module('users')
         function($scope, $http, $filter, $uibModal, uiGridConstants, postEmailForm) {
 
             function calcRegFee(glClass) {
-                var lateDate = new Date('2017-08-01');
-                var curDate = new Date();
-                var regFee = 0;
+                var regFee = 100;
                 if (glClass === 'pre-con' || glClass === 'confirmation') {
                     regFee = 150;
-                } else {
-                    regFee = 100;
                 }
-
-                if (curDate >= lateDate) {
-                    regFee += 50;
-                }
-
                 return regFee;
+            }
+
+            function getNextGL(currentGl) {
+                if (currentGl === 'gl-01') {
+                    return 'gl-02';
+                }
+                if (currentGl === 'gl-02') {
+                    return 'gl-03';
+                }
+                if (currentGl === 'gl-03') {
+                    return 'gl-04';
+                }
+                if (currentGl === 'gl-04') {
+                    return 'gl-05';
+                }
+                if (currentGl === 'gl-05') {
+                    return 'gl-06';
+                }
+                if (currentGl === 'gl-06') {
+                    return 'gl-07';
+                }
+                if (currentGl === 'gl-07') {
+                    return 'gl-08';
+                }
+                if (currentGl === 'gl-08') {
+                    return 'pre-con';
+                }
+                if (currentGl === 'pre-con') {
+                    return 'confirmation';
+                }
+                return '';
+            }
+
+            function getNextVN(currentVn) {
+                if (currentVn === 'vn-01') {
+                    return 'vn-02';
+                }
+                if (currentVn === 'vn-02') {
+                    return 'vn-03';
+                }
+                if (currentVn === 'vn-03') {
+                    return 'vn-04';
+                }
+                if (currentVn === 'vn-04') {
+                    return 'vn-05';
+                }
+                if (currentVn === 'vn-05') {
+                    return 'vn-06';
+                }
+                if (currentVn === 'vn-06') {
+                    return 'vn-07';
+                }
+                if (currentVn === 'vn-07') {
+                    return 'vn-08';
+                }
+                return '';
+            }
+
+            function prefillRegistration(registrations) {
+                for (var i = 0, len = registrations.length; i < len; i++) {
+                    if (registrations[i].year === (ApplicationConfiguration.regYear-1)) {
+                        var reg = {
+                            year: ApplicationConfiguration.regYear,
+                            glClass: getNextGL(registrations[i].glClass),
+                            vnClass: getNextVN(registrations[i].vnClass),
+                            schoolGrade: (parseInt(registrations[i].schoolGrade) + 1).toString()
+                        };
+                        return reg;
+                    }
+                }
             }
 
             $scope.filterOptions = {
@@ -152,6 +213,7 @@ angular.module('users')
                     zipCode: household.zipCode,
                     emails: household.emails,
                     phones: household.phones,
+                    emergency: household.emergency,
                     current_reg: {}
                 };
 
@@ -173,10 +235,12 @@ angular.module('users')
                 modalInstance.reg_step = 'approve';
                 modalInstance.modalTitle = 'Register new student for school Year '+ new Date().getFullYear();
                 modalInstance.result.then(function (modalData) {
-                    user.current_reg.reviewedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
-                    user.current_reg.receivedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
+                    user.current_reg.reviewedBy = $scope.authentication.user.fullName;
+                    user.current_reg.receivedBy = $scope.authentication.user.fullName;
                     user.current_reg.regFee = calcRegFee(user.current_reg.glClass);
+                    user.current_reg.regPaid = 0;
                     user.current_reg.status = 'APPROVED';
+                    user.actor = $scope.authentication.user.username;
                     $http.post('/api/users', user).success(function () {
                         $scope.success = 'Completed registration for student ' + user.username + '. Congratulations!';
                         $scope.load();
@@ -193,7 +257,7 @@ angular.module('users')
                 $http.get('/api/users?student_id='+studentId+'&household_id='+household.householdId).success(function (response) {
                     user = response;
                     if (user.current_reg === undefined) {
-                        user.current_reg = {};
+                        user.current_reg = prefillRegistration(user.registrations);
                     }
                     user.householdId = household.householdId;
                     user.fatherLastName = household.fatherLastName;
@@ -203,6 +267,7 @@ angular.module('users')
                     user.address = household.address;
                     user.city = household.city;
                     user.zipCode = household.zipCode;
+                    user.emergency = household.emergency;
 
                     var modalInstance = $uibModal.open({
                         animation: $scope.animationsEnabled,
@@ -222,8 +287,9 @@ angular.module('users')
                     modalInstance.reg_step = 'approve';
                     modalInstance.modalTitle = 'Register ' + user.firstName + ' ' + user.lastName + ' for school Year '+ new Date().getFullYear();
                     modalInstance.result.then(function (modalData) {
-                        user.current_reg.reviewedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
-                        user.current_reg.receivedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
+                        user.current_reg.reviewedBy = $scope.authentication.user.fullName;
+                        user.current_reg.receivedBy = $scope.authentication.user.fullName;
+                        user.actor = $scope.authentication.user.username;
                         if (user.current_reg.status === undefined) {
                             user.current_reg.regFee = calcRegFee(user.current_reg.glClass);
                             user.current_reg.regPaid = 0;
@@ -239,12 +305,24 @@ angular.module('users')
             };
 
             $scope.payFee = function(household) {
-                var currentyr = new Date().getFullYear();
+                var currentyr = ApplicationConfiguration.regYear;
                 $scope.modalData = {};
 
                 $http.get('/api/households/registrations?household_id='+household.householdId+'&reg_year='+currentyr).success(function (response) {
                     household.current_regs = response;
-                    household.payment = { regFee: 0, regTeacherExempt: false };
+                    household.payment = {};
+
+                    var feeAmount = 0;
+                    var paidAmount = 0;
+                    for (var i = 0, len = household.current_regs.length; i < len; i++) {
+                        feeAmount += parseInt(household.current_regs[i].regFee);
+                        if (household.current_regs[i].regPaid !== null) {
+                            paidAmount += parseInt(household.current_regs[i].regPaid);
+                        }
+                        household.payment.regTeacherExempt = household.current_regs[i].regTeacherExempt;
+                    }
+                    household.payment.regFee = String(feeAmount - paidAmount);
+
                     var modalInstance = $uibModal.open({
                         animation: $scope.animationsEnabled,
                         templateUrl: 'modules/users/client/views/payfee.client.view.html',
@@ -259,10 +337,11 @@ angular.module('users')
                             }
                         }
                     });
-                    modalInstance.modalTitle = 'Complete registration for school Year '+ new Date().getFullYear();
+                    modalInstance.modalTitle = 'Complete registration for school Year '+ currentyr;
                     modalInstance.result.then(function (modalData) {
-                        household.payment.reviewedBy = $scope.authentication.user.firstName + ' ' + $scope.authentication.user.lastName;
+                        household.payment.reviewedBy = $scope.authentication.user.fullName;
                         household.payment.status = 'APPROVED';
+                        household.actor = $scope.authentication.user.username;
 
                         $http.post('/api/households/payment', household).success(function () {
                             $scope.success = 'Registration completed!';

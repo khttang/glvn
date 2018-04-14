@@ -144,6 +144,23 @@
                                 </button>
                             </div>
                         </div>
+                        <label>Emergency Contacts:</label>
+                        <div class="row">
+                            <div class="form-group col-xs-5">
+                                <input type="text" id="ContactName" name="ContactName" class="form-control" ng-model="user.emergency.name" placeholder="Contact Name">
+                            </div>
+                            <div class="form-group col-xs-3">
+                                <input type="text" id="emergencyRelation" name="emergencyRelation" class="form-control" ng-model="user.emergency.relation" placeholder="Relationship">
+                            </div>
+                            <div class="form-group col-xs-4">
+                                <phonenumber-directive model='user.emergency.cell' required/>
+                                <div class="help-block" ng-messages="registerUserForm.emergencyCell.$error" ng-if="registerUserForm.emergencyCell.$touched">
+                                    <p ng-message="minlength">Emergency cell is too short</p>
+                                    <p ng-message="maxlength">Emergency cell is too long</p>
+                                    <p ng-message="required">Emergency cell is required</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-xs-5">
@@ -206,7 +223,6 @@
                                     <option value="vn-06">VN-06</option>
                                     <option value="vn-07">VN-07</option>
                                     <option value="vn-08">VN-08</option>
-                                    <option value="vn-09">VN-09</option>
                                 </select>
                                 <div class="help-block" ng-messages="registerUserForm.vnClass.$error" ng-if="registerUserForm.vnClass.$touched">
                                     <p ng-message="required">vnClass is required.</p>

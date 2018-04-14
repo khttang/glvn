@@ -16,7 +16,8 @@ var _ = require('lodash'),
     Student = mongoose.model('Student'),
     Household = mongoose.model('Household'),
     Registration = mongoose.model('Registration'),
-    HouseholdStudent = mongoose.model('HouseholdStudent');
+    HouseholdStudent = mongoose.model('HouseholdStudent'),
+    procedures = require(path.resolve("./modules/users/server/mysql/admin.procedures"));
 
 var findChild = function(users, id) {
     for (var i = 0, len = users.length; i < len; i++) {
@@ -60,7 +61,8 @@ exports.getHouseHolds = function (req, res) {
                     city: households[i].city,
                     zipCode: households[i].zipCode,
                     emails: households[i].emails,
-                    phones: households[i].phones
+                    phones: households[i].phones,
+                    emergency: households[i].emergency
                 };
                 hh.children = [];
                 for (var j = 0, len2 = householdusers.length; j < len2; j++) {
@@ -77,6 +79,9 @@ exports.getHouseHolds = function (req, res) {
         });
 };
 
+/*
+Initiated from household registration, create a new household.
+*/
 exports.register = function (req, res) {
 
     Household.find({ fatherFirstName: req.fatherFirstName, motherFirstName: req.motherFirstName, address: req.address, city: req.city, zipCode: req.zipCode }).populate('user', 'username')
@@ -89,15 +94,27 @@ exports.register = function (req, res) {
             }
 
             var household = new Household(req.body);
-            household.save(function (err) {
-                if (err) {
-                    return res.status(500).send(err.message);
-                }
-                res.status(200).send();
+            household.save().then((doc) => {
+                procedures.insertActivity({
+                    subjectId: doc._id.toHexString(),
+                    subjectType: 'HouseHold',
+                    activityType: 'Create',
+                    activityJson: JSON.stringify(req.body),
+                    actor: req.body.actor
+                });
+            }).catch((err) => {
+                return res.status(500).send(err.message);
             });
+
+            res.status(200).send();
         });
 };
 
+/*
+    Get all registrations for a specific household.
+    Used to populate data for popup payfee.client.view.html
+    Invoked from registration.client.controller.js
+ */
 exports.getRegistrations = function (req, res) {
     let _household_id = req.query.household_id;
     let _regyear = req.query.reg_year;
@@ -132,7 +149,7 @@ exports.getRegistrations = function (req, res) {
                         retRegistration.glClass = registrations[i].glClass;
                         retRegistration.vnClass = registrations[i].vnClass;
                         retRegistration.regFee = registrations[i].regFee;
-                        retRegistration.regPaid = registrations[i].regPaid;
+                        retRegistration.regPaid = (registrations[i].regPaid !== undefined) ? registrations[i].regPaid : null;
                         retRegistration.regTeacherExempt = registrations[i].regTeacherExempt;
 
                         for (var k = 0, len3 = progress.length; k < len3; k++) {
@@ -153,26 +170,52 @@ exports.getRegistrations = function (req, res) {
         });
 };
 
+/*
+    Submit household payment
+ */
 exports.submitPayment = function (req, res) {
     let _household = req.body;
     let promises = [];
-
+    let comments = 'Total: '+_household.payment.regFee;
+    if (_household.payment.checkNumber !== undefined) {
+        comments += ', Chk# '+_household.payment.checkNumber;
+    } else {
+        comments += ', Cash';
+    }
+    if (_household.payment.receipt !== undefined) {
+        comments += ', Receipt: '+_household.payment.receipt;
+    }
+    if (_household.payment.comments !== undefined) {
+        comments += ', Notes: '+ _household.payment.comments;
+    }
     for (var i = 0, len = _household.current_regs.length; i < len; i++) {
         promises.push(Registration.update({'_id': _household.current_regs[i]._id},
             {
                 '$set': {
                     'regTeacherExempt': _household.payment.regTeacherExempt,
                     'regFee': _household.current_regs[i].regFee,
-                    'regPaid': _household.current_regs[i].regPaid,
+                    'regPaid': _household.current_regs[i].regFee,  // regFee at this point becomes regPaid
                     'status': _household.current_regs[i].status,
                     'reviewedBy': _household.payment.reviewedBy,
                     'regReceipt': _household.payment.receipt,
-                    'comments': 'Total: '+_household.payment.regFee+', Chk# '+_household.payment.checkNumber + ', Notes: '+ _household.payment.comments
+                    'comments': comments
                 }
             }).exec()
         );
     }
     Promise.all(promises).then(function() {
+        var activity = {
+            registrations: _household.current_regs,
+            payment: _household.payment,
+            comments: comments
+        };
+        procedures.insertActivity({
+            subjectId: _household.householdId,
+            subjectType: 'HouseHold',
+            activityType: 'Pay',
+            activityJson: JSON.stringify(activity),
+            actor: _household.actor
+        });
         res.status(200).send();
     });
 };
