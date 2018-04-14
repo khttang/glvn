@@ -205,7 +205,8 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
         this.modalAdminRegisterNewHousehold = function (size) {
             var household = {
                 emails: [],
-                phones: []
+                phones: [],
+                emergency: {}
             };
 
             var modalInstance = $uibModal.open({
@@ -221,6 +222,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
             });
 
             modalInstance.result.then(function (modal_household) {
+                modal_household.actor = Authentication.user.username;
                 $http.post('/api/households/register', modal_household).success(function () {
                     $scope.success = 'A new household was added successfully!';
                     $scope.load();
@@ -278,20 +280,48 @@ angular.module('users').controller('payFee.modal', ['payment','registrations', '
         $uibModalInstance.dismiss('cancel');
     };
 
+    function calcRegFee(glClass, isLate) {
+        var regFee = (isLate) ? 150 : 100;
+        if (glClass === 'pre-con' || glClass === 'confirmation') {
+            regFee = (isLate) ? 200 : 150;
+        }
+        return regFee;
+    }
+
     $scope.recalcTotal = function () {
-        $scope.payment.regFee = 0;
+        var feeAmount = 0;
+        var paidAmount = 0;
         if ($scope.payment.regTeacherExempt !== true) {
             for (var i = 0, len = $scope.registrations.length; i < len; i++) {
-                if ($scope.registrations[i].regPaid !== undefined) {
-                    $scope.payment.regFee += parseInt($scope.registrations[i].regPaid, 10);
+                $scope.registrations[i].regFee = calcRegFee($scope.registrations[i].glClass, $scope.payment.isLate);
+                feeAmount += $scope.registrations[i].regFee;
+                if ($scope.registrations[i].regPaid !== null) {
+                    paidAmount += parseInt($scope.registrations[i].regPaid);
                 }
             }
+        } else {
+            for (var i = 0, len = $scope.registrations.length; i < len; i++) {
+                $scope.registrations[i].regFee = 0;
+                $scope.registrations[i].checkNumber = null;
+                $scope.registrations[i].receipt = null;
+                if ($scope.registrations[i].regPaid !== null) {
+                    paidAmount += parseInt($scope.registrations[i].regPaid);
+                }
+            }
+            $scope.payment.checkNumber = null;
+            $scope.payment.receipt = null;
         }
+        $scope.payment.regFee = String(feeAmount - paidAmount);
     };
 
     $scope.exemptToggle = function () {
         $scope.recalcTotal();
     };
+
+    $scope.lateToggle = function () {
+        $scope.recalcTotal();
+    };
+
 }]);
 
 angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$http', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $http, $uibModalInstance, $uibModal) {

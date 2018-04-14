@@ -34,15 +34,16 @@ function findHouseholdByUsername(username, households, householdStudents) {
 function findStudentsFromHouseHold(householdStudents, users, registrations, progress, houseHoldId) {
     var students = [];
     for (var i = 0, len = householdStudents.length; i < len; i++) {
-        if (houseHoldId == householdStudents[i].houseHoldId) {
+        if (houseHoldId === householdStudents[i].houseHoldId) {
             for (var j = 0, len2 = users.length; j < len2; j++) {
-                if (householdStudents[i].studentId == users[j].username) {
+                if (householdStudents[i].studentId === users[j].username) {
 
                     var s = {
                         phones: [],
                         emails: []
                     };
 
+                    s.username = users[j].username;
                     s.first =  users[j].firstName;
                     s.last = users[j].lastName;
                     s.middle = (users[j].middleName != undefined) ? users[j].middleName:'';
@@ -56,7 +57,7 @@ function findStudentsFromHouseHold(householdStudents, users, registrations, prog
                     }
 
                     for (var k = 0, len3 = registrations.length; k < len3; k++) {
-                        if (householdStudents[i].studentId == registrations[k].studentId) {
+                        if (householdStudents[i].studentId === registrations[k].studentId) {
                             s.vnClass = registrations[k].vnClass;
                             s.glClass = registrations[k].glClass;
                             s.grade = registrations[k].schoolGrade;
@@ -65,13 +66,13 @@ function findStudentsFromHouseHold(householdStudents, users, registrations, prog
                     }
 
                     for (var l = 0, len4 = progress.length; l < len4; l++) {
-                        if (householdStudents[i].studentId == progress[l].username) {
+                        if (householdStudents[i].studentId === progress[l].username) {
                             s.hasBaptismCert = progress[l].hasBaptismCert;
                             break;
                         }
                     }
 
-                    if (s.vnClass != undefined && s.glClass != undefined) {
+                    if (s.vnClass !== undefined || s.glClass !== undefined) {
                         students.push(s);
                     }
                 }
@@ -84,7 +85,7 @@ function findStudentsFromHouseHold(householdStudents, users, registrations, prog
 function findPhone(phones, owner) {
     var number = '';
     for (var i = 0, len = phones.length; i < len; i++) {
-        if (phones[i].owner == owner) {
+        if (phones[i].owner === owner) {
             number = phones[i].number;
         }
     }
@@ -94,7 +95,7 @@ function findPhone(phones, owner) {
 function findMaxHouseHoldSize(householdStudents) {
     var hshdsizes = new HashMap();
     for (var i = 0, len = householdStudents.length; i < len; i++) {
-        if (undefined == hshdsizes.get(householdStudents[i].houseHoldId)) {
+        if (undefined === hshdsizes.get(householdStudents[i].houseHoldId)) {
             hshdsizes.set(householdStudents[i].houseHoldId, 1);
         } else {
             var count = hshdsizes.get(householdStudents[i].houseHoldId);
@@ -110,6 +111,40 @@ function findMaxHouseHoldSize(householdStudents) {
     });
 
     return maxSize;
+}
+
+function getCurrentGLLevel(currentGl) {
+    if (currentGl === 'gl-01') {
+        return 'gl-01';
+    }
+    if (currentGl === 'gl-02') {
+        return 'gl-02';
+    }
+    if (currentGl === 'gl-03') {
+        return 'gl-03';
+    }
+    if (currentGl === 'gl-04') {
+        return 'gl-04';
+    }
+    if (currentGl === 'gl-05') {
+        return 'gl-05';
+    }
+    if (currentGl === 'gl-06') {
+        return 'gl-06';
+    }
+    if (currentGl === 'gl-07') {
+        return 'gl-07';
+    }
+    if (currentGl === 'gl-08') {
+        return 'gl-08';
+    }
+    if (currentGl === 'pre-con') {
+        return 'pre-con';
+    }
+    if (currentGl === 'confirmation') {
+        return 'confirmation';
+    }
+    return '';
 }
 
 function getNextGLLevel(currentGl) {
@@ -168,6 +203,33 @@ function getNextVNLevel(currentVn) {
     return '';
 }
 
+function getCurrentVNLevel(currentVn) {
+    if (currentVn === 'vn-01') {
+        return 'vn-01';
+    }
+    if (currentVn === 'vn-02') {
+        return 'vn-02';
+    }
+    if (currentVn === 'vn-03') {
+        return 'vn-03';
+    }
+    if (currentVn === 'vn-04') {
+        return 'vn-04';
+    }
+    if (currentVn === 'vn-05') {
+        return 'vn-05';
+    }
+    if (currentVn === 'vn-06') {
+        return 'vn-06';
+    }
+    if (currentVn === 'vn-07') {
+        return 'vn-07';
+    }
+    if (currentVn === 'vn-08') {
+        return 'vn-08';
+    }
+    return '';
+}
 
 mg.loadModels();
 
@@ -179,7 +241,7 @@ mg.connect(function (db) {
     var Household = mongoose.model('Household');
     var HouseholdStudent = mongoose.model('HouseholdStudent');
 
-    Registration.find({'year': '2017', 'status': {$in: ['APPROVED', 'RECEIVED']}}).exec()
+    Registration.find({'year': 2017, 'status': {$in: ['APPROVED', 'RECEIVED']}}).exec()
         .then(function (registrations) {
             var result = [];
             return User.find({'userType': 'STUDENT'}).exec()
@@ -203,7 +265,7 @@ mg.connect(function (db) {
             var households = result[3];
             var householdStudents = result[4];
 
-            var stream = fs.createWriteStream("/Users/ktang/Personal/Khiem/GLVN/WebProject/export/registered-2018-prep.txt");
+            var stream = fs.createWriteStream("/Users/ktang/Personal/Khiem/GLVN/WebProject/export/registered-2018-prep3.txt");
             stream.once('open', function (fd) {
 
                 stream.write('FatherName|FatherPhone|MotherName|MotherPhone|Address|City|ZipCode|Email1|Email2|S1_First|S1_Last|S1_Middle|S1_Gender|S1_BirthDate|S1_Grade|S1_BCert|S1_VN|S1_VNN|S1_GL|S1_GLN'
@@ -214,7 +276,9 @@ mg.connect(function (db) {
                     var fatherName = households[i].fatherFirstName + ' ' + households[i].fatherLastName;
                     var motherName = households[i].motherFirstName + ' ' + households[i].motherLastName;
                     var students = findStudentsFromHouseHold(householdStudents, users, registrations, progress, households[i]._id.toHexString());
-                    if (students.length > 0) {
+                    if (students.length === 1 && students[0].glClass === 'confirmation') {
+                        // Do nothing
+                    } else if (students.length > 0) {
                         var fatherPhone = (students[0].phones.length > 0) ? findPhone(students[0].phones, 'DAD'):'';
                         var motherPhone = (students[0].phones.length > 0) ? findPhone(students[0].phones, 'MOM'):'';
                         var email1 = (students[0].emails.length > 0) ? students[0].emails[0].address:'';
@@ -225,42 +289,50 @@ mg.connect(function (db) {
 
                         if (students.length > 0) {
                             if (students[0].glClass !== 'confirmation') {
+                                let currGl = getCurrentGLLevel(students[0].glClass);
+                                let currVn = getCurrentVNLevel(students[0].vnClass);
                                 let nextGl = getNextGLLevel(students[0].glClass);
                                 let nextVn = getNextVNLevel(students[0].vnClass);
                                 let hasBapCert = (students[0].hasBaptismCert === true) ? 'T':'F';
                                 stream.write(students[0].first + '|' + students[0].last + '|' + students[0].middle + '|' + students[0].gender[0] + '|' +
                                     dateFormat(students[0].birthDate, 'mm/dd/yyyy') + '|' + students[0].grade + '|' + hasBapCert + '|' +
-                                    students[0].vnClass + '|' + nextVn + '|' + students[0].glClass + '|' + nextGl);
+                                    currVn + '|' + nextVn + '|' + currGl + '|' + nextGl);
                             }
                         }
                         if (students.length > 1) {
                             if (students[1].glClass !== 'confirmation') {
+                                let currGl = getCurrentGLLevel(students[1].glClass);
+                                let currVn = getCurrentVNLevel(students[1].vnClass);
                                 let nextGl = getNextGLLevel(students[1].glClass);
                                 let nextVn = getNextVNLevel(students[1].vnClass);
                                 let hasBapCert = (students[1].hasBaptismCert === true) ? 'T':'F';
                                 stream.write('|' + students[1].first + '|' + students[1].last + '|' + students[1].middle + '|' + students[1].gender[0] + '|' +
                                     dateFormat(students[1].birthDate, 'mm/dd/yyyy') + '|' + students[1].grade + '|' + hasBapCert + '|' +
-                                    students[1].vnClass + '|' + nextVn + '|' + students[1].glClass + '|' + nextGl);
+                                    currVn + '|' + nextVn + '|' + currGl + '|' + nextGl);
                             }
                         }
                         if (students.length > 2) {
                             if (students[2].glClass !== 'confirmation') {
+                                let currGl = getCurrentGLLevel(students[2].glClass);
+                                let currVn = getCurrentVNLevel(students[2].vnClass);
                                 let nextGl = getNextGLLevel(students[2].glClass);
                                 let nextVn = getNextVNLevel(students[2].vnClass);
                                 let hasBapCert = (students[2].hasBaptismCert === true) ? 'T':'F';
                                 stream.write('|' + students[2].first + '|' + students[2].last + '|' + students[2].middle + '|' + students[2].gender[0] + '|' +
                                     dateFormat(students[2].birthDate, 'mm/dd/yyyy') + '|' + students[2].grade + '|' + hasBapCert + '|' +
-                                    students[2].vnClass + '|' + nextVn + '|' + students[2].glClass + '|' + nextGl);
+                                    currVn + '|' + nextVn + '|' + currGl + '|' + nextGl);
                             }
                         }
                         if (students.length > 3) {
                             if (students[3].glClass !== 'confirmation') {
+                                let currGl = getCurrentGLLevel(students[3].glClass);
+                                let currVn = getCurrentVNLevel(students[3].vnClass);
                                 let nextGl = getNextGLLevel(students[3].glClass);
                                 let nextVn = getNextVNLevel(students[3].vnClass);
                                 let hasBapCert = (students[3].hasBaptismCert === true) ? 'T':'F';
                                 stream.write('|' + students[3].first + '|' + students[3].last + '|' + students[3].middle + '|' + students[3].gender[0] + '|' +
                                     dateFormat(students[3].birthDate, 'mm/dd/yyyy') + '|' + students[3].grade + '|' + hasBapCert + '|' +
-                                    students[3].vnClass + '|' + nextVn + '|' + students[3].glClass + '|' + nextGl);
+                                    currVn + '|' + nextVn + '|' + currGl + '|' + nextGl);
                             }
                         }
                         stream.write('\n');

@@ -17,7 +17,9 @@ var _ = require('lodash'),
     Student = mongoose.model('Student'),
     Registration = mongoose.model('Registration'),
     Household = mongoose.model('Household'),
-    HouseholdStudent = mongoose.model('HouseholdStudent');
+    HouseholdStudent = mongoose.model('HouseholdStudent'),
+    procedures = require(path.resolve("./modules/users/server/mysql/admin.procedures")),
+    appConfig = require(path.resolve("./config/env/default"));
 
 var smtpOptions = {
     host: 'smtp.gmail.com', // hostname
@@ -44,7 +46,7 @@ function isFullName(inputtxt) {
 }
 
 function getCurrentRegStatus(inpStudents) {
-    var regYear = new Date().getFullYear();
+    var regYear = appConfig.glvn_registration.year;
     var outStudents = {};
 
     for (var student in inpStudents) {
@@ -110,7 +112,7 @@ exports.getRegistrations = function (req, res) {
     var _status = req.query.status;
     var _year = req.query.year;
     var _class = req.query.class;
-    var regYear = new Date().getFullYear();
+    var regYear = appConfig.glvn_registration.year;
 
     if (_status === undefined && _class === undefined) {
         if (_year === undefined) {
@@ -290,8 +292,7 @@ exports.find = function (req, res) {
                 var registrations = result[1];
                 var progress = result[2];
                 var hh = result[3];
-                var regYear = new Date().getFullYear();
-
+                var regYear = appConfig.glvn_registration.year;
                 var emails = (hh.emails !== undefined && hh.emails.length > 0) ? hh.emails:dbUser.emails;
                 var phones = (hh.phones !== undefined && hh.phones.length > 0) ? hh.phones:dbUser.phones;
 
@@ -443,7 +444,7 @@ exports.find = function (req, res) {
                 let progress = result[2];
                 let households = result[3];
                 let householdStudents = result[4];
-                let regYear = new Date().getFullYear();
+                let regYear = appConfig.glvn_registration.year;
                 let outputUsers = [];
 
                 for (var i = 0, len1 = users.length; i < len1; i++) {
@@ -502,7 +503,7 @@ exports.find = function (req, res) {
 
 exports.addRegistration = function (req, res) {
     var _registration = req.body;
-    var regYear = new Date().getFullYear();
+    var regYear = appConfig.glvn_registration.year;
 
     if (_registration._id === undefined) {
 
@@ -565,7 +566,7 @@ exports.addRegistration = function (req, res) {
 
 exports.register = function (req, res, next) {
     var inputUser = req.body;
-    var regYear = new Date().getFullYear();
+    var regYear = appConfig.glvn_registration.year;
 
     if (inputUser) {
         var _username = inputUser.firstName.toLowerCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toLowerCase().charAt(0);
@@ -719,12 +720,13 @@ function decodeBase64Image(dataString) {
 }
 
 /*
+Initiated from household registration. Add new student.
 Assumptions:
    - household already exist
- */
+*/
 exports.create = function (req, res, next) {
     var inputUser = req.body;
-    var regYear = new Date().getFullYear();
+    var regYear = appConfig.glvn_registration.year;
 
     if (inputUser) {
         var _username = inputUser.firstName.toLowerCase().charAt(0) + dateFormat(inputUser.birthDate, 'mmddyyyy') + inputUser.lastName.toLowerCase().charAt(0);
@@ -733,7 +735,7 @@ exports.create = function (req, res, next) {
                 res.status(500).send(err.message);
             }
             if (users !== null && users.length > 0) {
-                res.status(400).send('username '+_username+' already exists.');
+                res.status(400).send('username ' + _username + ' already exists.');
 
                 // fix user name if name is already taken
                 //_username = _username + _user.address.charAt(0) + '2';
@@ -750,6 +752,7 @@ exports.create = function (req, res, next) {
                     password: dateFormat(inputUser.birthDate, 'mmddyyyy'),
                     gender: inputUser.gender,
                     birthDate: inputUser.birthDate,
+                    emergency: inputUser.emergency,
                     emails: [],
                     phones: []
                 });
@@ -761,53 +764,53 @@ exports.create = function (req, res, next) {
                     user.phones.push(inputUser.phones[i]);
                 }
 
-                user.save(function (err) {
-                    if (err) {
-                        return res.status(400).send(err.message);
-                    }
-
+                user.save().then((doc) => {
                     var progress = new Student({
                         username: _username,
                         hasBaptismCert: inputUser.hasBaptismCert,
                         baptismDate: inputUser.baptismDate,
                         baptismPlace: inputUser.baptismPlace
                     });
-                    progress.save(function (err) {
-                        if (err) {
-                            return res.status(400).send(err.message);
-                        }
-
+                    progress.save().then((u) => {
                         var householdStudent = new HouseholdStudent({
                             houseHoldId: inputUser.householdId,
                             studentId: _username
                         });
-                        householdStudent.save(function (err) {
-                            if (err) {
-                                return res.status(400).send(err.message);
-                            }
-
+                        householdStudent.save().then((hh) => {
                             if (inputUser.current_reg !== undefined) {
                                 var registration = new Registration(
-                                {
-                                    studentId: _username,
-                                    year: regYear,
-                                    glClass: inputUser.current_reg.glClass,
-                                    vnClass: inputUser.current_reg.vnClass,
-                                    schoolGrade: inputUser.current_reg.schoolGrade,
-                                    receivedBy: inputUser.current_reg.receivedBy,
-                                    regFee: inputUser.current_reg.regFee,
-                                    status: inputUser.current_reg.status
-                                });
-                                registration.save(function (err) {
-                                    if (err) {
-                                        return res.status(500).send(err);
-                                    }
+                                    {
+                                        studentId: _username,
+                                        year: regYear,
+                                        glClass: inputUser.current_reg.glClass,
+                                        vnClass: inputUser.current_reg.vnClass,
+                                        schoolGrade: inputUser.current_reg.schoolGrade,
+                                        receivedBy: inputUser.current_reg.receivedBy,
+                                        regFee: inputUser.current_reg.regFee,
+                                        status: inputUser.current_reg.status,
+                                        comments: inputUser.comments
+                                    });
+                                registration.save().then((r) => {
+                                    procedures.insertActivity({
+                                        subjectId: _username,
+                                        subjectType: 'Student',
+                                        activityType: 'Create',
+                                        activityJson: JSON.stringify(inputUser),
+                                        actor: inputUser.actor
+                                    });
+                                    res.status(200).send();
+                                }).catch((err) => {
+                                    return res.status(500).send(err);
                                 });
                             }
-
-                            res.status(200).send();
+                        }).catch((err) => {
+                            return res.status(400).send(err.message);
                         });
+                    }).catch((err) => {
+                        return res.status(400).send(err.message);
                     });
+                }).catch((err) => {
+                    return res.status(400).send(err.message);
                 });
             }
         });
@@ -817,7 +820,10 @@ exports.create = function (req, res, next) {
 };
 
 /**
- * Update user details
+ * Update user details.
+ * Initiated from household registration, returning student.
+ * Submit registration.
+ * Current working version
  */
 exports.update = function (req, res) {
 
@@ -830,84 +836,67 @@ exports.update = function (req, res) {
     delete req.body.userType;
     delete req.body.username;
 
-    var regYear = new Date().getFullYear();
+    var regYear = appConfig.glvn_registration.year;
 
-    Student.find({'username': _username}).exec()
-        .then(function (students) {
-            Student.update({'_id': students[0]._id},
-                {
-                    '$set': {
-                        'hasBaptismCert': _inputUser.hasBaptismCert,
-                        'baptismPlace': _inputUser.baptismPlace,
-                        'baptismDate':_inputUser.baptismDate
-                    }
-                }).exec()
-                .then(function (retObj) {
-                    return User.find({'username': _username}).exec()
-                        .then(function (users) {
-                            User.update({'_id': users[0]._id},
-                                {
-                                    '$set': {
-                                        'saintName': _inputUser.saintName,
-                                        'firstName': _inputUser.firstName,
-                                        'lastName': _inputUser.lastName
-                                    }
-                                }).exec()
-                                .then(function () {
-                                    Household.update({'_id': _inputUser.householdId},
-                                        {
-                                            '$set': {
-                                                'fatherFirstName': _inputUser.fatherFirstName,
-                                                'fatherLastName': _inputUser.fatherLastName,
-                                                'motherFirstName': _inputUser.motherFirstName,
-                                                'motherLastName': _inputUser.motherLastName,
-                                                'address': _inputUser.address,
-                                                'city': _inputUser.city,
-                                                'zipCode': _inputUser.zipCode,
-                                                'emails': _inputUser.emails,
-                                                'phones': _inputUser.phones
-                                            }
-                                        }).exec()
-                                        .then(function () {
-                                            if (_registration._id === undefined) {
-                                                var registration = new Registration({
-                                                    studentId: _username,
-                                                    year: regYear,
-                                                    glClass: _registration.glClass,
-                                                    vnClass: _registration.vnClass,
-                                                    schoolGrade: _registration.schoolGrade,
-                                                    receivedBy: _registration.receivedBy,
-                                                    regTeacherExempt: _registration.regTeacherExempt,
-                                                    regFee: _registration.regFee,
-                                                    status: _registration.status
-                                                });
-                                                registration.save(function (err) {
-                                                    if (err) {
-                                                        return res.status(500).send(err);
-                                                    }
-                                                });
-                                            } else {
-                                                Registration.update({'_id': _registration._id},
-                                                    {
-                                                        '$set': {
-                                                            'glClass': _registration.glClass,
-                                                            'vnClass': _registration.vnClass,
-                                                            'schoolGrade': _registration.schoolGrade,
-                                                            'receivedBy': _registration.receivedBy,
-                                                            'regTeacherExempt': _registration.regTeacherExempt,
-                                                            'regFee': _registration.regFee,
-                                                            'status': _registration.status
-                                                        }
-                                                    }).exec();
-                                            }
-                                        })
-                                        .then(function() {
-
-                                        res.status(200);
-                                    });
+    Student.findOneAndUpdate({'username': _username},
+        { hasBaptismCert: _inputUser.hasBaptismCert, baptismPlace: _inputUser.baptismPlace, baptismDate:_inputUser.baptismDate}).exec()
+        .then(function () {
+            User.findOneAndUpdate({'username': _username},
+                { saintName: _inputUser.saintName, firstName: _inputUser.firstName, lastName: _inputUser.lastName}).exec()
+                .then(function () {
+                    Household.findOneAndUpdate({'_id': _inputUser.householdId},
+                        {
+                            fatherFirstName: _inputUser.fatherFirstName, fatherLastName: _inputUser.fatherLastName,
+                            motherFirstName: _inputUser.motherFirstName, motherLastName: _inputUser.motherLastName,
+                            address: _inputUser.address, city: _inputUser.city, zipCode: _inputUser.zipCode,
+                            emails: _inputUser.emails, phones: _inputUser.phones, emergency: _inputUser.emergency
+                        }).exec()
+                        .then(function () {
+                            if (_registration._id === undefined) {
+                                var registration = new Registration({
+                                    studentId: _username,
+                                    year: regYear,
+                                    glClass: _registration.glClass,
+                                    vnClass: _registration.vnClass,
+                                    schoolGrade: _registration.schoolGrade,
+                                    receivedBy: _registration.receivedBy,
+                                    regTeacherExempt: _registration.regTeacherExempt,
+                                    regFee: _registration.regFee,
+                                    status: _registration.status,
+                                    comments: _registration.comments
                                 });
-                        });
-                });
+                                registration.save().then((doc) => {
+                                    procedures.insertActivity({
+                                        subjectId: _username,
+                                        subjectType: 'Registration',
+                                        activityType: 'Create',
+                                        activityJson: JSON.stringify(doc),
+                                        actor: _inputUser.actor
+                                    });
+                                    res.status(200).send();
+                                }).catch((err) => {
+                                    return res.status(500).send(err.message);
+                                });
+                            } else {
+                                Registration.findOneAndUpdate({'_id': _registration._id},
+                                    {
+                                        glClass: _registration.glClass, vnClass: _registration.vnClass, schoolGrade: _registration.schoolGrade,
+                                        receivedBy: _registration.receivedBy, regTeacherExempt: _registration.regTeacherExempt,
+                                        regFee: _registration.regFee, status: _registration.status
+                                    }).exec()
+                                    .then((doc) => {
+                                        procedures.insertActivity({
+                                            subjectId: _username,
+                                            subjectType: 'Registration',
+                                            activityType: 'Update',
+                                            activityJson: JSON.stringify(doc),
+                                            actor: _inputUser.actor
+                                        });
+                                        res.status(200).send();
+                                    })
+                            }
+                        })
+                })
         })
         .then(function(err) {
             if (err) {

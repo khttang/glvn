@@ -114,6 +114,23 @@ var HouseholdSchema = new Schema({
             }
         }
     ],
+    emergency: {
+        name: {
+            type: String,
+            trim: true,
+            default: ''
+        },
+        relation: {
+            type: String,
+            trim: true,
+            default: ''
+        },
+        cell: {
+            type: String,
+            trim: true,
+            default: ''
+        }
+    }
 });
 
 mongoose.model('Household', HouseholdSchema);

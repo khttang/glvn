@@ -102,6 +102,23 @@
                                 </button>
                             </div>
                         </div>
+                        <label>Emergency Contacts:</label>
+                        <div class="row">
+                            <div class="form-group col-xs-5">
+                                <input type="text" id="ContactName" name="ContactName" class="form-control" ng-model="household.emergency.name" placeholder="Contact Name">
+                            </div>
+                            <div class="form-group col-xs-3">
+                                <input type="text" id="emergencyRelation" name="emergencyRelation" class="form-control" ng-model="household.emergency.relation" placeholder="Relationship">
+                            </div>
+                            <div class="form-group col-xs-4">
+                                <phonenumber-directive model='household.emergency.cell' required/>
+                                <div class="help-block" ng-messages="registerHouseholdForm.emergencyCell.$error" ng-if="registerHouseholdForm.emergencyCell.$touched">
+                                    <p ng-message="minlength">Emergency cell is too short</p>
+                                    <p ng-message="maxlength">Emergency cell is too long</p>
+                                    <p ng-message="required">Emergency cell is required</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </fieldset>
