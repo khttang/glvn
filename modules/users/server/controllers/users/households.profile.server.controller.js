@@ -189,12 +189,13 @@ exports.submitPayment = function (req, res) {
         comments += ', Notes: '+ _household.payment.comments;
     }
     for (var i = 0, len = _household.current_regs.length; i < len; i++) {
+        _household.current_regs[i].regPaid = _household.current_regs[i].regFee;
         promises.push(Registration.update({'_id': _household.current_regs[i]._id},
             {
                 '$set': {
                     'regTeacherExempt': _household.payment.regTeacherExempt,
                     'regFee': _household.current_regs[i].regFee,
-                    'regPaid': _household.current_regs[i].regFee,  // regFee at this point becomes regPaid
+                    'regPaid': _household.current_regs[i].regPaid,
                     'status': _household.current_regs[i].status,
                     'reviewedBy': _household.payment.reviewedBy,
                     'regReceipt': _household.payment.receipt,
@@ -217,5 +218,19 @@ exports.submitPayment = function (req, res) {
             actor: _household.actor
         });
         res.status(200).send();
+    });
+};
+
+/*
+    Retrieve report
+ */
+exports.getRegistrationReport = function (req, res) {
+    let _regyear = req.query.reg_year;
+    procedures.getRegistrationReport(_regyear, function(err, content) {
+        if (err) {
+            res.status(500).send(err.message);
+        } else {
+            res.json(content);
+        }
     });
 };

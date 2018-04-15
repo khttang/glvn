@@ -229,6 +229,109 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                 });
             });
         };
+
+        this.modalAdminReport = function (size) {
+
+            $http.get('/api/households/registration_report?reg_year='+ ApplicationConfiguration.regYear).success(function (response) {
+
+                var registrationsByDay = new Map();
+                for (var i = 0, len = response.length; i < len; i++) {
+                    var audit = {
+                        householdId: response[i].SubjectId,
+                        details: JSON.parse(response[i].ActivityJson),
+                        date: response[i].ActivityDate
+                    };
+                    var key = moment(audit.date).format('MMMM DD, YYYY'); //dateFormat(audit.date, 'mmmm dS, yyyy');
+                    var regByDay = registrationsByDay.get(key);
+                    if (regByDay === undefined) {
+                        regByDay = [];
+                    }
+                    regByDay.push(audit);
+                    registrationsByDay.set(key, regByDay);
+                }
+
+                let reportData = {
+                    progressesByDay: [],
+                    summary: {
+                        householdCount: 0,
+                        studentCount: 0,
+                        totalAmount: 0,
+                        checkAmount: 0,
+                        cashAmount: 0,
+                        exemptCount: 0,
+                        lateCount: 0,
+                        youthMinistry: 0
+                    }
+                }
+                registrationsByDay.forEach(function(auditEvents, key) {
+                    let households = 0;
+                    let students = 0;
+                    let totalAmount = 0;
+                    let checkAmount = 0;
+                    let cashAmount = 0;
+                    let exemptCount = 0;
+                    let lateCount = 0;
+                    let youthMinistry = 0;
+
+                    for (var i = 0, len = auditEvents.length; i < len; i++) {
+                        let paidAmount = parseInt(auditEvents[i].details.payment.regFee);
+                        households += 1;
+                        totalAmount += paidAmount;
+                        students += auditEvents[i].details.registrations.length;
+                        if (auditEvents[i].details.payment.regTeacherExempt) {
+                            exemptCount += 1;
+                        }
+                        if (auditEvents[i].details.payment.isLate) {
+                            lateCount += 1;
+                        }
+                        if (!isNaN(auditEvents[i].details.checkNumber)) {
+                            cashAmount += paidAmount;
+                        } else {
+                            checkAmount += paidAmount;
+                        }
+
+                        for (var j = 0, len2 = auditEvents[i].details.registrations.length; j < len2; j++) {
+                            let gl = auditEvents[i].details.registrations[j].glClass;
+                            if (gl === 'confirmation' || gl === 'pre-con') {
+                                youthMinistry += 1;
+                            }
+                        }
+                    }
+                    reportData.progressesByDay.push({
+                        reportDate: key,
+                        householdCount: households,
+                        studentCount: students,
+                        totalAmount: totalAmount,
+                        checkAmount: checkAmount,
+                        cashAmount: cashAmount,
+                        exemptCount: exemptCount,
+                        lateCount: lateCount,
+                        youthMinistry: youthMinistry
+                    });
+                    reportData.summary.householdCount += households;
+                    reportData.summary.studentCount += students;
+                    reportData.summary.totalAmount += totalAmount;
+                    reportData.summary.checkAmount += checkAmount;
+                    reportData.summary.cashAmount += cashAmount;
+                    reportData.summary.exemptCount += exemptCount;
+                    reportData.summary.lateCount += lateCount;
+                    reportData.summary.youthMinistry += youthMinistry;
+                });
+
+                var modalInstance = $uibModal.open({
+                    animation: $scope.animationsEnabled,
+                    templateUrl: 'modules/users/client/views/report_registration.client.view.html',
+                    controller: 'showreport.modal as vm',
+                    size: size,
+                    resolve: {
+                        reportData: function () {
+                            return reportData;
+                        }
+                    }
+                });
+
+            });
+        };
     }
 ]);
 
@@ -731,3 +834,14 @@ angular.module('users').controller('regHousehold.modal', ['household', '$scope',
     };
 
 }]);
+
+angular.module('users').controller('showreport.modal', ['reportData', '$scope', '$uibModalInstance', '$uibModal', function(reportData, $scope, $uibModalInstance, $uibModal) {
+
+    $scope.reportData = reportData;
+
+    $scope.ok = function () {
+        $uibModalInstance.close();
+    };
+
+}]);
+

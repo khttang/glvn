@@ -10,6 +10,7 @@ module.exports = function (app) {
     app.route('/api/households/payment').post(households.submitPayment);
     app.route('/api/households/registrations').get(households.getRegistrations);
     app.route('/api/households').get(households.getHouseHolds);
+    app.route('/api/households/registration_report').get(households.getRegistrationReport);
 
 };
 
