@@ -1,0 +1,56 @@
+<section>
+    <div class="modal-header">
+        <h3 class="modal-title">Registration Progress Report</h3>
+    </div>
+    <div class="modal-body" ng-init="init()">
+        <form name="report" novalidate>
+
+            <div class="row">
+                <table class="table table-hover table-stripped table-condensed" thead>
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Households</th>
+                        <th>Students</th>
+                        <th>YouthMinistry</th>
+                        <th>Exempts</th>
+                        <th>LateReg</th>
+                        <th>FeeCollected</th>
+                        <th>CheckAmount</th>
+                        <th>CashAmount</th>
+                    </tr>
+                    </thead>
+                    <tbody ng-repeat="progress in reportData.progressesByDay"  >
+                    <tr>
+                        <!--  | date:'MMMM dd, yyyy' -->
+                        <td>{{progress.reportDate}}</td>
+                        <td>{{progress.householdCount}}</td>
+                        <td>{{progress.studentCount}}</td>
+                        <td>{{progress.youthMinistry}}</td>
+                        <td>{{progress.exemptCount}}</td>
+                        <td>{{progress.lateCount}}</td>
+                        <td>{{progress.totalAmount | currency:'$':0}}</td>
+                        <td>{{progress.checkAmount | currency:'$':0}}</td>
+                        <td>{{progress.cashAmount | currency:'$':0}}</td>
+
+                    </tr>
+                    <tr>
+                        <td>Total to Date</td>
+                        <td>{{reportData.summary.householdCount}}</td>
+                        <td>{{reportData.summary.studentCount}}</td>
+                        <td>{{reportData.summary.youthMinistry}}</td>
+                        <td>{{reportData.summary.exemptCount}}</td>
+                        <td>{{reportData.summary.lateCount}}</td>
+                        <td>{{reportData.summary.totalAmount | currency:'$':0}}</td>
+                        <td>{{reportData.summary.checkAmount | currency:'$':0}}</td>
+                        <td>{{reportData.summary.cashAmount | currency:'$':0}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success btn-lg" ng-click="ok()">Close</button>
+    </div>
+</section>

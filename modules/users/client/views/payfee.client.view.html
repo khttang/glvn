@@ -25,8 +25,8 @@
                         <td>{{reg.glClass}}, {{reg.vnClass}}</td>
                         <td>{{reg.hasBaptismCert}}</td>
                         <td>{{reg.regTeacherExempt}}</td>
-                        <td>{{reg.regFee}}</td>
-                        <td>{{reg.regPaid}}</td>
+                        <td>{{reg.regFee | currency:'$':0}}</td>
+                        <td>{{reg.regPaid | currency:'$':0}}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -40,7 +40,7 @@
                     </tr>
                     <tr>
                         <td><span style="font-weight:bold">Total due:</span></td>
-                        <td><input type="text" id="regFee" style="width: 80px;" class="form-control" ng-readonly="true" ng-model="payment.regFee"></td>
+                        <td><input type="text" id="regFee" style="width: 80px;" class="form-control" ng-readonly="true" ng-model="payment.regFee | currency:'$':0"></td>
                     </tr>
                     <tr>
                         <td><span style="font-weight:bold">Receipt Number:</span></td>
