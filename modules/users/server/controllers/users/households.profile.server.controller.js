@@ -17,7 +17,7 @@ var _ = require('lodash'),
     Household = mongoose.model('Household'),
     Registration = mongoose.model('Registration'),
     HouseholdStudent = mongoose.model('HouseholdStudent'),
-    procedures = require(path.resolve("./modules/users/server/mysql/admin.procedures"));
+    procedures = require(path.resolve('./modules/users/server/mysql/admin.procedures'));
 
 var findChild = function(users, id) {
     for (var i = 0, len = users.length; i < len; i++) {

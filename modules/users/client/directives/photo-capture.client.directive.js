@@ -16,6 +16,7 @@ angular.module('users')
 
     var contentURL;
 
+    /*
     return {
         restrict: 'E', //E = element, A = attribute, C = class, M = comment
         scope: {
@@ -59,5 +60,6 @@ angular.module('users')
             }
         }
     };
+    */
 });
 

@@ -4,6 +4,7 @@ var mysql = require('./lib/mysql');
 
 
 function Glvn() {
+    /*
     this.lookupByHousehold = function(householdid) {
         connection.acquire(function(err, con) {
             con.query('SELECT Student.HouseHold,Student.LastName,Student.FirstName,Student.BirthDate,Student.StudentId,Registration.Year,Registration.GlClass,Registration.VnClass,Registration.GradeLevel from Registration'
@@ -14,5 +15,6 @@ function Glvn() {
             });
         });
     };
+    */
 }
 module.exports = new Glvn();
