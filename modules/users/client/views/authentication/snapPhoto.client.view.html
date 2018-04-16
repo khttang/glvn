@@ -2,6 +2,7 @@
     <div class="modal-header">
         <h3 class="modal-title">{{modalTitle}}</h3>
     </div>
+    <!--
     <div class="modal-body">
         <div class="row" ng-if="modalData.photoType==='student'">
             <photo-capture ng-model="modalData.photo" img-width=260 img-height=240 type="photo" id="photo"/>
@@ -10,6 +11,7 @@
             <photo-capture ng-model="modalData.photo" img-width=520 img-height=400 type="certificate" id="certificate"/>
         </div>
     </div>
+    -->
     <div class="modal-footer">
         <button class="btn btn-success btn-lg" ng-disabled="photo.$invalid" ng-click="ok()">Add</button>
         <button class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>

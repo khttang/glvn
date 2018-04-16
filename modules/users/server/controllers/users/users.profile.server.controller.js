@@ -18,8 +18,8 @@ var _ = require('lodash'),
     Registration = mongoose.model('Registration'),
     Household = mongoose.model('Household'),
     HouseholdStudent = mongoose.model('HouseholdStudent'),
-    procedures = require(path.resolve("./modules/users/server/mysql/admin.procedures")),
-    appConfig = require(path.resolve("./config/env/default"));
+    procedures = require(path.resolve('./modules/users/server/mysql/admin.procedures')),
+    appConfig = require(path.resolve('./config/env/default'));
 
 var smtpOptions = {
     host: 'smtp.gmail.com', // hostname
@@ -893,10 +893,10 @@ exports.update = function (req, res) {
                                             actor: _inputUser.actor
                                         });
                                         res.status(200).send();
-                                    })
+                                    });
                             }
-                        })
-                })
+                        });
+                });
         })
         .then(function(err) {
             if (err) {

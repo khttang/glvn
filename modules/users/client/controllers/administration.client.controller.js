@@ -262,7 +262,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         lateCount: 0,
                         youthMinistry: 0
                     }
-                }
+                };
                 registrationsByDay.forEach(function(auditEvents, key) {
                     let households = 0;
                     let students = 0;
