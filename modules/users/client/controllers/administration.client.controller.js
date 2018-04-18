@@ -232,6 +232,34 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
 
         this.modalAdminReport = function (size) {
 
+          let reportData = {
+            progressesByDay: [],
+            summary: {
+              householdCount: 0,
+              studentCount: 0,
+              totalAmount: 0,
+              checkAmount: 0,
+              cashAmount: 0,
+              exemptCount: 0,
+              lateCount: 0,
+              youthMinistry: 0
+            }
+          };
+
+          var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'modules/users/client/views/report_registration.client.view.html',
+            controller: 'showreport.modal as vm',
+            size: size,
+            resolve: {
+              reportData: function () {
+                return reportData;
+              }
+            }
+          });
+
+            /*
+            Good code
             $http.get('/api/households/registration_report?reg_year='+ ApplicationConfiguration.regYear).success(function (response) {
 
                 var registrationsByDay = new Map();
@@ -329,8 +357,8 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         }
                     }
                 });
-
             });
+            */
         };
     }
 ]);
