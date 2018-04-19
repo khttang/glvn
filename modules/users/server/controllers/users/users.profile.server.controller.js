@@ -21,6 +21,8 @@ var _ = require('lodash'),
     procedures = require(path.resolve('./modules/users/server/mysql/admin.procedures')),
     appConfig = require(path.resolve('./config/env/default'));
 
+mongoose.Promise = require('bluebird');
+
 var smtpOptions = {
     host: 'smtp.gmail.com', // hostname
     secureConnection: true, // use SSL

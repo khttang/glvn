@@ -19,6 +19,8 @@ var _ = require('lodash'),
     HouseholdStudent = mongoose.model('HouseholdStudent'),
     procedures = require(path.resolve('./modules/users/server/mysql/admin.procedures'));
 
+mongoose.Promise = require('bluebird');
+
 var findChild = function(users, id) {
     for (var i = 0, len = users.length; i < len; i++) {
         if (id === users[i].username) {
