@@ -232,36 +232,11 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
 
         this.modalAdminReport = function (size) {
 
-          let reportData = {
-            progressesByDay: [],
-            summary: {
-              householdCount: 0,
-              studentCount: 0,
-              totalAmount: 0,
-              checkAmount: 0,
-              cashAmount: 0,
-              exemptCount: 0,
-              lateCount: 0,
-              youthMinistry: 0
-            }
-          };
+            console.log('Inside modalAdminReport');
 
-          var modalInstance = $uibModal.open({
-            animation: $scope.animationsEnabled,
-            templateUrl: 'modules/users/client/views/report_registration.client.view.html',
-            controller: 'showreport.modal as vm',
-            size: size,
-            resolve: {
-              reportData: function () {
-                return reportData;
-              }
-            }
-          });
-
-            /*
-            Good code
             $http.get('/api/households/registration_report?reg_year='+ ApplicationConfiguration.regYear).success(function (response) {
 
+                console.log('Inside modalAdminReport - after getting report from mysql');
                 var registrationsByDay = new Map();
                 for (var i = 0, len = response.length; i < len; i++) {
                     var audit = {
@@ -269,7 +244,9 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         details: JSON.parse(response[i].ActivityJson),
                         date: response[i].ActivityDate
                     };
+                    console.log('Inside modalAdminReport - before moment');
                     var key = moment(audit.date).format('MMMM DD, YYYY'); //dateFormat(audit.date, 'mmmm dS, yyyy');
+                    console.log('Inside modalAdminReport - after moment');
                     var regByDay = registrationsByDay.get(key);
                     if (regByDay === undefined) {
                         regByDay = [];
@@ -277,6 +254,8 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     regByDay.push(audit);
                     registrationsByDay.set(key, regByDay);
                 }
+
+                console.log('Inside modalAdminReport - after for loop');
 
                 let reportData = {
                     progressesByDay: [],
@@ -346,6 +325,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     reportData.summary.youthMinistry += youthMinistry;
                 });
 
+                console.log('Inside modalAdminReport - after building data');
                 var modalInstance = $uibModal.open({
                     animation: $scope.animationsEnabled,
                     templateUrl: 'modules/users/client/views/report_registration.client.view.html',
@@ -358,7 +338,6 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     }
                 });
             });
-            */
         };
     }
 ]);
