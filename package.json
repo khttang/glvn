@@ -5,18 +5,6 @@
   "meanjs-version": "0.4.1",
   "author": "Khiem Tang",
   "license": "MIT",
-  "eslintConfig": {
-    "parserOptions": {
-      "ecmaVersion": 6,
-      "sourceType": "module",
-      "ecmaFeatures": {
-        "jsx": true
-      }
-    },
-    "rules": {
-      "semi": 2
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/khttang/glvn.git"

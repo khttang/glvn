@@ -231,12 +231,8 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
         };
 
         this.modalAdminReport = function (size) {
-
-            console.log('Inside modalAdminReport');
-
             $http.get('/api/households/registration_report?reg_year='+ ApplicationConfiguration.regYear).success(function (response) {
 
-                console.log('Inside modalAdminReport - after getting report from mysql');
                 var registrationsByDay = new Map();
                 for (var i = 0, len = response.length; i < len; i++) {
                     var audit = {
@@ -244,9 +240,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         details: JSON.parse(response[i].ActivityJson),
                         date: response[i].ActivityDate
                     };
-                    console.log('Inside modalAdminReport - before moment');
                     var key = moment(audit.date).format('MMMM DD, YYYY'); //dateFormat(audit.date, 'mmmm dS, yyyy');
-                    console.log('Inside modalAdminReport - after moment');
                     var regByDay = registrationsByDay.get(key);
                     if (regByDay === undefined) {
                         regByDay = [];
@@ -254,8 +248,6 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     regByDay.push(audit);
                     registrationsByDay.set(key, regByDay);
                 }
-
-                console.log('Inside modalAdminReport - after for loop');
 
                 let reportData = {
                     progressesByDay: [],
