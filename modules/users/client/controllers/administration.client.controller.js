@@ -231,7 +231,6 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
         };
 
         this.modalAdminReport = function (size) {
-
             $http.get('/api/households/registration_report?reg_year='+ ApplicationConfiguration.regYear).success(function (response) {
 
                 var registrationsByDay = new Map();
@@ -318,6 +317,7 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                     reportData.summary.youthMinistry += youthMinistry;
                 });
 
+                console.log('Inside modalAdminReport - after building data');
                 var modalInstance = $uibModal.open({
                     animation: $scope.animationsEnabled,
                     templateUrl: 'modules/users/client/views/report_registration.client.view.html',
@@ -329,7 +329,6 @@ angular.module('users').controller('AdministrationController', ['$scope', '$stat
                         }
                     }
                 });
-
             });
         };
     }
@@ -429,20 +428,6 @@ angular.module('users').controller('payFee.modal', ['payment','registrations', '
 
 angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$http', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $http, $uibModalInstance, $uibModal) {
 
-    var lateDate = new Date('2016-06-21');
-    var curDate = new Date();
-    $scope.basefee = (curDate < lateDate) ? 80:130;
-    if (user.current_reg !== undefined) {
-        if (user.current_reg.regTeacherExempt) {
-            $scope.basefee = 0;
-        }
-        if (user.current_reg.glClass === 'pre-con' || user.current_reg.glClass === 'confirmation') {
-            $scope.extrafees = 20;
-        } else {
-            $scope.extrafees = 0;
-        }
-        user.current_reg.regFee = $scope.basefee + $scope.extrafees;
-    }
     $scope.modalTitle = $uibModalInstance.modalTitle;
     $scope.user = user;
     $scope.registrations = registrations;
@@ -466,22 +451,9 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
     };
 
     $scope.glClassChange = function() {
-        if (user.current_reg.glClass === 'pre-con' || user.current_reg.glClass === 'confirmation') {
-            $scope.extrafees = 20;
-        } else {
-            $scope.extrafees = 0;
-        }
-        user.current_reg.regFee = $scope.basefee + $scope.extrafees;
     };
 
     $scope.teacherExemptToggle = function() {
-        if (user.current_reg.regTeacherExempt) {
-            $scope.basefee = 0;
-        } else {
-            var curDate = new Date();
-            $scope.basefee = (curDate < lateDate) ? 80:130;
-        }
-        user.current_reg.regFee = $scope.basefee + $scope.extrafees;
     };
 
     $scope.addNewEmail = function(size) {

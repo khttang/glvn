@@ -27,7 +27,9 @@
     "inject",
     "by",
     "browser",
-    "element"
+    "element",
+    "angular",
+    "moment"
   ],
   "indent": 4, // Specify indentation spacing
   "devel": true, // Allow development statements e.g. `console.log();`.
