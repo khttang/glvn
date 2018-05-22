@@ -428,20 +428,6 @@ angular.module('users').controller('payFee.modal', ['payment','registrations', '
 
 angular.module('users').controller('regstudent.modal', ['user', 'registrations', '$scope', '$http', '$uibModalInstance', '$uibModal', function(user, registrations, $scope, $http, $uibModalInstance, $uibModal) {
 
-    var lateDate = new Date('2016-06-21');
-    var curDate = new Date();
-    $scope.basefee = (curDate < lateDate) ? 80:130;
-    if (user.current_reg !== undefined) {
-        if (user.current_reg.regTeacherExempt) {
-            $scope.basefee = 0;
-        }
-        if (user.current_reg.glClass === 'pre-con' || user.current_reg.glClass === 'confirmation') {
-            $scope.extrafees = 20;
-        } else {
-            $scope.extrafees = 0;
-        }
-        user.current_reg.regFee = $scope.basefee + $scope.extrafees;
-    }
     $scope.modalTitle = $uibModalInstance.modalTitle;
     $scope.user = user;
     $scope.registrations = registrations;
@@ -465,22 +451,9 @@ angular.module('users').controller('regstudent.modal', ['user', 'registrations',
     };
 
     $scope.glClassChange = function() {
-        if (user.current_reg.glClass === 'pre-con' || user.current_reg.glClass === 'confirmation') {
-            $scope.extrafees = 20;
-        } else {
-            $scope.extrafees = 0;
-        }
-        user.current_reg.regFee = $scope.basefee + $scope.extrafees;
     };
 
     $scope.teacherExemptToggle = function() {
-        if (user.current_reg.regTeacherExempt) {
-            $scope.basefee = 0;
-        } else {
-            var curDate = new Date();
-            $scope.basefee = (curDate < lateDate) ? 80:130;
-        }
-        user.current_reg.regFee = $scope.basefee + $scope.extrafees;
     };
 
     $scope.addNewEmail = function(size) {
